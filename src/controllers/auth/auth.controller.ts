@@ -1,11 +1,11 @@
 import { Controller, Inject, Post } from "@nestjs/common";
-import { DatabaseModule } from "./auth.module";
+import AuthService from "./auth.service";
 
 
 @Controller('/auth')
 export default class AuthController{
     constructor(
-        RegisterService
+        private readonly authService:AuthService
     ){}
 
     @Post('/register')
