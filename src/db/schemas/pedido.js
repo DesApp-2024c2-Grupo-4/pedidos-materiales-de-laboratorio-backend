@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from 'mongoose'
 
-const dataSchema = new mongoose.Schema({
+const reqestSchema = new Schema({
   docente: {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" },
     nombre: String,
@@ -107,4 +107,6 @@ const dataSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = mongoose.model("Pedido", dataSchema);
+const Request = model("Request", materialSchema);
+
+export default Request

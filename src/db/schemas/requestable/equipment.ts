@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+import { Schema, model } from 'mongoose'
 
-const dataSchema = new mongoose.Schema({
-  clase: {
+const equipmentSchema = new Schema({
+  type: {
     required: true,
     type: String,
   },
-  descripcion: {
+  description: {
     required: true,
     type: String,
   },
@@ -13,34 +13,36 @@ const dataSchema = new mongoose.Schema({
     required: true,
     type: Number,
   },
-  unidadMedida: {
+  unitMessure: {
     required: true,
     type: String,
   },
-  enUso: [
+  inUse: [
     {
       id: {
         type: String,
       },
-      fecha_inicio: {
+      startDate: {
         type: Date,
       },
-      fecha_fin: {
+      endDate: {
         type: Date,
       },
-      cantidad: {
+      quantity: {
         type: Number,
       },
     },
   ],
-  enReparacion: {
+  inRepair: {
     type: Number,
   },
-  disponible: {
+  available: {
     required: true,
     type: Boolean,
     default: true
   },
 });
 
-module.exports = mongoose.model("Equipo", dataSchema);
+const Equipment = model("Equipment", equipmentSchema);
+
+export default Equipment

@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+import { Schema, model } from 'mongoose'
 
-const dataSchema = new mongoose.Schema({
-  descripcion: {
+const reactiveSchema = new Schema({
+  description: {
     required: true,
     type: String,
   },
@@ -12,14 +12,16 @@ const dataSchema = new mongoose.Schema({
   stock: {
     type: Number,
   },
-  enUso: {
+  inUse: {
     type: Number,
   },
-  disponible: {
+  isAvailable: {
     required: true,
     type: Boolean,
     default: true
   },
 });
 
-module.exports = mongoose.model("Reactivo", dataSchema);
+const Reactive = model("Reactive", reactiveSchema);
+
+export default Reactive
