@@ -13,12 +13,12 @@ const MongooseProvider = {
 };
 
 function buildMongoUri(configService: ConfigService) {
-  const host = configService['DB_HOST'] || 'localhost';
-  const port = configService['DB_PORT'] || '27017';
-  const username = configService['DB_USERNAME'] || 'root';
-  const password = configService['DB_PASSWORD'] || 'example';
-  const collection = configService['DB_COLLECTION'] || 'lab';
-  const authSource = configService['DB_AUTH_SOURCE'] || 'admin';
+  const host = configService.get<string>('DB_HOST') || 'localhost';
+  const port = configService.get<string>('DB_PORT') || '27017';
+  const username = configService.get<string>('DB_USERNAME') || 'root';
+  const password = configService.get<string>('DB_PASSWORD') || 'example';
+  const collection = configService.get<string>('DB_COLLECTION') || 'lab';
+  const authSource = configService.get<string>('DB_AUTH_SOURCE') || 'admin';
 
   return `mongodb://${username}:${password}@${host}:${port}/${collection}?authSource=${authSource}`;
 }
