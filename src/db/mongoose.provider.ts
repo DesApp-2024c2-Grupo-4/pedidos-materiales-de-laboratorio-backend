@@ -17,7 +17,7 @@ function buildMongoUri(configService: ConfigService) {
   const port = configService['DB_PORT'] || '27017';
   const username = configService['DB_USERNAME'] || 'root';
   const password = configService['DB_PASSWORD'] || 'example';
-  const collection = configService['DB_COLLECTION'] || 'alumnos';
+  const collection = configService['DB_COLLECTION'] || 'lab';
   const authSource = configService['DB_AUTH_SOURCE'] || 'admin';
 
   return `mongodb://${username}:${password}@${host}:${port}/${collection}?authSource=${authSource}`;
