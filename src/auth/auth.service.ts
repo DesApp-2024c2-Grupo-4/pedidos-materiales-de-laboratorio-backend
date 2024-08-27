@@ -20,6 +20,7 @@ export default class AuthService {
 
     if (dbUser) {
       // FIXME: return 400 user already exists
+      throw new BackendException(`Username ${user.username} already exists.`);
     }
 
     const [newUser, createUserErr] = await handlePromise(
@@ -31,6 +32,8 @@ export default class AuthService {
         `Cannot create user ${user.username}. Reason: ${createUserErr}`,
       );
     }
+
+    return newUser;
   }
 
   async findByUsername(username: string) {
