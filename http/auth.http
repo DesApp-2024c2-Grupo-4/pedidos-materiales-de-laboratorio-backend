@@ -8,9 +8,6 @@ Content-Type: application/json
         "password": "piclkeRick1",
         "email": "rsanchez@example.com",
         "dni": 1234,
-        "role": [
-            "MASTER OF THE UNIVERSE"
-        ]
     }
 }
 

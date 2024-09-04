@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { InUse } from '../common/inUse';
+import { InUse } from '../common/in-use.schema';
 
 export type ReactiveDocument = HydratedDocument<Reactive>;
 

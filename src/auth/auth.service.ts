@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { User } from '../schemas/user';
+import { User } from '../schemas/user.schema';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { UserService } from '../service/user.service';
@@ -28,6 +28,9 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    /* Fixme: remove once data validation is implemented */
+    delete user.role;
 
     const [newUser, createUserErr] = await handlePromise(
       this.userService.createUser(user),

@@ -5,6 +5,7 @@ export const MongooseModels = {
   REACTIVE: 'Reactive',
   REQUEST: 'Request',
   MESSAGE: 'Message',
+  Conversation: 'Conversation',
 } as const;
 
 export type MongooseModel =

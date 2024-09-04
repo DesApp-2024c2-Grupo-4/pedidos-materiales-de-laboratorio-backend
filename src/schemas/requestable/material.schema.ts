@@ -1,22 +1,22 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { InUse } from '../common/inUse';
+import { InUse } from '../common/in-use.schema';
 
-export type EquipmentDocument = HydratedDocument<Equipment>;
+export type MaterialDocument = HydratedDocument<Material>;
 
 @Schema()
-export class Equipment {
-  @Prop({ required: true })
-  type: string;
-
+export class Material {
   @Prop({ required: true })
   description: string;
 
   @Prop({ required: true })
-  stock: number;
+  unitMeasure: string;
 
   @Prop({ required: true })
-  unitMeasure: string;
+  type: string;
+
+  @Prop({ required: true })
+  stock: number;
 
   @Prop({ type: [InUse] })
   inUse: InUse[];
@@ -25,7 +25,7 @@ export class Equipment {
   inRepair: number;
 
   @Prop({ required: true, default: true })
-  available: boolean;
+  isAvailable: boolean;
 }
 
-export const EquipmentSchema = SchemaFactory.createForClass(Equipment);
+export const MaterialSchema = SchemaFactory.createForClass(Material);
