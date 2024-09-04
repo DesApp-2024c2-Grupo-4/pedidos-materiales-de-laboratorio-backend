@@ -15,10 +15,14 @@ export class Message {
   @Prop({ required: true, type: [Types.ObjectId] })
   read: Types.ObjectId[];
 
+  @Prop({ required: true, type: Date })
+  timestamp: Number;
+
   constructor(ownerId: Types.ObjectId, message: string) {
     this.ownerId = ownerId;
     this.message = message;
     this.read = [];
+    this.timestamp = Date.now();
   }
 }
 
@@ -26,6 +30,15 @@ export class Message {
 export class Conversation {
   @Prop({ type: [Message] })
   messages: Message[];
+
+  addMessage: Function;
 }
 
 export const ConversationSchema = SchemaFactory.createForClass(Message);
+
+ConversationSchema.methods.addMessage = async function (
+  ownerId: Types.ObjectId,
+  content: string,
+): Promise<void> {
+  return this.messages.push(new Message(ownerId, content));
+};

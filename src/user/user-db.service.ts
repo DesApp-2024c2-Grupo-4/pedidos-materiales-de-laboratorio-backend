@@ -10,7 +10,7 @@ import {
 } from './user.errors';
 
 @Injectable()
-export class UserService {
+export class UserDbService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   async findByEmail(email: string): Promise<User> {

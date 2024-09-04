@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { Types } from 'mongoose';
 
@@ -9,5 +9,14 @@ export class ConversationController {
   @Get('/:id')
   getConversationById(@Param('id') id: Types.ObjectId) {
     return this.conversationService.getConversationById(id);
+  }
+
+  @Post('/:id')
+  addMessage(
+    @Param('id') id: Types.ObjectId,
+    @Body('ownerId') ownerId: Types.ObjectId,
+    @Body('message') content: string,
+  ) {
+    this.conversationService.addMessage(id, ownerId, content);
   }
 }

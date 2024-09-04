@@ -2,14 +2,14 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { User } from '../schemas/user.schema';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
-import { UserService } from '../user/user-db.service';
+import { UserDbService } from '../user/user-db.service';
 import { AccessTokenPayload } from '../types/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
+    private readonly userService: UserDbService,
     private readonly accessTokenService: JwtService,
   ) {}
 

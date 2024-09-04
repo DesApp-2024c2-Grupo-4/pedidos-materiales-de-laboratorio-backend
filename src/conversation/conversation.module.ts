@@ -7,14 +7,17 @@ import {
   ConversationSchema,
 } from '../schemas/conversation.schema';
 import { ConversationDbService } from './conversation-db.service';
+import { UserDbService } from '../user/user-db.service';
+import { User, UserSchema } from 'src/schemas/user.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Conversation.name, schema: ConversationSchema },
     ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [ConversationController],
-  providers: [ConversationService, ConversationDbService],
+  providers: [ConversationService, ConversationDbService, UserDbService],
 })
 export class ConversationModule {}
