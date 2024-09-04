@@ -3,12 +3,13 @@ import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { ConversationDbService } from './conversation-db.service';
 import { Conversation } from '../schemas/conversation.schema';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class ConversationService {
   constructor(private readonly dbService: ConversationDbService) {}
 
-  async getConversationById(id: string) {
+  async getConversationById(id: Types.ObjectId) {
     const [conversation, getErr] = await handlePromise<Conversation, Error>(
       this.dbService.getConversationById(id),
     );

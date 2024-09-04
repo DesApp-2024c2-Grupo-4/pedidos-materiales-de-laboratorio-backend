@@ -12,8 +12,14 @@ export class Message {
   @Prop({ required: true })
   message: string;
 
-  @Prop({ required: true })
-  read: boolean;
+  @Prop({ required: true, type: [Types.ObjectId] })
+  read: Types.ObjectId[];
+
+  constructor(ownerId: Types.ObjectId, message: string) {
+    this.ownerId = ownerId;
+    this.message = message;
+    this.read = [];
+  }
 }
 
 @Schema()

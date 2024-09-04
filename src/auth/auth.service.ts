@@ -2,7 +2,7 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { User } from '../schemas/user.schema';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
-import { UserService } from '../service/user.service';
+import { UserService } from '../user/user-db.service';
 import { AccessTokenPayload } from '../types/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
 
