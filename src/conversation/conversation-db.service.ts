@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import handlePromise from 'src/utils/promise';
-import { Conversation, Message } from '../schemas/conversation.schema';
+import { Conversation } from '../schemas/conversation.schema';
 import {
   cantCreateConversation,
-  cantCreateMessage,
   cantGetConversation,
 } from './conversation.errors';
 
@@ -16,7 +15,7 @@ export class ConversationDbService {
     private conversationModel: Model<Conversation>,
   ) {}
 
-  async createConversation() {
+  async createConversation(): Promise<Types.ObjectId> {
     const [conversation, createErr] = await handlePromise(
       this.conversationModel.create({}),
     );
@@ -25,7 +24,7 @@ export class ConversationDbService {
       throw new Error(cantCreateConversation(createErr));
     }
 
-    return conversation;
+    return conversation._id;
   }
 
   async getConversationById(id: Types.ObjectId) {
