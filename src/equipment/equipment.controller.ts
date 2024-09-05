@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { EquipmentService } from './equipment.service';
 import { Equipment } from 'src/schemas/requestable/equipment';
+import { Types } from 'mongoose';
 
 
 @Controller('/equipment')
@@ -26,20 +27,20 @@ export class EquipmentController {
     }
 
     @Get('/:id') 
-    GetEquipmentById(@Param('id') id: number)
+    GetEquipmentById(@Param('id') id: Types.ObjectId)
     {
-        return this.EquipmentService.getEquipoById(id);
+        return this.EquipmentService.getEquipmentById(id);
     }
 
     @Delete('/:id') 
-    DeleteEquipmentById(@Param('id') id: number)
+    DeleteEquipmentById(@Param('id') id: Types.ObjectId)
     {
-        return this.EquipmentService.deleteEquipoById(id);
+        return this.EquipmentService.deleteEquipmentById(id);
     }
 
     @Put('/:id') 
-    UpdateEquipmentById(@Param('id') id: number, @Body() equipment: Equipment)
+    UpdateEquipmentById(@Param('id') id: Types.ObjectId, @Body() equipment: Equipment)
     {
-        return this.EquipmentService.updateEquipoById(id,equipment);
+        return this.EquipmentService.updateEquipmentById(id,equipment);
     }
 }

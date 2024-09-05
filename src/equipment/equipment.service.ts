@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Equipment } from '../schemas/requestable/equipment';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { EquipmentController } from './equipment.controller';
 import { EquipmentModule } from './equipment.module';
 import { InjectModel } from '@nestjs/mongoose';
@@ -55,7 +55,7 @@ export class EquipmentService {
     return equipments;
   }
 
-  async getEquipoById(id: Number): Promise<Equipment> {
+  async getEquipmentById(id: Types.ObjectId): Promise<Equipment> {
     const [equipment, err] = await handlePromise(
       this.EquipmentModel.findById(id)
     );
@@ -71,7 +71,7 @@ export class EquipmentService {
 
 
 
-  async updateEquipoById(id: Number, equipment: Equipment): Promise<Equipment> {
+  async updateEquipmentById(id: Types.ObjectId, equipment: Equipment): Promise<Equipment> {
     const [result, err] = await handlePromise(
       this.EquipmentModel.updateOne({ _id: id }, equipment, { new: true })
     );
@@ -86,7 +86,7 @@ export class EquipmentService {
 
 
 
-  async deleteEquipoById(id: Number): Promise<String> {
+  async deleteEquipmentById(id: Types.ObjectId): Promise<String> {
     const [equipment, err] = await handlePromise(
       this.EquipmentModel.findByIdAndDelete(id)
     );
