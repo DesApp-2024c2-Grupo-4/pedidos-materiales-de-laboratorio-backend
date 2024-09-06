@@ -6,48 +6,49 @@ import { Model, Types } from 'mongoose';
 import { EquipmentController } from './equipment.controller';
 import { EquipmentModule } from './equipment.module';
 import { InjectModel } from '@nestjs/mongoose';
+import { EquipmentdbService } from './equipment-db.service'
 
 
 @Injectable()
 export class EquipmentService {
   constructor( 
     @InjectModel(Equipment.name)
-    private EquipmentModel: Model<Equipment>
+    private EquipmentModel: Model<Equipment>,
+    private readonly dbEquipment: EquipmentdbService,
+
   ) { }
 
-  async createEquipment(equipment: Equipment): Promise<Equipment> {
-    return this.EquipmentModel.create(equipment);
+  async createEquipment(equipment: Equipment): Promise<Types.ObjectId> {
+    const [newequipment , err ] = await   handlePromise(this.dbEquipment.createEquipment(equipment))
+
+    if (err) {
+        throw new BackendException( (err as Error).message, HttpStatus.INTERNAL_SERVER_ERROR,);
+      }
+
+    return newequipment._id
   }
 
   async getEquipment(description: string): Promise<Equipment[]> {
     const [equipments, err] = await handlePromise(
-      this.EquipmentModel.find({
-        $and: [
-          { description: { $regex: description, $options: "i" } },
-          { available: true }
-        ],
-      }).sort({ type: 'asc', description: 'asc' })
-    );
-
+                              this.dbEquipment.searchEquipment(description)  
+                              );
     if (err) {
-      throw new BackendException(
-        `Cannot get equipment ${description}. Reason: ${err}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+        throw new BackendException(
+          ( err as Error).message,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );    
     }
-
     return equipments;
   }
 
   async getEquipments(): Promise<Equipment[]> {
     const [equipments, err] = await handlePromise(
-      this.EquipmentModel.find(
-        { available: true })
+      this.dbEquipment.getEquipments()
     );
 
     if (err) {
-      throw new BackendException(
-        `Cannot get equipments Reason: ${err}`,
+     throw new BackendException(
+        (err as Error).message,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -57,15 +58,14 @@ export class EquipmentService {
 
   async getEquipmentById(id: Types.ObjectId): Promise<Equipment> {
     const [equipment, err] = await handlePromise(
-      this.EquipmentModel.findById(id)
+      this.dbEquipment.getEquipmentById(id)
     );
     if (err) {
       throw new BackendException(
-        `Cannot get equipment ${id}. Reason: ${err}`,
+        (err as Error).message,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
     return equipment;
   }
 
@@ -73,12 +73,12 @@ export class EquipmentService {
 
   async updateEquipmentById(id: Types.ObjectId, equipment: Equipment): Promise<Equipment> {
     const [result, err] = await handlePromise(
-      this.EquipmentModel.updateOne({ _id: id }, equipment, { new: true })
+     this.dbEquipment.updateEquipmentById(id,equipment)
     );
     if (err) {
       throw new BackendException(
-        `Cannot get equipment ${id}. Reason: ${err}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+            (err as Error).message,
+             HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
     return equipment; // TODO: Check how return the updated equipment with the last changes
@@ -88,16 +88,15 @@ export class EquipmentService {
 
   async deleteEquipmentById(id: Types.ObjectId): Promise<String> {
     const [equipment, err] = await handlePromise(
-      this.EquipmentModel.findByIdAndDelete(id)
+      this.dbEquipment.deleteEquipmentById(id)
     );
     if (err) {
       throw new BackendException(
-        `Cannot get equipment ${id}. Reason: ${err}`,
+        (err as Error).message,
         HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-      
+      );      
     }
-    return `Equipment with description ${equipment.description} and id ${equipment.id} was deleted successfully`;
+    return `Equipment with description was deleted successfully`;
   }
 
 

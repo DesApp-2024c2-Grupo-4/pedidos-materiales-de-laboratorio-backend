@@ -5,16 +5,17 @@ import { Types } from 'mongoose';
 
 
 @Controller('/equipment')
-export class EquipmentController {
+export class EquipmentController 
+{
     constructor(private EquipmentService: EquipmentService) {}
 
-    @Post('/') 
+    @Post() 
     createEquipment(@Body() equipment: Equipment)
     {
         return this.EquipmentService.createEquipment(equipment);
     }
 
-    @Get('/') 
+    @Get() 
     getAll()
     {
         return this.EquipmentService.getEquipments();
