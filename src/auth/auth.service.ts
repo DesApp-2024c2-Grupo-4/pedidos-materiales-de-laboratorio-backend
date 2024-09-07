@@ -83,14 +83,15 @@ export class AuthService {
     const payload = this.buildAccessTokenPayload(user);
 
     return {
-      access_token: await this.accessTokenService.signAsync(payload),
+      accessToken: await this.accessTokenService.signAsync(payload),
     };
   }
 
   private buildAccessTokenPayload(user: User): AccessTokenPayload {
-    const { role, name, lastName, email } = user;
+    const { _id, role, name, lastName, email } = user;
 
     return {
+      id: _id,
       role,
       name,
       lastName,

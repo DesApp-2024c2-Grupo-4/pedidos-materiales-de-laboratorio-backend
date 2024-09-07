@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { SoftDelete } from './common/soft-delete.schema';
 
@@ -7,6 +7,9 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User extends SoftDelete {
+  @Prop({ required: true })
+  _id: Types.ObjectId;
+
   @Prop({ required: true })
   email: string;
 

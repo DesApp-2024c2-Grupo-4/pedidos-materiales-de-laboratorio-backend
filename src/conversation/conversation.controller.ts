@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { Types } from 'mongoose';
+import { Request } from 'express';
+import { AccessTokenPayload } from 'src/types/jwt-payload';
 
 @Controller('conversation')
 export class ConversationController {
@@ -14,9 +16,10 @@ export class ConversationController {
   @Post('/:id')
   addMessage(
     @Param('id') id: Types.ObjectId,
-    @Body('ownerId') ownerId: Types.ObjectId,
+    @Req() req: Request & { auth: AccessTokenPayload },
     @Body('message') content: string,
   ) {
+    const { id: ownerId } = req.auth;
     this.conversationService.addMessage(id, ownerId, content);
   }
 }
