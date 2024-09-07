@@ -16,7 +16,7 @@ export class Message {
   read: Types.ObjectId[];
 
   @Prop({ required: true, type: Date })
-  timestamp: Number;
+  timestamp: number;
 
   constructor(ownerId: Types.ObjectId, message: string) {
     this.ownerId = ownerId;
@@ -31,7 +31,7 @@ export class Conversation {
   @Prop({ type: [Message] })
   messages: Message[];
 
-  addMessage: Function;
+  addMessage: (ownerId: Types.ObjectId, content: string) => Promise<void>;
 }
 
 export const ConversationSchema = SchemaFactory.createForClass(Message);

@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  HttpCode,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './strategies/local.guard';
 import { Public } from './providers/accesor.metadata';

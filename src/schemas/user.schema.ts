@@ -28,7 +28,7 @@ export class User extends SoftDelete {
   @Prop({ required: true })
   role: string[];
 
-  comparePassword: Function;
+  comparePassword: (candidatePassword: string) => Promise<boolean>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
