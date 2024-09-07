@@ -49,7 +49,7 @@ export class ConversationService {
 
     if (!conversation) {
       throw new BackendException(
-        `Conversation with id ${id} not fould`,
+        `Conversation with id ${id} not found`,
         HttpStatus.BAD_REQUEST,
       );
     }
