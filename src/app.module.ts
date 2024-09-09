@@ -9,6 +9,7 @@ import { AuthGuardProvider } from './auth/providers/auth-guard.provider';
 /* App Modules */
 import { AuthModule } from './auth/auth.module';
 import { ConversationModule } from './conversation/conversation.module';
+import { MaterialModule } from './material/material.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ConversationModule } from './conversation/conversation.module';
     MongooseModule.forRootAsync(MongooseProvider),
     AuthModule,
     ConversationModule,
+    MaterialModule,
   ],
   controllers: [],
   providers: [AuthGuardProvider],

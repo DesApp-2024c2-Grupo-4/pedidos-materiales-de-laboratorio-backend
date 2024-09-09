@@ -16,6 +16,7 @@ export class AuthController {
   }
 
   @Public()
+  @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post('/login')
   loginUser(@Body() body: unknown) {

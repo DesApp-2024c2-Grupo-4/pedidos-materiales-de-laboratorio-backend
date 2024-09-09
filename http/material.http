@@ -1,0 +1,16 @@
+GET  http://localhost:3000/material/5f4ea666-9867-429a-9013-4a18338291b5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjpbIk1BU1RFUiBPRiBUSEUgVU5JVkVSU0UiLCJVTklWRVJTRSBPRiBUSEUgTUFTVEVSIl0sIm5hbWUiOiJyaWNrIiwibGFzdE5hbWUiOiJzYW5jaGV6IiwiZW1haWwiOiJyc2FuY2hlekBleGFtcGxlLmNvbSIsImlhdCI6MTcyNTUwMjgxMCwiZXhwIjoxNzI1NTAzNzEwfQ.wV1jH4Ezr3xRK6qMEbZ0JUBZ7FN3jN9aVhP-jOakWSo
+
+### Add Material
+POST http://localhost:3000/material
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjpbIk1BU1RFUiBPRiBUSEUgVU5JVkVSU0UiLCJVTklWRVJTRSBPRiBUSEUgTUFTVEVSIl0sIm5hbWUiOiJyaWNrIiwibGFzdE5hbWUiOiJzYW5jaGV6IiwiZW1haWwiOiJyc2FuY2hlekBleGFtcGxlLmNvbSIsImlhdCI6MTcyNTUwMjgxMCwiZXhwIjoxNzI1NTAzNzEwfQ.wV1jH4Ezr3xRK6qMEbZ0JUBZ7FN3jN9aVhP-jOakWSo
+Content-Type: application/json
+
+{
+    "description": "material falso",
+    "unitMeasure": "u",
+    "type": "falso",
+    "stock": 123,
+    "isAvailable": true,
+    "inUse": []
+}
