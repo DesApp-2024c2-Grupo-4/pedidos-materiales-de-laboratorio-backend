@@ -3,14 +3,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjpbIk1BU1RFU
 
 ### Add Material
 POST http://localhost:3000/material
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjpbIk1BU1RFUiBPRiBUSEUgVU5JVkVSU0UiLCJVTklWRVJTRSBPRiBUSEUgTUFTVEVSIl0sIm5hbWUiOiJyaWNrIiwibGFzdE5hbWUiOiJzYW5jaGV6IiwiZW1haWwiOiJyc2FuY2hlekBleGFtcGxlLmNvbSIsImlhdCI6MTcyNTUwMjgxMCwiZXhwIjoxNzI1NTAzNzEwfQ.wV1jH4Ezr3xRK6qMEbZ0JUBZ7FN3jN9aVhP-jOakWSo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDc4NWNlNzQ2OGZmZTcyMWEyMzkwZSIsInJvbGUiOlsiTUFTVEVSIE9GIFRIRSBVTklWRVJTRSIsIlVOSVZFUlNFIE9GIFRIRSBNQVNURVIiXSwibmFtZSI6InJpY2siLCJsYXN0TmFtZSI6InNhbmNoZXoiLCJlbWFpbCI6InJzYW5jaGV6QGV4YW1wbGUuY29tIiwiaWF0IjoxNzI1OTEwNDEwLCJleHAiOjE3MjU5MTQwMTB9.kNnS-2D6zwTwboLC0zAV71ljUE9kqOX7UWkXdaG--MU
 Content-Type: application/json
 
 {
-    "description": "material falso",
+"material":{    "description": "material falso",
     "unitMeasure": "u",
     "type": "falso",
     "stock": 123,
     "isAvailable": true,
-    "inUse": []
+    "inUse": []}
 }
