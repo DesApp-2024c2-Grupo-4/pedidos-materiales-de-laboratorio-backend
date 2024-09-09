@@ -7,7 +7,7 @@ Content-Type: application/json
         "lastName": "sanchez",
         "password": "piclkeRick1",
         "email": "rsanchez@example.com",
-        "dni": 1234,
+        "dni": 1234
     }
 }
 

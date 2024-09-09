@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Material } from '../schemas/requestable/material.schema';
+import {
+  Material,
+  UpdateMaterialDto,
+} from '../schemas/requestable/material.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import handlePromise from '../utils/promise';
 import {
@@ -10,6 +13,7 @@ import {
   cantupdate,
 } from './material.error';
 import { Model, Types } from 'mongoose';
+import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()
 export class MaterialDbService {
@@ -19,7 +23,6 @@ export class MaterialDbService {
   ) {}
 
   async add(material: Material) {
-    console.log({ material });
     const [newMaterial, err] = await handlePromise(
       this.materialModel.create(material),
     );
@@ -29,9 +32,9 @@ export class MaterialDbService {
     }
   }
 
-  async update(id: Types.ObjectId, material: Material) {
+  async update(id: Types.ObjectId, material: UpdateMaterialDto) {
     const [, err] = await handlePromise(
-      this.materialModel.updateOne({ id }, material),
+      this.materialModel.updateOne({ _id: id }, material),
     );
 
     if (err) {
@@ -41,7 +44,7 @@ export class MaterialDbService {
 
   async get(id: Types.ObjectId) {
     const [material, err] = await handlePromise(
-      this.materialModel.findOne({ id }),
+      this.materialModel.findOne({ _id: id }),
     );
 
     if (err) {
@@ -62,8 +65,11 @@ export class MaterialDbService {
   }
 
   async delete(id: Types.ObjectId) {
+    const softDelete = {};
+    softDelete[IS_SOFT_DELETED_KEY] = true;
+
     const [, err] = await handlePromise(
-      this.materialModel.updateOne({ id }, { softDeleted: true }),
+      this.materialModel.updateOne({ _id: id }, { $set: softDelete }),
     );
 
     if (err) {

@@ -1,8 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { MaterialDbService } from './material-db.service';
-import handlePromise from 'src/utils/promise';
-import { BackendException } from 'src/shared/backend.exception';
-import { Material } from 'src/schemas/requestable/material.schema';
+import handlePromise from '../utils/promise';
+import { BackendException } from '../shared/backend.exception';
+import {
+  Material,
+  UpdateMaterialDto,
+} from '../schemas/requestable/material.schema';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -22,7 +25,7 @@ export class MaterialService {
     }
   }
 
-  async update(id: Types.ObjectId, material: Material) {
+  async update(id: Types.ObjectId, material: UpdateMaterialDto) {
     const [, err] = await handlePromise<unknown, Error>(
       this.dbService.update(id, material),
     );
@@ -55,7 +58,7 @@ export class MaterialService {
   }
 
   async getAll() {
-    const [material, err] = await handlePromise<unknown, Error>(
+    const [materials, err] = await handlePromise<unknown, Error>(
       this.dbService.getAll(),
     );
 
@@ -66,7 +69,7 @@ export class MaterialService {
       );
     }
 
-    return material;
+    return materials;
   }
 
   async delete(id: Types.ObjectId) {
