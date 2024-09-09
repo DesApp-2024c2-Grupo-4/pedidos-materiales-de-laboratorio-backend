@@ -9,12 +9,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { MaterialService } from './material.service';
-import { Types } from 'mongoose';
-import {
-  Material,
-  UpdateMaterialDto,
-} from '../schemas/requestable/material.schema';
-import { IdDto } from 'src/dto/id.dto';
+import { Material } from '../schemas/requestable/material.schema';
+import { IdDto } from '../dto/id.dto';
+import { UpdateMaterialDto } from '../dto/material.dto';
 
 @Controller('material')
 export class MaterialController {

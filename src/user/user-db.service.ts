@@ -5,10 +5,14 @@ import { Model, Types } from 'mongoose';
 import handlePromise from '../utils/promise';
 import {
   cantCreateUser,
+  cantDelete,
   cantGeteUserByEmail,
   cantGetUser,
+  cantGetUsers,
+  cantUpdate,
 } from './user.errors';
-import { CreateUserDto } from '../dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from '../dto/user.dto';
+import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()
 export class UserDbService {
@@ -50,6 +54,39 @@ export class UserDbService {
     }
 
     return _user;
+  }
+
+  async getAll() {
+    const [materials, err] = await handlePromise(this.userModel.find());
+
+    if (err) {
+      return new Error(cantGetUsers(err));
+    }
+
+    return materials;
+  }
+
+  async update(id: Types.ObjectId, material: UpdateUserDto) {
+    const [, err] = await handlePromise(
+      this.userModel.updateOne({ _id: id }, material),
+    );
+
+    if (err) {
+      return new Error(cantUpdate(id, err));
+    }
+  }
+
+  async delete(id: Types.ObjectId) {
+    const softDelete = {};
+    softDelete[IS_SOFT_DELETED_KEY] = true;
+
+    const [, err] = await handlePromise(
+      this.userModel.updateOne({ _id: id }, { $set: softDelete }),
+    );
+
+    if (err) {
+      return new Error(cantDelete(id, err));
+    }
   }
 
   async validatePassword(user: User, password: string): Promise<boolean> {

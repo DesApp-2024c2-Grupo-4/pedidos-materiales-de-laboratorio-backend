@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Material,
-  UpdateMaterialDto,
-} from '../schemas/requestable/material.schema';
+import { Material } from '../schemas/requestable/material.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import handlePromise from '../utils/promise';
 import {
   cantCreateMaterial,
-  cantdelete,
+  cantDelete,
   cantGet,
   cantGetMaterials,
-  cantupdate,
+  cantUpdate,
 } from './material.error';
 import { Model, Types } from 'mongoose';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
+import { UpdateMaterialDto } from '../dto/material.dto';
 
 @Injectable()
 export class MaterialDbService {
@@ -38,7 +36,7 @@ export class MaterialDbService {
     );
 
     if (err) {
-      return new Error(cantupdate(id, err));
+      return new Error(cantUpdate(id, err));
     }
   }
 
@@ -73,7 +71,7 @@ export class MaterialDbService {
     );
 
     if (err) {
-      return new Error(cantdelete(id, err));
+      return new Error(cantDelete(id, err));
     }
   }
 }

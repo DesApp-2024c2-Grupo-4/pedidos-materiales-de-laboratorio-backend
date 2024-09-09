@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   Material,
   MaterialSchema,
-} from 'src/schemas/requestable/material.schema';
+} from '../schemas/requestable/material.schema';
 import { MaterialController } from './material.controller';
 import { MaterialDbService } from './material-db.service';
 import { MaterialService } from './material.service';

@@ -15,14 +15,14 @@ export function cantGetMaterials(reason: unknown): string {
   return `Cannot get materials. Reason: ${reason}`;
 }
 
-export function cantupdate(
+export function cantUpdate(
   materialId: Types.ObjectId,
   reason: unknown,
 ): string {
   return `Cannot update material with id ${materialId}. Reason: ${reason}`;
 }
 
-export function cantdelete(
+export function cantDelete(
   materialId: Types.ObjectId,
   reason: unknown,
 ): string {
