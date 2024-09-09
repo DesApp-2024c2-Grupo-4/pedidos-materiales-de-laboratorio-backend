@@ -5,6 +5,7 @@ import { BackendException } from '../shared/backend.exception';
 import { UserDbService } from '../user/user-db.service';
 import { AccessTokenPayload } from '../types/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from '../dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
     private readonly accessTokenService: JwtService,
   ) {}
 
-  public async registerUser(user: User) {
+  public async registerUser(user: CreateUserDto) {
     const [dbUser, getUserErr] = await handlePromise(
       this.userService.findByEmail(user.email),
     );
@@ -28,9 +29,6 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-
-    /* Fixme: remove once data validation is implemented */
-    delete user.role;
 
     const [newUser, createUserErr] = await handlePromise(
       this.userService.createUser(user),

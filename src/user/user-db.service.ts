@@ -8,6 +8,7 @@ import {
   cantGeteUserByEmail,
   cantGetUser,
 } from './user.errors';
+import { CreateUserDto } from '../dto/user.dto';
 
 @Injectable()
 export class UserDbService {
@@ -41,7 +42,7 @@ export class UserDbService {
     return user;
   }
 
-  async createUser(user: User): Promise<User> {
+  async createUser(user: CreateUserDto): Promise<User> {
     const [_user, err] = await handlePromise(this.userModel.create(user));
 
     if (err) {
