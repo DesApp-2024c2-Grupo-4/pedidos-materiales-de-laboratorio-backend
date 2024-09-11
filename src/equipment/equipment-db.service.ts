@@ -38,10 +38,10 @@ export class EquipmentdbService {
       return equipments
   }
 
-  async getEquipments(): Promise<Equipment[]> {
+  async getEquipments(available:boolean): Promise<Equipment[]> {
     const [equipments, err] = await handlePromise(
       this.EquipmentModel.find(
-        { available: true })
+        { available: available })
     );
 
     if (err) {

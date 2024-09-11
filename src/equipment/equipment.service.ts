@@ -18,14 +18,14 @@ export class EquipmentService {
 
   ) { }
 
-  async createEquipment(equipment: Equipment): Promise<Types.ObjectId> {
+  async createEquipment(equipment: Equipment) {
     const [newequipment , err ] = await   handlePromise(this.dbEquipment.createEquipment(equipment))
 
     if (err) {
         throw new BackendException( (err as Error).message, HttpStatus.INTERNAL_SERVER_ERROR,);
       }
 
-    return newequipment._id
+    return HttpStatus.CREATED
   }
 
   async getEquipment(description: string): Promise<Equipment[]> {
@@ -38,12 +38,22 @@ export class EquipmentService {
           HttpStatus.INTERNAL_SERVER_ERROR,
         );    
     }
+
+
+    if(equipments.length == 0)
+    {
+        throw new BackendException(
+        (err as Error).message,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     return equipments;
   }
 
-  async getEquipments(): Promise<Equipment[]> {
+  async getEquipments(available:boolean = true): Promise<Equipment[]> {
     const [equipments, err] = await handlePromise(
-      this.dbEquipment.getEquipments()
+      this.dbEquipment.getEquipments(available)
     );
 
     if (err) {
@@ -53,6 +63,13 @@ export class EquipmentService {
       );
     }
 
+    if(equipments.length == 0)
+    {
+        throw new BackendException(
+        (err as Error).message,
+        HttpStatus.NOT_FOUND,
+      );
+    }
     return equipments;
   }
 
@@ -71,7 +88,7 @@ export class EquipmentService {
 
 
 
-  async updateEquipmentById(id: Types.ObjectId, equipment: Equipment): Promise<Equipment> {
+  async updateEquipmentById(id: Types.ObjectId, equipment: Equipment) {
     const [result, err] = await handlePromise(
      this.dbEquipment.updateEquipmentById(id,equipment)
     );
@@ -81,12 +98,20 @@ export class EquipmentService {
              HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    return equipment; // TODO: Check how return the updated equipment with the last changes
+
+    if(!result)
+    {
+        throw new BackendException(
+        (err as Error).message,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return HttpStatus.OK
   }
 
 
 
-  async deleteEquipmentById(id: Types.ObjectId): Promise<String> {
+  async deleteEquipmentById(id: Types.ObjectId){
     const [equipment, err] = await handlePromise(
       this.dbEquipment.deleteEquipmentById(id)
     );
@@ -96,8 +121,6 @@ export class EquipmentService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );      
     }
-    return `Equipment with description was deleted successfully`;
+    return HttpStatus.OK
   }
-
-
 }
