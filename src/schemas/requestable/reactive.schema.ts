@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { InUse } from '../common/inUse';
+import { InUse } from '../common/in-use.schema';
+import { SoftDelete } from '../common/soft-delete.schema';
 
 export type ReactiveDocument = HydratedDocument<Reactive>;
 
 @Schema()
-export class Reactive {
+export class Reactive extends SoftDelete {
   @Prop({ required: true })
   description: string;
 

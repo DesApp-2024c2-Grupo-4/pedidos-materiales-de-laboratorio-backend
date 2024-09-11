@@ -1,20 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { MongooseModels } from 'src/const/mongoose.ref';
+import { MongooseModels } from '../const/mongoose.const';
 
 export type RequestDocument = HydratedDocument<Request>;
-
-@Schema()
-export class Message {
-  @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.USER })
-  ownerId: Types.ObjectId;
-
-  @Prop({ required: true })
-  message: string;
-
-  @Prop({ required: true })
-  read: boolean;
-}
 
 @Schema()
 export class SolventRequest {
@@ -99,8 +87,8 @@ export class Request {
   @Prop({ required: true })
   tpNumber: number;
 
-  @Prop({ type: [Message] })
-  messages: Message[];
+  @Prop({ type: [Types.ObjectId], ref: MongooseModels.Conversation })
+  messages: Types.ObjectId;
 
   @Prop({ type: [Types.ObjectId], ref: MongooseModels.EQUIPMENT })
   equipments: Types.ObjectId[];
