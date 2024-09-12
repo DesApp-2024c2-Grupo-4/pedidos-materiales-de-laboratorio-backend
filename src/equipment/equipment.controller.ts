@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { EquipmentService } from './equipment.service';
-import { Equipment } from 'src/schemas/requestable/equipment';
+import { Equipment } from 'src/schemas/requestable/equipment.schema';
 import { Types } from 'mongoose';
 
 
