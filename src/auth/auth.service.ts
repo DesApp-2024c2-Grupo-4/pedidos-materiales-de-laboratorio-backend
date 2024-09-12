@@ -1,19 +1,20 @@
-import { HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { User } from '../schemas/user';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { User } from '../schemas/user.schema';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
-import { UserService } from '../service/user.service';
+import { UserDbService } from '../user/user-db.service';
 import { AccessTokenPayload } from '../types/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from '../dto/user.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
+    private readonly userService: UserDbService,
     private readonly accessTokenService: JwtService,
   ) {}
 
-  public async registerUser(user: User) {
+  public async registerUser(user: CreateUserDto) {
     const [dbUser, getUserErr] = await handlePromise(
       this.userService.findByEmail(user.email),
     );
@@ -80,14 +81,15 @@ export class AuthService {
     const payload = this.buildAccessTokenPayload(user);
 
     return {
-      access_token: await this.accessTokenService.signAsync(payload),
+      accessToken: await this.accessTokenService.signAsync(payload),
     };
   }
 
   private buildAccessTokenPayload(user: User): AccessTokenPayload {
-    const { role, name, lastName, email } = user;
+    const { _id, role, name, lastName, email } = user;
 
     return {
+      id: _id,
       role,
       name,
       lastName,

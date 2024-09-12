@@ -1,14 +1,8 @@
-import {
-  Body,
-  Controller,
-  Post,
-  HttpCode,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './strategies/local.guard';
 import { Public } from './providers/accesor.metadata';
+import { CreateUserDto, UserLoginDto } from '../dto/user.dto';
 
 @Controller('/auth')
 export class AuthController {
@@ -17,16 +11,16 @@ export class AuthController {
   @Public()
   @HttpCode(201)
   @Post('/register')
-  registerUser(@Body() body: unknown) {
-    const user = (body as any).user;
-    return this.authService.registerUser(user);
+  registerUser(@Body() createUserDto: CreateUserDto) {
+    return this.authService.registerUser(createUserDto);
   }
 
   @Public()
+  @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  loginUser(@Body() body: unknown) {
-    const { email, password } = body as any;
+  loginUser(@Body() userLoginDto: UserLoginDto) {
+    const { email, password } = userLoginDto;
     return this.authService.loginUser(email, password);
   }
 }
