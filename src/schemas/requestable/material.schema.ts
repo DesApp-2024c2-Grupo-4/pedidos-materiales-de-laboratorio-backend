@@ -46,5 +46,3 @@ export class Material extends SoftDelete {
 }
 
 export const MaterialSchema = SchemaFactory.createForClass(Material);
-
-export class UpdateMaterialDto extends PartialType(Material) {}
