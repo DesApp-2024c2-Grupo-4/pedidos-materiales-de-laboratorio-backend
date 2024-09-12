@@ -21,11 +21,6 @@ export class EquipmentController
         return this.EquipmentService.getEquipments();
     }
 
-    @Get('/:description') 
-    GetEquipment(@Param('description') description: string)
-    {
-        return this.EquipmentService.getEquipment(description);
-    }
 
     @Get('/:id') 
     GetEquipmentById(@Param('id') id: Types.ObjectId)

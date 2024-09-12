@@ -28,28 +28,6 @@ export class EquipmentService {
     return HttpStatus.CREATED
   }
 
-  async getEquipment(description: string): Promise<Equipment[]> {
-    const [equipments, err] = await handlePromise(
-                              this.dbEquipment.searchEquipment(description)  
-                              );
-    if (err) {
-        throw new BackendException(
-          ( err as Error).message,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );    
-    }
-
-
-    if(equipments.length == 0)
-    {
-        throw new BackendException(
-        (err as Error).message,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    return equipments;
-  }
 
   async getEquipments(available:boolean = true): Promise<Equipment[]> {
     const [equipments, err] = await handlePromise(
@@ -63,7 +41,7 @@ export class EquipmentService {
       );
     }
 
-    if(equipments.length == 0)
+    if(!equipments)
     {
         throw new BackendException(
         (err as Error).message,
@@ -77,6 +55,7 @@ export class EquipmentService {
     const [equipment, err] = await handlePromise(
       this.dbEquipment.getEquipmentById(id)
     );
+    
     if (err) {
       throw new BackendException(
         (err as Error).message,
