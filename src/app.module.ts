@@ -10,6 +10,7 @@ import { AuthGuardProvider } from './auth/providers/auth-guard.provider';
 import { AuthModule } from './auth/auth.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { MaterialModule } from './material/material.module';
+import { ReactiveModule } from './reactive/reactive.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MaterialModule } from './material/material.module';
     AuthModule,
     ConversationModule,
     MaterialModule,
+    ReactiveModule,
   ],
   controllers: [],
   providers: [AuthGuardProvider],
