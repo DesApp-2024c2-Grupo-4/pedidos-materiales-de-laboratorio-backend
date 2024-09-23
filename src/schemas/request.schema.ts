@@ -4,12 +4,26 @@ import { MongooseModels } from '../const/mongoose.const';
 import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 
+
+import { Injectable } from '@nestjs/common';
+import { Transform } from 'class-transformer';
+
+@Injectable()
+export class IsGmailTransformer {
+  @Transform(({ value }) => {
+    return value.toLowerCase().endsWith('@gmail.com');
+  })
+  transform(value: string) {
+    return value;
+  }
+}
 
 export type RequestDocument = HydratedDocument<Request>;
 
@@ -64,6 +78,16 @@ export class MaterialRequest {
 }
 
 @Schema()
+export class EquipmentRequest {
+  @IsNumber()
+  @Prop({ required: true })
+  quantity: number;
+
+  @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.EQUIPMENT })
+  material: Types.ObjectId;
+}
+
+@Schema()
 export class Request {
   @Prop({ type: Types.ObjectId, ref: MongooseModels.USER })
   requestantUser: Types.ObjectId;
@@ -75,9 +99,11 @@ export class Request {
   @Prop({ required: true })
   description: string;
 
+  @IsDate()
   @Prop({ required: true })
   requestDate: Date;
 
+  @IsDate()
   @Prop({ required: true })
   usageDate: Date;
 
@@ -118,7 +144,7 @@ export class Request {
   messages: Types.ObjectId;
 
   @IsArray()
-  @Prop({ type: [Types.ObjectId], ref: MongooseModels.EQUIPMENT })
+  @Prop({ type: [EquipmentRequest] })
   equipments: Types.ObjectId[];
 
   @IsArray()
@@ -131,9 +157,7 @@ export class Request {
 
   @IsNumber()
   @Prop({ required: true  })
-  requestNumber: MaterialRequest[];
-  
-
+  requestNumber: Number;  
 }
 
 export const RequestSchema = SchemaFactory.createForClass(Request);

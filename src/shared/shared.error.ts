@@ -1,14 +1,14 @@
 import { Types } from 'mongoose';
 
- export function  cantAffectMaterials( reason: unknown,){
-    return `Cannot create Request with id . Reason: ${reason}`;
- }
+ export function cantGetusedMaterials( err: unknown): string {
+  throw new Error('Function not implemented.');
+}
 
- export function  cantAffectReactives( reason: unknown,){
-    return `Cannot affect Reactives . Reason: ${reason}`;
-} 
+ export function cantGetusedReactives( err: unknown): string {
+  throw new Error('Function not implemented.');
+}
 
+ export function cantGetusedEquipments( err: unknown): string {
+  throw new Error('Function not implemented.');
+}
 
- export function  cantAffectEquipments( reason: unknown,){
-    return `Cannot create Request with id . Reason: ${reason}`;
-} 
