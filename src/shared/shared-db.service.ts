@@ -39,10 +39,10 @@ export class SharedDbService {
         { $unwind: "$materials" },
         
         // group by materials and sum 'quantity'
-        { $group: { _id: "$materials.material", totalQuantity: { $sum: "$materials.quantity" }, date: { $first: "$date" } } },
+        { $group: { _id: "$materials.material", totalQuantity: { $sum: "$materials.quantity" }} },
         
         // we are not returning  1 , in this case _id is materials.material 
-        { $project: { _id: 1, date: 1, totalQuantity: 1 } }
+        { $project: { _id: 1,  totalQuantity: 1 } }
       ]),  
     );
 
@@ -63,8 +63,8 @@ export class SharedDbService {
       this.requestModel.aggregate([
         { $match: { date: { $gte: tenDaysAgo } } },
         { $unwind: "$equipments" },
-        { $group: { _id: "$equipments.equipment", totalQuantity: { $sum: "$equipments.quantity" }, date: { $first: "$date" } } },
-        { $project: { _id: 1, date: 1, totalQuantity: 1 } }
+        { $group: { _id: "$equipments.equipment", totalQuantity: { $sum: "$equipments.quantity" }} },
+        { $project: { _id: 1, totalQuantity: 1 } }
     ]),  
     );
 
@@ -84,8 +84,8 @@ export class SharedDbService {
       this.requestModel.aggregate([
         { $match: { date: { $gte: tenDaysAgo } } },
         { $unwind: "$reactives" },
-        { $group: { _id: "$reactives.reactive", totalQuantity: { $sum: "$reactives.quantity" }, date: { $first: "$date" } } },
-        { $project: { _id: 1, date: 1, totalQuantity: 1 } }
+        { $group: { _id: "$reactives.reactive", totalQuantity: { $sum: "$reactives.quantity" }} },
+        { $project: { _id: 1, totalQuantity: 1 } }
     ]),  
     );
 
