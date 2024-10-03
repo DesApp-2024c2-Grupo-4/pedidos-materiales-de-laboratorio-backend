@@ -2,11 +2,9 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { MaterialDbService } from './material-db.service';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
-import {
-  Material,
-  UpdateMaterialDto,
-} from '../schemas/requestable/material.schema';
+import { Material } from '../schemas/requestable/material.schema';
 import { Types } from 'mongoose';
+import { UpdateMaterialDto } from '../dto/material.dto';
 
 @Injectable()
 export class MaterialService {
