@@ -11,36 +11,37 @@ import {
 import { EquipmentService } from './equipment.service';
 import { Equipment } from 'src/schemas/requestable/equipment.schema';
 import { Types } from 'mongoose';
-
+import { IdDto } from 'src/dto/id.dto';
+import { UpdateEquipmentDto } from 'src/dto/equipment.dto'
 @Controller('/equipment')
 export class EquipmentController {
   constructor(private EquipmentService: EquipmentService) {}
 
   @Post()
   createEquipment(@Body() equipment: Equipment) {
-    return this.EquipmentService.createEquipment(equipment);
+    return this.EquipmentService.add(equipment);
   }
 
   @Get()
   getAll() {
-    return this.EquipmentService.getEquipments();
+    return this.EquipmentService.getAll();
   }
 
   @Get('/:id')
-  GetEquipmentById(@Param('id') id: Types.ObjectId) {
-    return this.EquipmentService.getEquipmentById(id);
+    get(@Param() params: IdDto) {
+    return this.EquipmentService.get(params.id);
   }
 
   @Delete('/:id')
-  DeleteEquipmentById(@Param('id') id: Types.ObjectId) {
-    return this.EquipmentService.deleteEquipmentById(id);
+  DeleteEquipmentById(@Param() params: IdDto) {
+    return this.EquipmentService.delete(params.id);
   }
 
   @Put('/:id')
   UpdateEquipmentById(
-    @Param('id') id: Types.ObjectId,
-    @Body() equipment: Equipment,
+     @Param() params: IdDto,
+    @Body() updateEquipmentDto: UpdateEquipmentDto,
   ) {
-    return this.EquipmentService.updateEquipmentById(id, equipment);
+    return this.EquipmentService.update(params.id, updateEquipmentDto);
   }
 }
