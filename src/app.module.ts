@@ -12,6 +12,7 @@ import { EquipmentController } from './equipment/equipment.controller';
 import { AuthModule } from './auth/auth.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { MaterialModule } from './material/material.module';
+import { ReactiveModule } from './reactive/reactive.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MaterialModule } from './material/material.module';
     EquipmentModule,
     ConversationModule,
     MaterialModule,
+    ReactiveModule,
   ],
   controllers: [],
   providers: [AuthGuardProvider],

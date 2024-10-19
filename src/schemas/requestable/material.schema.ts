@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { InUse } from '../common/in-use.schema';
 import { SoftDelete } from '../common/soft-delete.schema';
 import {
   IsArray,
@@ -30,10 +29,6 @@ export class Material extends SoftDelete {
   @IsNumber()
   @Prop({ required: true })
   stock: number;
-
-  @IsArray()
-  @Prop({ type: [InUse] })
-  inUse: InUse[];
 
   @IsOptional()
   @IsNumber()
