@@ -3,16 +3,14 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
 import { ReactiveService } from './reactive.service';
-import { Types } from 'mongoose';
 import { Reactive } from '../schemas/requestable/reactive.schema';
-import { IdDto } from 'src/dto/id.dto';
-import { UpdateReactivelDto } from 'src/dto/reactive.dto';
+import { IdDto } from '../dto/id.dto';
+import { UpdateReactivelDto } from '../dto/reactive.dto';
 
 @Controller('/reactive')
 export class ReactiveController {

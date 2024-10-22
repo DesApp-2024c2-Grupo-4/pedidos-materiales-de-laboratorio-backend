@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import handlePromise from 'src/utils/promise';
+import handlePromise from '../utils/promise';
 import { Conversation } from '../schemas/conversation.schema';
 import {
   cantCreateConversation,

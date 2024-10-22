@@ -1,14 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { SoftDelete } from '../common/soft-delete.schema';
-import {
-  IsArray,
-  IsBoolean,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { PartialType } from '@nestjs/mapped-types';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export type MaterialDocument = HydratedDocument<Material>;
 

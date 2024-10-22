@@ -10,7 +10,7 @@ import {
   cantDeleteEquipment,
   cantGetEquipmentById,
 } from './equipment.errors';
-import { IS_SOFT_DELETED_KEY } from 'src/schemas/common/soft-delete.schema';
+import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()
 export class EquipmentdbService {
@@ -74,7 +74,7 @@ export class EquipmentdbService {
     );
 
     if (err) {
-      return new Error(cantDeleteEquipment(id, err));
+      throw new Error(cantDeleteEquipment(id, err));
     }
   }
 }
