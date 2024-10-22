@@ -13,7 +13,7 @@ export class EquipmentService {
     private readonly dbEquipment: EquipmentdbService,
   ) {}
 
-  async createEquipment(equipment: Equipment): Promise<Types.ObjectId> {
+  async add(equipment: Equipment): Promise<Types.ObjectId> {
     const [id, err] = await handlePromise(
       this.dbEquipment.createEquipment(equipment),
     );
@@ -28,7 +28,7 @@ export class EquipmentService {
     return id;
   }
 
-  async getEquipments(available: boolean = true): Promise<Equipment[]> {
+  async getAll(available: boolean = true): Promise<Equipment[]> {
     const [equipments, err] = await handlePromise(
       this.dbEquipment.getEquipments(available),
     );
@@ -47,7 +47,7 @@ export class EquipmentService {
     return equipments;
   }
 
-  async getEquipmentById(id: Types.ObjectId): Promise<Equipment> {
+  async get(id: Types.ObjectId): Promise<Equipment> {
     const [equipment, err] = await handlePromise(
       this.dbEquipment.getEquipmentById(id),
     );
@@ -66,7 +66,7 @@ export class EquipmentService {
     return equipment;
   }
 
-  async updateEquipmentById(id: Types.ObjectId, equipment: Equipment) {
+  async update(id: Types.ObjectId, equipment: Equipment) {
     const [, err] = await handlePromise(
       this.dbEquipment.updateEquipmentById(id, equipment),
     );
@@ -79,7 +79,7 @@ export class EquipmentService {
     }
   }
 
-  async deleteEquipmentById(id: Types.ObjectId) {
+  async delete(id: Types.ObjectId) {
     const [, err] = await handlePromise(this.dbEquipment.delete(id));
 
     if (err) {

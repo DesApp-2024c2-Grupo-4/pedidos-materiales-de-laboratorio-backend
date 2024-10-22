@@ -8,7 +8,7 @@ import {
 } from '../schemas/conversation.schema';
 import { ConversationDbService } from './conversation-db.service';
 import { UserDbService } from '../user/user-db.service';
-import { User, UserSchema } from 'src/schemas/user.schema';
+import { User, UserSchema } from '../schemas/user.schema';
 
 @Module({
   imports: [

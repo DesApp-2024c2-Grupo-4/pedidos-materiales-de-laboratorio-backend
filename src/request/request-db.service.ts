@@ -12,8 +12,6 @@ import {
 import { Model, Types } from 'mongoose';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 import { UpdateRequestDto } from '../dto/request.dto';
-import { Reactive } from 'src/schemas/requestable/reactive.schema';
-import { materialize } from 'rxjs';
 
 @Injectable()
 export class RequestDbService {
@@ -41,7 +39,6 @@ export class RequestDbService {
       return new Error(cantUpdate(id, err));
     }
   }
-
 
   async get(id: Types.ObjectId) {
     const [request, err] = await handlePromise(

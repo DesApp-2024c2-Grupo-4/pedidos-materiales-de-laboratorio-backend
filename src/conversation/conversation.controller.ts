@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { Types } from 'mongoose';
 import { Request } from 'express';
-import { AccessTokenPayload } from 'src/types/jwt-payload';
+import { AccessTokenPayload } from '../types/jwt-payload';
 
 @Controller('conversation')
 export class ConversationController {

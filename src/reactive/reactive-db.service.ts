@@ -10,7 +10,7 @@ import {
   cantDeleteReactive,
   cantSearchReactiveById as cantGetReactiveById,
 } from './reactive.errors';
-import { UpdateReactivelDto } from 'src/dto/reactive.dto';
+import { UpdateReactivelDto } from '../dto/reactive.dto';
 
 @Injectable()
 export class ReactiveDbService {
