@@ -5,6 +5,7 @@ import { Material } from '../../schemas/requestable/material.schema';
 import { Types } from 'mongoose';
 import { UpdateMaterialDto } from '../../dto/material.dto';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
+import { cantUpdate } from '../material.error';
 
 describe('MaterialDbService', () => {
   let service: MaterialDbService;
@@ -76,7 +77,7 @@ describe('MaterialDbService', () => {
 
       expect(result).toEqual(
         new Error(
-          `Cannot create Material: ${mockMaterial.type}. Reason: ${error}`,
+          `Cannot create material ${mockMaterial.type}. Reason: ${error}`,
         ),
       );
     });
@@ -102,16 +103,9 @@ describe('MaterialDbService', () => {
       const error = new Error('Update failed');
       materialModel.updateOne.mockRejectedValue(error);
 
-      const result = await service.update(
-        mockMaterial._id,
-        mockUpdateMaterialDto,
-      );
-
-      expect(result).toEqual(
-        new Error(
-          `Cannot update material with id ${mockMaterial._id}. Reason: ${error}`,
-        ),
-      );
+      await expect(
+        service.update(mockMaterial._id, mockUpdateMaterialDto),
+      ).rejects.toThrow(cantUpdate(mockMaterial._id, error));
     });
   });
 
