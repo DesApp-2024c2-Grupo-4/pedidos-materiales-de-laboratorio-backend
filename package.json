@@ -79,6 +79,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
-    "resetMocks": false
+    "resetMocks": false,
+    "coveragePathIgnorePatterns": [
+      ".*\\.module\\.ts$"
+    ]
   }
 }
