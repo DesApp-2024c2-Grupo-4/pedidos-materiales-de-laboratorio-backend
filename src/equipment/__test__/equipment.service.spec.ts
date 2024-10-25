@@ -3,20 +3,10 @@ import { EquipmentService } from '../equipment.service';
 import { EquipmentdbService } from '../equipment-db.service';
 import { BackendException } from '../../shared/backend.exception';
 import { Types } from 'mongoose';
-import { getModelToken } from '@nestjs/mongoose';
-import { Equipment } from '../../schemas/requestable/equipment.schema';
 
 describe('EquipmentService', () => {
   let equipmentService: EquipmentService;
-  let dbService: EquipmentdbService;
-
-  const mockEquipmentModel = {
-    add: jest.fn(),
-    getAll: jest.fn(),
-    get: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  };
+  let dbService: any;
 
   const mockEquipment = {
     _id: new Types.ObjectId(),
@@ -30,8 +20,8 @@ describe('EquipmentService', () => {
 
   const mockEquipmentDbService = {
     add: jest.fn(),
-    getEquipments: jest.fn(),
-    getEquipmentById: jest.fn(),
+    getAll: jest.fn(),
+    get: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
   };
@@ -43,10 +33,6 @@ describe('EquipmentService', () => {
         {
           provide: EquipmentdbService,
           useValue: mockEquipmentDbService,
-        },
-        {
-          provide: getModelToken(Equipment.name),
-          useValue: mockEquipmentModel,
         },
       ],
     }).compile();
@@ -62,16 +48,16 @@ describe('EquipmentService', () => {
   describe('add', () => {
     it('should create an equipment and return its ID', async () => {
       const id = new Types.ObjectId();
-      mockEquipmentDbService.add.mockResolvedValue([id, null]);
+      dbService.add.mockResolvedValue(id);
 
       const result = await equipmentService.add(mockEquipment);
       expect(result).toBe(id);
-      expect(mockEquipmentDbService.add).toHaveBeenCalledWith(mockEquipment);
+      expect(dbService.add).toHaveBeenCalledWith(mockEquipment);
     });
 
     it('should throw BackendException when creation fails', async () => {
       const error = new Error('Creation failed');
-      mockEquipmentDbService.add.mockResolvedValue([null, error]);
+      dbService.add.mockRejectedValue([null, error]);
 
       await expect(equipmentService.add(mockEquipment)).rejects.toThrow(
         BackendException,
@@ -82,17 +68,14 @@ describe('EquipmentService', () => {
   describe('getEquipments', () => {
     it('should return a list of equipments', async () => {
       const equipments = [mockEquipment];
-      mockEquipmentDbService.getEquipments.mockResolvedValue([
-        equipments,
-        null,
-      ]);
+      dbService.getAll.mockResolvedValue(equipments);
 
       const result = await equipmentService.getAll();
       expect(result).toEqual(equipments);
     });
 
     it('should return an empty array if no equipments found', async () => {
-      mockEquipmentDbService.getEquipments.mockResolvedValue([null, null]);
+      dbService.getAll.mockResolvedValue([]);
 
       const result = await equipmentService.getAll();
       expect(result).toEqual([]);
@@ -100,7 +83,7 @@ describe('EquipmentService', () => {
 
     it('should throw BackendException when retrieval fails', async () => {
       const error = new Error('Get failed');
-      mockEquipmentDbService.getEquipments.mockResolvedValue([null, error]);
+      dbService.getAll.mockRejectedValue([null, error]);
 
       await expect(equipmentService.getAll()).rejects.toThrow(BackendException);
     });
@@ -108,17 +91,14 @@ describe('EquipmentService', () => {
 
   describe('getEquipmentById', () => {
     it('should return the equipment by ID', async () => {
-      mockEquipmentDbService.getEquipmentById.mockResolvedValue([
-        mockEquipment,
-        null,
-      ]);
+      dbService.get.mockResolvedValue(mockEquipment);
 
       const result = await equipmentService.get(mockEquipment._id);
       expect(result).toEqual(mockEquipment);
     });
 
     it('should throw BackendException if equipment not found', async () => {
-      mockEquipmentDbService.getEquipmentById.mockResolvedValue([null, null]);
+      dbService.get.mockRejectedValue([null, null]);
 
       await expect(equipmentService.get(mockEquipment._id)).rejects.toThrow(
         BackendException,
@@ -127,7 +107,7 @@ describe('EquipmentService', () => {
 
     it('should throw BackendException when retrieval fails', async () => {
       const error = new Error('Get failed');
-      mockEquipmentDbService.getEquipmentById.mockResolvedValue([null, error]);
+      dbService.get.mockRejectedValue([null, error]);
 
       await expect(equipmentService.get(mockEquipment._id)).rejects.toThrow(
         BackendException,
@@ -137,10 +117,10 @@ describe('EquipmentService', () => {
 
   describe('update', () => {
     it('should update the equipment successfully', async () => {
-      mockEquipmentDbService.update.mockResolvedValue([null, null]);
+      dbService.update.mockResolvedValue([null, null]);
 
       await equipmentService.update(mockEquipment._id, mockEquipment);
-      expect(mockEquipmentDbService.update).toHaveBeenCalledWith(
+      expect(dbService.update).toHaveBeenCalledWith(
         mockEquipment._id,
         mockEquipment,
       );
@@ -148,7 +128,7 @@ describe('EquipmentService', () => {
 
     it('should throw BackendException when update fails', async () => {
       const error = new Error('Update failed');
-      mockEquipmentDbService.update.mockResolvedValue([null, error]);
+      dbService.update.mockRejectedValue([null, error]);
 
       await expect(
         equipmentService.update(mockEquipment._id, mockEquipment),
@@ -156,19 +136,18 @@ describe('EquipmentService', () => {
     });
   });
 
-  describe('deleteEquipmentById', () => {
+  describe('delete', () => {
     it('should delete the equipment successfully', async () => {
-      mockEquipmentDbService.delete.mockResolvedValue([null, null]);
+      dbService.delete.mockResolvedValue(null);
 
-      await equipmentService.delete(mockEquipment._id);
-      expect(mockEquipmentDbService.delete).toHaveBeenCalledWith(
-        mockEquipment._id,
-      );
+      const response = await equipmentService.delete(mockEquipment._id);
+      expect(dbService.delete).toHaveBeenCalledWith(mockEquipment._id);
+      expect(response).toBeUndefined();
     });
 
     it('should throw BackendException when deletion fails', async () => {
       const error = new Error('Delete failed');
-      mockEquipmentDbService.delete.mockResolvedValue([null, error]);
+      dbService.delete.mockRejectedValue(error);
 
       await expect(equipmentService.delete(mockEquipment._id)).rejects.toThrow(
         BackendException,

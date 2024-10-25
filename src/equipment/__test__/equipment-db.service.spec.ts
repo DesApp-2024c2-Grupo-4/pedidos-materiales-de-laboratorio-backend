@@ -27,9 +27,9 @@ describe('EquipmentdbService', () => {
   };
 
   const mockEquipmentModel = {
-    create: jest.fn(),
     find: jest.fn(),
     findById: jest.fn(),
+    create: jest.fn(),
     updateOne: jest.fn(),
   };
 
@@ -52,13 +52,11 @@ describe('EquipmentdbService', () => {
     jest.clearAllMocks();
   });
 
-  describe('createEquipment', () => {
+  describe('add', () => {
     it('should create a new equipment and return its ID', async () => {
       equipmentModel.create.mockResolvedValue(mockEquipment);
 
-      const result = await service.createEquipment(
-        mockEquipment as any as Equipment,
-      );
+      const result = await service.add(mockEquipment as any as Equipment);
 
       expect(result).toEqual(mockEquipment._id);
       expect(equipmentModel.create).toHaveBeenCalledWith(mockEquipment);
@@ -68,17 +66,17 @@ describe('EquipmentdbService', () => {
       const error = new Error('Creation failed');
       equipmentModel.create.mockRejectedValue(error);
 
-      await expect(
-        service.createEquipment(mockEquipment as Equipment),
-      ).rejects.toThrow(cantCreateEquipment(error));
+      await expect(service.add(mockEquipment as Equipment)).rejects.toThrow(
+        cantCreateEquipment(error),
+      );
     });
   });
 
-  describe('getEquipments', () => {
+  describe('getAll', () => {
     it('should return an array of equipments', async () => {
       equipmentModel.find.mockResolvedValue([mockEquipment]);
 
-      const result = await service.getEquipments(true);
+      const result = await service.getAll(true);
 
       expect(result).toEqual([mockEquipment]);
       expect(equipmentModel.find).toHaveBeenCalledWith({ available: true });
@@ -88,17 +86,17 @@ describe('EquipmentdbService', () => {
       const error = new Error('Retrieval failed');
       equipmentModel.find.mockRejectedValue(error);
 
-      await expect(service.getEquipments(true)).rejects.toThrow(
+      await expect(service.getAll(true)).rejects.toThrow(
         cantGetEquipment(error),
       );
     });
   });
 
-  describe('getEquipmentById', () => {
+  describe('get', () => {
     it('should return a single equipment by ID', async () => {
       equipmentModel.findById.mockResolvedValue(mockEquipment);
 
-      const result = await service.getEquipmentById(mockEquipment._id);
+      const result = await service.get(mockEquipment._id);
 
       expect(result).toEqual(mockEquipment);
       expect(equipmentModel.findById).toHaveBeenCalledWith(mockEquipment._id);
@@ -108,20 +106,17 @@ describe('EquipmentdbService', () => {
       const error = new Error('Not found');
       equipmentModel.findById.mockRejectedValue(error);
 
-      await expect(service.getEquipmentById(mockEquipment._id)).rejects.toThrow(
+      await expect(service.get(mockEquipment._id)).rejects.toThrow(
         cantGetEquipmentById(mockEquipment._id, error),
       );
     });
   });
 
-  describe('updateEquipmentById', () => {
+  describe('update', () => {
     it('should update an equipment by ID', async () => {
       equipmentModel.updateOne.mockResolvedValue({ nModified: 1 });
 
-      await service.updateEquipmentById(
-        mockEquipment._id,
-        mockEquipment as Equipment,
-      );
+      await service.update(mockEquipment._id, mockEquipment as Equipment);
 
       expect(equipmentModel.updateOne).toHaveBeenCalledWith(
         { _id: mockEquipment._id },
@@ -135,10 +130,7 @@ describe('EquipmentdbService', () => {
       equipmentModel.updateOne.mockRejectedValue(error);
 
       await expect(
-        service.updateEquipmentById(
-          mockEquipment._id,
-          mockEquipment as Equipment,
-        ),
+        service.update(mockEquipment._id, mockEquipment as Equipment),
       ).rejects.toThrow(cantUpdateEquipment(mockEquipment._id, error));
     });
   });

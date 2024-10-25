@@ -19,7 +19,7 @@ export class EquipmentdbService {
     private EquipmentModel: Model<Equipment>,
   ) {}
 
-  async createEquipment(equipment: Equipment): Promise<Types.ObjectId> {
+  async add(equipment: Equipment): Promise<Types.ObjectId> {
     const [e, createErr] = await handlePromise(
       this.EquipmentModel.create(equipment),
     );
@@ -29,7 +29,7 @@ export class EquipmentdbService {
     return e._id;
   }
 
-  async getEquipments(available: boolean): Promise<Equipment[]> {
+  async getAll(available: boolean): Promise<Equipment[]> {
     const [equipments, err] = await handlePromise(
       this.EquipmentModel.find({ available: available }),
     );
@@ -40,7 +40,7 @@ export class EquipmentdbService {
     return equipments;
   }
 
-  async getEquipmentById(id: Types.ObjectId): Promise<Equipment> {
+  async get(id: Types.ObjectId): Promise<Equipment> {
     const [equipment, err] = await handlePromise(
       this.EquipmentModel.findById(id),
     );
@@ -52,10 +52,7 @@ export class EquipmentdbService {
     return equipment;
   }
 
-  async updateEquipmentById(
-    id: Types.ObjectId,
-    equipment: Equipment,
-  ): Promise<void> {
+  async update(id: Types.ObjectId, equipment: Equipment): Promise<void> {
     const [, err] = await handlePromise(
       this.EquipmentModel.updateOne({ _id: id }, equipment, { new: true }),
     );
@@ -64,7 +61,7 @@ export class EquipmentdbService {
     }
   }
 
-  async delete(id: Types.ObjectId) {
+  async delete(id: Types.ObjectId): Promise<void> {
     const softDelete = {
       [IS_SOFT_DELETED_KEY]: true,
     };

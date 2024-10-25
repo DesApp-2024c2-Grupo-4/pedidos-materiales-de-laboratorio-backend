@@ -51,7 +51,7 @@ describe('EquipmentController', () => {
 
       const result = await controller.add(mockEquipment);
 
-      expect(service.add).toHaveBeenCalledWith(mockEquipment);
+      expect(mockEquipmentService.add).toHaveBeenCalledWith(mockEquipment);
       expect(result).toEqual(mockEquipment._id);
     });
   });
@@ -62,7 +62,7 @@ describe('EquipmentController', () => {
 
       const result = await controller.getAll();
 
-      expect(service.get).toHaveBeenCalled();
+      expect(mockEquipmentService.get).toHaveBeenCalled();
       expect(result).toEqual([mockEquipment]);
     });
   });
@@ -73,7 +73,7 @@ describe('EquipmentController', () => {
 
       const result = await controller.get(mockEquipment._id);
 
-      expect(service.get).toHaveBeenCalledWith(mockEquipment._id);
+      expect(mockEquipmentService.get).toHaveBeenCalledWith(mockEquipment._id);
       expect(result).toEqual(mockEquipment);
     });
 
@@ -82,7 +82,7 @@ describe('EquipmentController', () => {
 
       const result = await controller.get(mockEquipment._id);
 
-      expect(service.get).toHaveBeenCalledWith(mockEquipment._id);
+      expect(mockEquipmentService.get).toHaveBeenCalledWith(mockEquipment._id);
       expect(result).toBeNull();
     });
   });
@@ -93,7 +93,9 @@ describe('EquipmentController', () => {
 
       const result = await controller.delete(mockEquipment._id);
 
-      expect(service.delete).toHaveBeenCalledWith(mockEquipment._id);
+      expect(mockEquipmentService.delete).toHaveBeenCalledWith(
+        mockEquipment._id,
+      );
       expect(result).toBeUndefined();
     });
   });
@@ -104,7 +106,7 @@ describe('EquipmentController', () => {
 
       const result = await controller.update(mockEquipment._id, mockEquipment);
 
-      expect(service.update).toHaveBeenCalledWith(
+      expect(mockEquipmentService.update).toHaveBeenCalledWith(
         mockEquipment._id,
         mockEquipment,
       );
