@@ -21,7 +21,7 @@ export class AuthService {
 
     if (getUserErr) {
       throw new BackendException(
-        `${getUserErr}`,
+        `Cannot create user ${user.email}. Reason: ${getUserErr}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -53,7 +53,10 @@ export class AuthService {
     );
 
     if (getUserErr) {
-      throw getUserErr;
+      throw new BackendException(
+        `Cannot validate user: ${getUserErr}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     if (!user) {
