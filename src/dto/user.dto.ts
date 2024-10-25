@@ -31,7 +31,7 @@ export class CreateUserDto {
   lastName: string;
 
   @IsNumber()
-  dni: string;
+  dni: number;
 
   @IsOptional()
   @IsNotEmpty()

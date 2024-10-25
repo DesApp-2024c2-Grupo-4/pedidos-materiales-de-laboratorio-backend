@@ -20,7 +20,10 @@ export class AuthService {
     );
 
     if (getUserErr) {
-      throw getUserErr;
+      throw new BackendException(
+        `${getUserErr}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     if (dbUser) {
@@ -66,7 +69,7 @@ export class AuthService {
 
     if (pwdErr) {
       throw new BackendException(
-        `Cannot validate usar: ${pwdErr}`,
+        `Cannot validate user: ${pwdErr}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

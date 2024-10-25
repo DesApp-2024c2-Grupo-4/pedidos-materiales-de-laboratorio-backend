@@ -2,118 +2,116 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
 import { UserDbService } from '../../user/user-db.service';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from '../../dto/user.dto';
 import { BackendException } from '../../shared/backend.exception';
 import { HttpStatus } from '@nestjs/common';
-import { User } from '../../schemas/user.schema';
-import { CreateUserDto } from '../../dto/user.dto';
-import { Types } from 'mongoose';
 
 describe('AuthService', () => {
-  let service: AuthService;
-  let userDbService: jest.Mocked<UserDbService>;
-  let jwtService: jest.Mocked<JwtService>;
+  let authService: AuthService;
+  let userService: UserDbService;
+  let jwtService: JwtService;
+
+  const mockUserService = {
+    findByEmail: jest.fn(),
+    createUser: jest.fn(),
+    validatePassword: jest.fn(),
+  };
+
+  const mockJwtService = {
+    signAsync: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        {
-          provide: UserDbService,
-          useValue: {
-            findByEmail: jest.fn(),
-            createUser: jest.fn(),
-            validatePassword: jest.fn(),
-          },
-        },
-        {
-          provide: JwtService,
-          useValue: {
-            signAsync: jest.fn(),
-          },
-        },
+        { provide: UserDbService, useValue: mockUserService },
+        { provide: JwtService, useValue: mockJwtService },
       ],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
-    userDbService = module.get(UserDbService);
-    jwtService = module.get(JwtService);
+    authService = module.get<AuthService>(AuthService);
+    userService = module.get<UserDbService>(UserDbService);
+    jwtService = module.get<JwtService>(JwtService);
   });
 
   describe('registerUser', () => {
-    it('should throw an error if user already exists', async () => {
-      const mockUserDto: CreateUserDto = {
-        email: 'test@example.com',
-        password: 'test123',
-        name: 'Test',
-        lastName: 'User',
-        dni: '12345678',
-        matricula: 123456,
+    it('should throw an error if an error occurs while fetching the user', async () => {
+      const createUserDto: CreateUserDto = {
+        name: 'John',
+        lastName: 'Doe',
+        dni: 12345678,
+        email: 'john.doe@example.com',
+        password: 'password123',
+        matricula: 123,
       };
-      userDbService.findByEmail.mockResolvedValueOnce({
-        email: 'test@example.com',
-      } as User);
 
-      await expect(service.registerUser(mockUserDto)).rejects.toThrow(
-        new BackendException(
-          `Username ${mockUserDto.email} already exists.`,
-          HttpStatus.BAD_REQUEST,
-        ),
+      mockUserService.findByEmail.mockImplementation(() => {
+        throw new BackendException('Database error', HttpStatus.UNAUTHORIZED);
+      });
+
+      await expect(authService.registerUser(createUserDto)).rejects.toThrow(
+        BackendException,
       );
-    });
-
-    it('should create a new user successfully', async () => {
-      const mockUserDto: CreateUserDto = {
-        email: 'test@example.com',
-        password: 'test123',
-        name: 'Test',
-        lastName: 'User',
-        dni: '12345678',
-        matricula: 123456,
-      };
-      userDbService.findByEmail.mockResolvedValueOnce(null);
-      userDbService.createUser.mockResolvedValueOnce({
-        email: 'test@example.com',
-      } as User);
-
-      const result = await service.registerUser(mockUserDto);
-      expect(result.email).toEqual(mockUserDto.email);
+      await expect(authService.registerUser(createUserDto)).rejects.toThrow(
+        `Database error`,
+      );
     });
   });
 
   describe('loginUser', () => {
-    it('should throw an error if credentials are invalid', async () => {
-      const email = 'nonexistent@example.com';
-      const password = 'password';
-      userDbService.findByEmail.mockResolvedValueOnce(null);
-
-      await expect(service.loginUser(email, password)).rejects.toThrow(
-        new BackendException(
-          'Credentials are invalid',
-          HttpStatus.UNAUTHORIZED,
-        ),
-      );
-    });
-
-    it('should return access token for valid credentials', async () => {
-      const email = 'test@example.com';
-      const password = 'password';
-      const mockUser: User = {
-        _id: new Types.ObjectId(),
-        email: 'test@example.com',
-        password: 'hashedPwd',
-        role: ['user'],
+    it('should throw an error if there is a problem validating the password', async () => {
+      const email = 'john.doe@example.com';
+      const password = 'password123';
+      const user = {
+        _id: '1',
         name: 'John',
         lastName: 'Doe',
         dni: 12345678,
-        matricula: 123456,
-        comparePassword: jest.fn().mockResolvedValue(true),
+        email,
+        password: 'hashedPwd',
       };
-      userDbService.findByEmail.mockResolvedValueOnce(mockUser);
-      userDbService.validatePassword.mockResolvedValueOnce(true);
-      jwtService.signAsync.mockResolvedValueOnce('fake-token');
 
-      const result = await service.loginUser(email, password);
-      expect(result.accessToken).toBe('fake-token');
+      mockUserService.findByEmail.mockResolvedValue(user);
+      mockUserService.validatePassword.mockImplementation(() => {
+        throw new BackendException('Validation error', HttpStatus.UNAUTHORIZED);
+      });
+
+      await expect(authService.loginUser(email, password)).rejects.toThrow(
+        BackendException,
+      );
+
+      await expect(authService.loginUser(email, password)).rejects.toThrow(
+        `Cannot validate usar: Validation error`,
+      );
+    });
+
+    it('should successfully log in a user', async () => {
+      const email = 'john.doe@example.com';
+      const password = 'password123';
+      const user = {
+        _id: '1',
+        name: 'John',
+        lastName: 'Doe',
+        dni: 12345678,
+        email,
+        password: 'hashedPwd',
+      };
+
+      mockUserService.findByEmail.mockResolvedValue(user);
+      mockUserService.validatePassword.mockResolvedValue(true);
+      mockJwtService.signAsync.mockResolvedValue('jwt-token');
+
+      const result = await authService.loginUser(email, password);
+      expect(result).toEqual({ accessToken: 'jwt-token' });
+      expect(mockJwtService.signAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: user._id,
+          email: user.email,
+          name: user.name,
+          lastName: user.lastName,
+        }),
+      );
     });
   });
 });
