@@ -1,188 +1,120 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MaterialDbService } from '../material-db.service';
-import { getModelToken } from '@nestjs/mongoose';
+import { MaterialController } from '../material.controller';
+import { MaterialService } from '../material.service';
 import { Material } from '../../schemas/requestable/material.schema';
-import { Types } from 'mongoose';
 import { UpdateMaterialDto } from '../../dto/material.dto';
-import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
-import { cantUpdate } from '../material.error';
+import { Types } from 'mongoose';
 
-describe('MaterialDbService', () => {
-  let service: MaterialDbService;
-  let materialModel: any;
+describe('MaterialController', () => {
+  let controller: MaterialController;
+  let service: MaterialService;
+
+  // Mocking the MaterialService methods
+  const mockMaterialService = {
+    add: jest.fn(),
+    update: jest.fn(),
+    get: jest.fn(),
+    getAll: jest.fn(),
+    delete: jest.fn(),
+  };
 
   const mockMaterial = {
-    _id: new Types.ObjectId(),
-    description: 'High-quality steel',
+    description: 'Steel Rod',
     unitMeasure: 'kg',
-    type: 'Raw Material',
-    stock: 100,
-    inRepair: 10,
-    isAvailable: true,
-    save: jest.fn(),
-  };
-
-  const mockUpdateMaterialDto: UpdateMaterialDto = {
-    description: 'Updated steel',
-    unitMeasure: 'kg',
-    type: 'Updated Material',
-    stock: 150,
+    type: 'Metal',
+    stock: 50,
     inRepair: 5,
-    isAvailable: false,
-  };
-
-  const materialModelMock = {
-    create: jest.fn(),
-    updateOne: jest.fn(),
-    findOne: jest.fn(),
-    find: jest.fn(),
+    isAvailable: true,
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      controllers: [MaterialController],
       providers: [
-        MaterialDbService,
         {
-          provide: getModelToken(Material.name),
-          useValue: materialModelMock,
+          provide: MaterialService,
+          useValue: mockMaterialService,
         },
       ],
     }).compile();
 
-    service = module.get<MaterialDbService>(MaterialDbService);
-    materialModel = module.get(getModelToken(Material.name));
+    controller = module.get<MaterialController>(MaterialController);
+    service = module.get<MaterialService>(MaterialService);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
   describe('add', () => {
-    it('should call materialModel.create and save the material on success', async () => {
-      materialModel.create.mockResolvedValue(mockMaterial);
+    it('should call service.add and return the result', async () => {
+      const material: Material = {
+        ...mockMaterial,
+      };
+      mockMaterialService.add.mockResolvedValue(material);
 
-      await service.add(mockMaterial);
+      const result = await controller.add(material);
 
-      expect(materialModel.create).toHaveBeenCalledWith(mockMaterial);
-      expect(mockMaterial.save).toHaveBeenCalled();
-    });
-
-    it('should return an error if material creation fails', async () => {
-      const error = new Error('Create failed');
-      materialModel.create.mockResolvedValue({
-        save: jest.fn().mockRejectedValue('Create failed'),
-      });
-
-      const result = await service.add(mockMaterial);
-
-      expect(result).toEqual(
-        new Error(
-          `Cannot create material ${mockMaterial.type}. Reason: ${error}`,
-        ),
-      );
+      expect(service.add).toHaveBeenCalledWith(material);
+      expect(result).toEqual(material);
     });
   });
 
   describe('update', () => {
-    it('should call materialModel.updateOne and update the material on success', async () => {
-      materialModel.updateOne.mockResolvedValue(undefined);
+    it('should call service.update and return the result', async () => {
+      const material: UpdateMaterialDto = {
+        ...mockMaterial,
+      };
+      const id = new Types.ObjectId();
+      mockMaterialService.update.mockResolvedValue(material);
 
-      const result = await service.update(
-        mockMaterial._id,
-        mockUpdateMaterialDto,
-      );
+      const result = await controller.update({ id }, material);
 
-      expect(materialModel.updateOne).toHaveBeenCalledWith(
-        { _id: mockMaterial._id },
-        mockUpdateMaterialDto,
-      );
-      expect(result).toBeUndefined();
-    });
-
-    it('should return an error if material update fails', async () => {
-      const error = new Error('Update failed');
-      materialModel.updateOne.mockRejectedValue(error);
-
-      await expect(
-        service.update(mockMaterial._id, mockUpdateMaterialDto),
-      ).rejects.toThrow(cantUpdate(mockMaterial._id, error));
+      expect(service.update).toHaveBeenCalledWith(id, material);
+      expect(result).toEqual(material);
     });
   });
 
   describe('get', () => {
-    it('should return a material when found', async () => {
-      materialModel.findOne.mockResolvedValue(mockMaterial);
+    it('should call service.get and return the result', async () => {
+      const material = {
+        ...mockMaterial,
+      };
+      const id = new Types.ObjectId();
+      mockMaterialService.get.mockResolvedValue(material);
 
-      const result = await service.get(mockMaterial._id);
+      const result = await controller.get({ id });
 
-      expect(materialModel.findOne).toHaveBeenCalledWith({
-        _id: mockMaterial._id,
-      });
-      expect(result).toEqual(mockMaterial);
-    });
-
-    it('should return an error if material retrieval fails', async () => {
-      const error = new Error('Get failed');
-      materialModel.findOne.mockRejectedValue(error);
-
-      const result = await service.get(mockMaterial._id);
-
-      expect(result).toEqual(
-        new Error(
-          `Cannot get material with id ${mockMaterial._id}. Reason: ${error}`,
-        ),
-      );
+      expect(service.get).toHaveBeenCalledWith(id);
+      expect(result).toEqual(material);
     });
   });
 
   describe('getAll', () => {
-    it('should return all materials on success', async () => {
-      materialModel.find.mockResolvedValue([mockMaterial]);
+    it('should call service.getAll and return the result', async () => {
+      const materials = [
+        {
+          ...mockMaterial,
+        },
+      ];
+      mockMaterialService.getAll.mockResolvedValue(materials);
 
-      const result = await service.getAll();
+      const result = await controller.getAll();
 
-      expect(materialModel.find).toHaveBeenCalled();
-      expect(result).toEqual([mockMaterial]);
-    });
-
-    it('should return an error if material retrieval fails', async () => {
-      const error = new Error('Get all failed');
-      materialModel.find.mockRejectedValue(error);
-
-      const result = await service.getAll();
-
-      expect(result).toEqual(
-        new Error(`Cannot get materials. Reason: ${error}`),
-      );
+      expect(service.getAll).toHaveBeenCalled();
+      expect(result).toEqual(materials);
     });
   });
 
   describe('delete', () => {
-    it('should call materialModel.updateOne to soft-delete a material by ID', async () => {
-      materialModel.updateOne.mockResolvedValue(undefined);
+    it('should call service.delete and return the result', async () => {
+      const id = new Types.ObjectId();
+      mockMaterialService.delete.mockResolvedValue(true);
 
-      await service.delete(mockMaterial._id);
+      const result = await controller.delete({ id });
 
-      const softDelete = {};
-      softDelete[IS_SOFT_DELETED_KEY] = true;
-
-      expect(materialModel.updateOne).toHaveBeenCalledWith(
-        { _id: mockMaterial._id },
-        { $set: softDelete },
-      );
-    });
-
-    it('should return an error if material deletion fails', async () => {
-      const error = new Error('Delete failed');
-      materialModel.updateOne.mockRejectedValue(error);
-
-      const result = await service.delete(mockMaterial._id);
-
-      expect(result).toEqual(
-        new Error(
-          `Cannot delete material with id ${mockMaterial._id}. Reason: ${error}`,
-        ),
-      );
+      expect(service.delete).toHaveBeenCalledWith(id);
+      expect(result).toEqual(true);
     });
   });
 });
