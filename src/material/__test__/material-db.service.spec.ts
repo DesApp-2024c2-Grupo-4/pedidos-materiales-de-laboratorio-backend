@@ -6,12 +6,6 @@ import { Types } from 'mongoose';
 import { UpdateMaterialDto } from '../../dto/material.dto';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
-jest.mock('../utils/promise', () => ({
-  default: jest.fn((promise) =>
-    promise.then((res) => [res, null]).catch((err) => [null, err]),
-  ),
-}));
-
 describe('MaterialDbService', () => {
   let service: MaterialDbService;
   let materialModel: any;
@@ -63,16 +57,15 @@ describe('MaterialDbService', () => {
 
   describe('add', () => {
     it('should create and save a new material', async () => {
-      const finalMockMaterial = {
-        ...mockMaterial,
-        save: jest.fn(),
+      const saveMaterial = {
+        save: jest.fn().mockResolvedValue(mockMaterial),
       };
-      materialModel.create.mockResolvedValue(finalMockMaterial);
+      materialModel.create.mockResolvedValue(saveMaterial);
 
       await service.add(mockMaterial);
 
       expect(materialModel.create).toHaveBeenCalledWith(mockMaterial);
-      expect(finalMockMaterial.save).toHaveBeenCalled();
+      expect(saveMaterial.save).toHaveBeenCalled();
     });
 
     it('should return an error if creation fails', async () => {
@@ -83,7 +76,22 @@ describe('MaterialDbService', () => {
 
       expect(result).toEqual(
         new Error(
-          `Cannot create Material: ${mockMaterial.type}. Reason: ${error}`,
+          `Cannot create material ${mockMaterial.type}. Reason: ${error}`,
+        ),
+      );
+    });
+
+    it('should return an error if save fails', async () => {
+      const error = new Error('Creation failed');
+      materialModel.create.mockResolvedValue({
+        save: jest.fn().mockRejectedValue(error),
+      });
+
+      const result = await service.add(mockMaterial);
+
+      expect(result).toEqual(
+        new Error(
+          `Cannot create material ${mockMaterial.type}. Reason: ${error}`,
         ),
       );
     });
@@ -116,7 +124,7 @@ describe('MaterialDbService', () => {
 
       expect(result).toEqual(
         new Error(
-          `Cannot update Material: ${mockMaterial._id}. Reason: ${error}`,
+          `Cannot update material with id ${mockMaterial._id}. Reason: ${error}`,
         ),
       );
     });
@@ -141,7 +149,9 @@ describe('MaterialDbService', () => {
       const result = await service.get(mockMaterial._id);
 
       expect(result).toEqual(
-        new Error(`Cannot get Material: ${mockMaterial._id}. Reason: ${error}`),
+        new Error(
+          `Cannot get material with id ${mockMaterial._id}. Reason: ${error}`,
+        ),
       );
     });
   });
@@ -163,7 +173,7 @@ describe('MaterialDbService', () => {
       const result = await service.getAll();
 
       expect(result).toEqual(
-        new Error(`Cannot get Materials. Reason: ${error}`),
+        new Error(`Cannot get materials. Reason: ${error}`),
       );
     });
   });
@@ -191,7 +201,7 @@ describe('MaterialDbService', () => {
 
       expect(result).toEqual(
         new Error(
-          `Cannot delete Material: ${mockMaterial._id}. Reason: ${error}`,
+          `Cannot delete material with id ${mockMaterial._id}. Reason: ${error}`,
         ),
       );
     });

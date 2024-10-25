@@ -24,9 +24,15 @@ export class MaterialDbService {
     const [newMaterial, err] = await handlePromise(
       this.materialModel.create(material),
     );
-    newMaterial.save();
+
     if (err) {
       return new Error(cantCreateMaterial(material.type, err));
+    }
+
+    const [, errSave] = await handlePromise(newMaterial.save());
+
+    if (errSave) {
+      return new Error(cantCreateMaterial(material.type, errSave));
     }
   }
 
