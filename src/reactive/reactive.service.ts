@@ -9,10 +9,7 @@ import { UpdateReactivelDto } from '../dto/reactive.dto';
 
 @Injectable()
 export class ReactiveService {
-  constructor(
-    @InjectModel(Reactive.name)
-    private readonly dbService: ReactiveDbService,
-  ) {}
+  constructor(private readonly dbService: ReactiveDbService) {}
 
   async add(reactive: Reactive): Promise<void> {
     const [, err] = await handlePromise<unknown, Error>(
