@@ -5,12 +5,13 @@ import handlePromise from '../utils/promise';
 import { Reactive } from '../schemas/requestable/reactive.schema';
 import {
   cantCreateReactive,
-  cantSearchReactive,
+  cantGetRactives,
   cantUpdateReactive,
   cantDeleteReactive,
-  cantSearchReactiveById as cantGetReactiveById,
+  cantGetReactive as cantGetReactiveById,
 } from './reactive.errors';
 import { UpdateReactivelDto } from '../dto/reactive.dto';
+import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()
 export class ReactiveDbService {
@@ -25,7 +26,7 @@ export class ReactiveDbService {
     );
 
     if (createErr) {
-      throw new Error(cantCreateReactive(createErr));
+      return Promise.reject(cantCreateReactive(createErr));
     }
 
     return e._id;
@@ -37,7 +38,7 @@ export class ReactiveDbService {
     );
 
     if (err) {
-      throw new Error(cantSearchReactive(err));
+      return Promise.reject(cantGetRactives(err));
     }
 
     return reactives;
@@ -49,7 +50,7 @@ export class ReactiveDbService {
     );
 
     if (err) {
-      throw new Error(cantGetReactiveById(id, err));
+      return Promise.reject(cantGetReactiveById(id, err));
     }
 
     return reactive;
@@ -64,17 +65,20 @@ export class ReactiveDbService {
     );
 
     if (err) {
-      throw new Error(cantUpdateReactive(id, err));
+      return Promise.reject(cantUpdateReactive(id, err));
     }
   }
 
   async delete(id: Types.ObjectId): Promise<void> {
+    const softDelete = {};
+    softDelete[IS_SOFT_DELETED_KEY] = true;
+
     const [, err] = await handlePromise(
-      this.ReactiveModel.findByIdAndDelete(id),
+      this.ReactiveModel.updateOne({ _id: id }, { $set: softDelete }),
     );
 
     if (err) {
-      throw new Error(cantDeleteReactive(id, err));
+      return Promise.reject(cantDeleteReactive(id, err));
     }
   }
 }
