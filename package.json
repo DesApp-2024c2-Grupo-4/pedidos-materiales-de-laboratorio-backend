@@ -82,6 +82,12 @@
     "resetMocks": false,
     "coveragePathIgnorePatterns": [
       ".*\\.module\\.ts$",
+      ".*\\.guard\\.ts$",
+      ".*\\.strategy\\.ts$",
+      ".*\\.provider\\.ts$",
+      ".*\\.const\\.ts$",
+      ".*\\.dto\\.ts$",
+      ".*\\.schema\\.ts$",
       "main.ts"
     ]
   }
