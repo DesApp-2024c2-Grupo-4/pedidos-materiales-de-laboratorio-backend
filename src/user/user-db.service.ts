@@ -26,7 +26,7 @@ export class UserDbService {
     );
 
     if (err) {
-      throw new Error(cantGeteUserByEmail(email, err));
+      return Promise.reject(cantGeteUserByEmail(email, err));
     }
 
     return user;
@@ -40,7 +40,7 @@ export class UserDbService {
     );
 
     if (err) {
-      throw new Error(cantGetUser(id, err));
+      return Promise.reject(cantGetUser(id, err));
     }
 
     return user;
@@ -50,7 +50,7 @@ export class UserDbService {
     const [_user, err] = await handlePromise(this.userModel.create(user));
 
     if (err) {
-      throw new Error(cantCreateUser(user.email, err));
+      return Promise.reject(cantCreateUser(user.email, err));
     }
 
     return _user;
@@ -60,7 +60,7 @@ export class UserDbService {
     const [materials, err] = await handlePromise(this.userModel.find());
 
     if (err) {
-      return new Error(cantGetUsers(err));
+      return Promise.reject(cantGetUsers(err));
     }
 
     return materials;
@@ -72,7 +72,7 @@ export class UserDbService {
     );
 
     if (err) {
-      return new Error(cantUpdate(id, err));
+      return Promise.reject(cantUpdate(id, err));
     }
   }
 
@@ -85,7 +85,7 @@ export class UserDbService {
     );
 
     if (err) {
-      return new Error(cantDelete(id, err));
+      return Promise.reject(cantDelete(id, err));
     }
   }
 
