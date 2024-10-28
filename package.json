@@ -81,7 +81,8 @@
     "testEnvironment": "node",
     "resetMocks": false,
     "coveragePathIgnorePatterns": [
-      ".*\\.module\\.ts$"
+      ".*\\.module\\.ts$",
+      "main.ts"
     ]
   }
 }

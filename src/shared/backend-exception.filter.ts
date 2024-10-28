@@ -4,7 +4,6 @@ import { BackendException } from './backend.exception';
 
 export class BackendExceptionFilter implements ExceptionFilter {
   catch(exception: any): Response {
-    console.log({ isEx: exception instanceof BackendException });
     if (!(exception instanceof BackendException)) {
       return;
     }

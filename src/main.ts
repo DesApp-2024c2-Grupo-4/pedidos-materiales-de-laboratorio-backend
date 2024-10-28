@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 
-async function bootstrap() {
+export async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = app.get<ConfigService>(ConfigService);
@@ -17,7 +17,7 @@ async function bootstrap() {
 }
 bootstrap();
 
-function configureApp(app, config) {
+export function configureApp(app, config) {
   app.useGlobalPipes(new ValidationPipe());
 
   const allowedOrigins = config.get('CORS_ENABLED_ORIGINS').split(';');

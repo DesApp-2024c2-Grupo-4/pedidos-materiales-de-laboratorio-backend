@@ -65,7 +65,7 @@ describe('EquipmentService', () => {
     });
   });
 
-  describe('getEquipments', () => {
+  describe('getAll', () => {
     it('should return a list of equipments', async () => {
       const equipments = [mockEquipment];
       dbService.getAll.mockResolvedValue(equipments);
@@ -75,7 +75,7 @@ describe('EquipmentService', () => {
     });
 
     it('should return an empty array if no equipments found', async () => {
-      dbService.getAll.mockResolvedValue([]);
+      dbService.getAll.mockResolvedValue(null);
 
       const result = await equipmentService.getAll();
       expect(result).toEqual([]);
@@ -89,7 +89,7 @@ describe('EquipmentService', () => {
     });
   });
 
-  describe('getEquipmentById', () => {
+  describe('get', () => {
     it('should return the equipment by ID', async () => {
       dbService.get.mockResolvedValue(mockEquipment);
 
@@ -98,7 +98,7 @@ describe('EquipmentService', () => {
     });
 
     it('should throw BackendException if equipment not found', async () => {
-      dbService.get.mockRejectedValue([null, null]);
+      dbService.get.mockResolvedValue(null);
 
       await expect(equipmentService.get(mockEquipment._id)).rejects.toThrow(
         BackendException,
@@ -107,7 +107,7 @@ describe('EquipmentService', () => {
 
     it('should throw BackendException when retrieval fails', async () => {
       const error = new Error('Get failed');
-      dbService.get.mockRejectedValue([null, error]);
+      dbService.get.mockRejectedValue(error);
 
       await expect(equipmentService.get(mockEquipment._id)).rejects.toThrow(
         BackendException,
