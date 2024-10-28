@@ -70,7 +70,7 @@ describe('UserDbService', () => {
   describe('findById', () => {
     it('should find a user by id', async () => {
       model.findOne.mockResolvedValue(mockUser);
-      const user = await service.findById(mockUser._id);
+      const user = await service.get(mockUser._id);
 
       expect(model.findOne).toHaveBeenCalledWith({ _id: mockUser._id });
       expect(user).toEqual(mockUser);
@@ -79,7 +79,7 @@ describe('UserDbService', () => {
     it('should throw an error if finding by id fails', async () => {
       const err = new Error('Find error');
       model.findOne.mockRejectedValue(err);
-      await expect(service.findById(mockUser._id)).rejects.toStrictEqual(
+      await expect(service.get(mockUser._id)).rejects.toStrictEqual(
         `Cannot get user with id ${mockUser._id}. Reason: ${err}`,
       );
     });

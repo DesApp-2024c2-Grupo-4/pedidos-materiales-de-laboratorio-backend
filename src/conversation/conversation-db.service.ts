@@ -15,7 +15,7 @@ export class ConversationDbService {
     private conversationModel: Model<Conversation>,
   ) {}
 
-  async createConversation(): Promise<Types.ObjectId> {
+  async add(): Promise<Types.ObjectId> {
     const [conversation, createErr] = await handlePromise(
       this.conversationModel.create({}),
     );
@@ -27,7 +27,7 @@ export class ConversationDbService {
     return conversation._id;
   }
 
-  async getConversationById(id: Types.ObjectId) {
+  async get(id: Types.ObjectId) {
     const [conversation, getErr] = await handlePromise(
       this.conversationModel.findOne({
         _id: id,

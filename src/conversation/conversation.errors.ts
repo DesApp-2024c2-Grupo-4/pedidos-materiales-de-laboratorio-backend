@@ -1,11 +1,11 @@
 import { Types } from 'mongoose';
 
-export function cantCreateMessage(
+export function cantAddMessage(
   conversationId: Types.ObjectId,
   ownerId: Types.ObjectId,
   reason: unknown,
 ): string {
-  return `Cannot create message for conversation ${conversationId}, user ${ownerId}. Reason: ${reason}`;
+  return `Cannot add message for conversation ${conversationId}, user ${ownerId}. Reason: ${reason}`;
 }
 
 export function cantGetConversation(

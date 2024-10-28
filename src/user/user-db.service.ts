@@ -32,7 +32,7 @@ export class UserDbService {
     return user;
   }
 
-  async findById(id: Types.ObjectId): Promise<User> {
+  async get(id: Types.ObjectId): Promise<User> {
     const [user, err] = await handlePromise(
       this.userModel.findOne({
         _id: id,

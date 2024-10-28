@@ -10,7 +10,7 @@ export class ConversationController {
 
   @Get('/:id')
   getConversationById(@Param('id') id: Types.ObjectId) {
-    return this.conversationService.getConversationById(id);
+    return this.conversationService.get(id);
   }
 
   @Post('/:id')

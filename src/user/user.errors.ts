@@ -12,10 +12,6 @@ export function cantGetUsers(reason: unknown): string {
   return `Cannot get users. Reason: ${reason}`;
 }
 
-export function userNotFound(id: Types.ObjectId, reason: unknown): string {
-  return `Cannot get user with id ${id}. Reason: ${reason}`;
-}
-
 export function cantGeteUserByEmail(email: string, reason: unknown): string {
   return `Cannot get user ${email}. Reason: ${reason}`;
 }

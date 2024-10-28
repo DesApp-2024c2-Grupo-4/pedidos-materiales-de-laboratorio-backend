@@ -15,27 +15,21 @@ export class UserService {
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async get(id: Types.ObjectId) {
     const [user, err] = await handlePromise<unknown, Error>(
-      this.dbService.findById(id),
+      this.dbService.get(id),
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     if (!user) {
-      return new BackendException('', HttpStatus.NOT_FOUND);
+      throw new BackendException('', HttpStatus.NOT_FOUND);
     }
 
     return user;
@@ -47,10 +41,7 @@ export class UserService {
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return users;
@@ -62,10 +53,7 @@ export class UserService {
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -4,6 +4,7 @@ import { BackendException } from '../shared/backend.exception';
 import { ConversationDbService } from './conversation-db.service';
 import { Types } from 'mongoose';
 import { UserDbService } from '../user/user-db.service';
+import { cantAddMessage } from './conversation.errors';
 
 @Injectable()
 export class ConversationService {
@@ -12,10 +13,8 @@ export class ConversationService {
     private readonly dbUserService: UserDbService,
   ) {}
 
-  async getConversationById(id: Types.ObjectId) {
-    const [conversation, getErr] = await handlePromise(
-      this.dbService.getConversationById(id),
-    );
+  async get(id: Types.ObjectId) {
+    const [conversation, getErr] = await handlePromise(this.dbService.get(id));
 
     if (getErr) {
       throw new BackendException(
@@ -37,12 +36,12 @@ export class ConversationService {
     content: string,
   ) {
     const [conversation, getConversationErr] = await handlePromise(
-      this.dbService.getConversationById(id),
+      this.dbService.get(id),
     );
 
     if (getConversationErr) {
       throw new BackendException(
-        (getConversationErr as Error).message,
+        cantAddMessage(id, ownerId, getConversationErr),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -55,19 +54,19 @@ export class ConversationService {
     }
 
     const [user, getUserErr] = await handlePromise(
-      this.dbUserService.findById(ownerId),
+      this.dbUserService.get(ownerId),
     );
 
     if (getUserErr) {
       throw new BackendException(
-        (getUserErr as Error).message,
+        cantAddMessage(id, ownerId, getUserErr),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
     if (!user) {
       throw new BackendException(
-        `User with id ${ownerId} not fould`,
+        `User with id ${ownerId} not found`,
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -78,7 +77,7 @@ export class ConversationService {
 
     if (saveErr) {
       throw new BackendException(
-        (saveErr as Error).message,
+        cantAddMessage(id, ownerId, saveErr),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
