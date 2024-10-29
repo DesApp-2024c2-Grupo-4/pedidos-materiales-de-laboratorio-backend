@@ -6,6 +6,7 @@ import { UserDbService } from '../user/user-db.service';
 import { AccessTokenPayload } from '../types/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../dto/user.dto';
+import { Document, Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -92,10 +93,11 @@ export class AuthService {
   }
 
   private buildAccessTokenPayload(user: User): AccessTokenPayload {
-    const { _id, role, name, lastName, email } = user;
+    const { role, name, lastName, email } = user;
+    const { _id: id } = user as any as Document<Types.ObjectId, any, User>;
 
     return {
-      id: _id,
+      id,
       role,
       name,
       lastName,

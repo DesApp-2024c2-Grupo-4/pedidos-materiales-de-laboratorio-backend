@@ -6,6 +6,7 @@ import {
   Equipment,
   EquipmentSchema,
 } from '../schemas/requestable/equipment.schema';
+import { EquipmentdbService } from './equipment-db.service';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import {
     ]),
   ],
   controllers: [EquipmentController],
-  providers: [EquipmentService],
+  providers: [EquipmentService, EquipmentdbService],
 })
 export class EquipmentModule {}
