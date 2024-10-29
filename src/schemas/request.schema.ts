@@ -1,16 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongooseModels } from '../const/mongoose.const';
-import {
-  IsArray,
-  IsBoolean,
-  IsDate,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { PartialType } from '@nestjs/mapped-types';
-
+import { IsArray, IsDate, IsNumber, IsString } from 'class-validator';
 
 import { Injectable } from '@nestjs/common';
 import { Transform } from 'class-transformer';
@@ -140,12 +131,12 @@ export class Request {
   tpNumber: number;
 
   @IsArray()
-  @Prop({ type: [Types.ObjectId], ref: MongooseModels.Conversation })
+  @Prop({ type: Types.ObjectId, ref: MongooseModels.Conversation })
   messages: Types.ObjectId;
 
   @IsArray()
   @Prop({ type: [EquipmentRequest] })
-  equipments: Types.ObjectId[];
+  equipments: EquipmentRequest[];
 
   @IsArray()
   @Prop({ type: [ReactiveRequest] })
@@ -156,8 +147,8 @@ export class Request {
   materials: MaterialRequest[];
 
   @IsNumber()
-  @Prop({ required: true  })
-  requestNumber: Number;  
+  @Prop({ required: true })
+  requestNumber: Number;
 }
 
 export const RequestSchema = SchemaFactory.createForClass(Request);

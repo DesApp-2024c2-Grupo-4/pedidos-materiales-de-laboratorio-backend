@@ -26,7 +26,7 @@ export class RequestDbService {
     );
     newRequest.save();
     if (err) {
-      return new Error(cantCreateRequest(err));
+      return Promise.reject(cantCreateRequest(err));
     }
   }
 
@@ -36,7 +36,7 @@ export class RequestDbService {
     );
 
     if (err) {
-      return new Error(cantUpdate(id, err));
+      return Promise.reject(cantUpdate(id, err));
     }
   }
 
@@ -46,7 +46,7 @@ export class RequestDbService {
     );
 
     if (err) {
-      return new Error(cantGet(id, err));
+      return Promise.reject(cantGet(id, err));
     }
 
     return request;
@@ -56,7 +56,7 @@ export class RequestDbService {
     const [requests, err] = await handlePromise(this.requestModel.find());
 
     if (err) {
-      return new Error(cantGetRequests(err));
+      return Promise.reject(cantGetRequests(err));
     }
 
     return requests;
@@ -71,7 +71,7 @@ export class RequestDbService {
     );
 
     if (err) {
-      return new Error(cantDelete(id, err));
+      return Promise.reject(cantDelete(id, err));
     }
   }
 }
