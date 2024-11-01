@@ -69,8 +69,8 @@ export class EquipmentService {
     }
   }
 
-  async delete(id: Types.ObjectId) {
-    const [, err] = await handlePromise(this.dbEquipment.delete(id));
+  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
+    const [, err] = await handlePromise(this.dbEquipment.delete(id, deletedBy));
 
     if (err) {
       throw new BackendException(

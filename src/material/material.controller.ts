@@ -7,11 +7,13 @@ import {
   Param,
   Post,
   Put,
+  Request,
 } from '@nestjs/common';
 import { MaterialService } from './material.service';
 import { Material } from '../schemas/requestable/material.schema';
 import { IdDto } from '../dto/id.dto';
 import { UpdateMaterialDto } from '../dto/material.dto';
+import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 
 @Controller('material')
 export class MaterialController {
@@ -39,7 +41,8 @@ export class MaterialController {
   }
 
   @Delete('/:id')
-  delete(@Param() params: IdDto) {
-    return this.materialService.delete(params.id);
+  delete(@Request() req: AuthenticatedRequest, @Param() params: IdDto) {
+    const { id } = req.user;
+    return this.materialService.delete(params.id, id);
   }
 }

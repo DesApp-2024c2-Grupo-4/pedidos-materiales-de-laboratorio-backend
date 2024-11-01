@@ -2,8 +2,8 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { RequestDbService } from './request-db.service';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
-import {  Request} from '../schemas/request.schema';
-import {  UpdateRequestDto } from '../dto/request.dto';
+import { Request } from '../schemas/request.schema';
+import { UpdateRequestDto } from '../dto/request.dto';
 import { Types } from 'mongoose';
 
 @Injectable()
@@ -70,9 +70,9 @@ export class RequestService {
     return requests;
   }
 
-  async delete(id: Types.ObjectId) {
+  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
     const [, err] = await handlePromise<unknown, Error>(
-      this.dbService.delete(id),
+      this.dbService.delete(id, deletedBy),
     );
 
     if (err) {

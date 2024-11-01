@@ -1,5 +1,8 @@
 import { Prop, Schema } from '@nestjs/mongoose';
-import { IsBoolean, IsOptional } from 'class-validator';
+import { IsBoolean, IsDate, IsOptional } from 'class-validator';
+import { Types } from 'mongoose';
+import { MongooseModels } from '../../const/mongoose.const';
+import { IsObjectId } from '../../utils/id-validator';
 
 @Schema()
 export class SoftDelete {
@@ -7,6 +10,16 @@ export class SoftDelete {
   @IsBoolean()
   @Prop({ type: Boolean })
   isSoftDeleted?: boolean;
+
+  @IsOptional()
+  @IsObjectId({ message: 'Id should be in Mongo ObjectId format' })
+  @Prop({ required: false, type: Types.ObjectId, ref: MongooseModels.USER })
+  deletedBy?: Types.ObjectId;
+
+  @IsOptional()
+  @IsDate()
+  @Prop({ required: false, type: Date })
+  deletionDate?: Date;
 }
 
 export const IS_SOFT_DELETED_KEY = 'isSoftDeleted';

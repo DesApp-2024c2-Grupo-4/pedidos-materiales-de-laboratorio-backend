@@ -1,7 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  Request,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { IdDto } from '../dto/id.dto';
 import { UpdateUserDto } from '../dto/user.dto';
+import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 
 @Controller('material')
 export class UserController {
@@ -23,7 +32,8 @@ export class UserController {
   }
 
   @Delete('/:id')
-  delete(@Param() params: IdDto) {
-    return this.userService.delete(params.id);
+  delete(@Request() req: AuthenticatedRequest, @Param() params: IdDto) {
+    const { id } = req.user;
+    return this.userService.delete(params.id, id);
   }
 }

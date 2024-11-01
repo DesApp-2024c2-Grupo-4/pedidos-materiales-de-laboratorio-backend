@@ -47,9 +47,9 @@ export class UserService {
     return users;
   }
 
-  async delete(id: Types.ObjectId) {
+  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
     const [, err] = await handlePromise<unknown, Error>(
-      this.dbService.delete(id),
+      this.dbService.delete(id, deletedBy),
     );
 
     if (err) {

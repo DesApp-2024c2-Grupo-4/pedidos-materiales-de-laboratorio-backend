@@ -1,4 +1,5 @@
 import {
+  Request,
   Body,
   Controller,
   Delete,
@@ -10,6 +11,8 @@ import {
 import { EquipmentService } from './equipment.service';
 import { Equipment } from '../schemas/requestable/equipment.schema';
 import { Types } from 'mongoose';
+import { AuthenticatedRequest } from 'src/dto/authenticated-request.dto';
+import { IdDto } from '../dto/id.dto';
 
 @Controller('/equipment')
 export class EquipmentController {
@@ -31,8 +34,9 @@ export class EquipmentController {
   }
 
   @Delete('/:id')
-  delete(@Param('id') id: Types.ObjectId) {
-    return this.EquipmentService.delete(id);
+  delete(@Request() req: AuthenticatedRequest, @Param() params: IdDto) {
+    const { id } = req.user;
+    return this.EquipmentService.delete(params.id, id);
   }
 
   @Put('/:id')
