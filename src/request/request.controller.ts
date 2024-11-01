@@ -7,11 +7,13 @@ import {
   Param,
   Post,
   Put,
+  Request as NestRequest,
 } from '@nestjs/common';
 import { RequestService } from './request.service';
 import { Request } from '../schemas/request.schema';
 import { IdDto } from '../dto/id.dto';
 import { UpdateRequestDto } from '../dto/request.dto';
+import { AuthenticatedRequest } from 'src/dto/authenticated-request.dto';
 
 @Controller('request')
 export class RequestController {
@@ -39,7 +41,8 @@ export class RequestController {
   }
 
   @Delete('/:id')
-  delete(@Param() params: IdDto) {
-    return this.requestService.delete(params.id);
+  delete(@NestRequest() req: AuthenticatedRequest, @Param() params: IdDto) {
+    const { id } = req.user;
+    return this.requestService.delete(params.id, id);
   }
 }

@@ -62,9 +62,12 @@ export class RequestDbService {
     return requests;
   }
 
-  async delete(id: Types.ObjectId) {
-    const softDelete = {};
-    softDelete[IS_SOFT_DELETED_KEY] = true;
+  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId): Promise<void> {
+    const softDelete = {
+      [IS_SOFT_DELETED_KEY]: true,
+      deletedBy,
+      deletionDate: new Date(Date.now()),
+    };
 
     const [, err] = await handlePromise(
       this.requestModel.updateOne({ _id: id }, { $set: softDelete }),

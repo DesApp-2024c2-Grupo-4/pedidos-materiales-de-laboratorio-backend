@@ -6,11 +6,13 @@ import {
   Param,
   Post,
   Put,
+  Request,
 } from '@nestjs/common';
 import { ReactiveService } from './reactive.service';
 import { Reactive } from '../schemas/requestable/reactive.schema';
 import { IdDto } from '../dto/id.dto';
 import { UpdateReactivelDto } from '../dto/reactive.dto';
+import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 
 @Controller('/reactive')
 export class ReactiveController {
@@ -40,7 +42,8 @@ export class ReactiveController {
   }
 
   @Delete('/:id')
-  delete(@Param() params: IdDto) {
-    return this.ReactiveService.delete(params.id);
+  delete(@Request() req: AuthenticatedRequest, @Param() params: IdDto) {
+    const { id } = req.user;
+    return this.ReactiveService.delete(params.id, id);
   }
 }

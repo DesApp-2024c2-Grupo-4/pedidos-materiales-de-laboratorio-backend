@@ -69,9 +69,12 @@ export class ReactiveDbService {
     }
   }
 
-  async delete(id: Types.ObjectId): Promise<void> {
-    const softDelete = {};
-    softDelete[IS_SOFT_DELETED_KEY] = true;
+  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId): Promise<void> {
+    const softDelete = {
+      [IS_SOFT_DELETED_KEY]: true,
+      deletedBy,
+      deletionDate: new Date(Date.now()),
+    };
 
     const [, err] = await handlePromise(
       this.ReactiveModel.updateOne({ _id: id }, { $set: softDelete }),

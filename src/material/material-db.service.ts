@@ -26,14 +26,10 @@ export class MaterialDbService {
     );
 
     if (err) {
-      return new Error(cantCreateMaterial(material.type, err));
+      return Promise.reject(cantCreateMaterial(material.type, err));
     }
 
-    const [, errSave] = await handlePromise(newMaterial.save());
-
-    if (errSave) {
-      return new Error(cantCreateMaterial(material.type, errSave));
-    }
+    return newMaterial._id;
   }
 
   async update(id: Types.ObjectId, material: UpdateMaterialDto) {
@@ -42,7 +38,7 @@ export class MaterialDbService {
     );
 
     if (err) {
-      return new Error(cantUpdate(id, err));
+      return Promise.reject(cantUpdate(id, err));
     }
   }
 
@@ -52,7 +48,7 @@ export class MaterialDbService {
     );
 
     if (err) {
-      return new Error(cantGet(id, err));
+      return Promise.reject(cantGet(id, err));
     }
 
     return material;
@@ -62,22 +58,25 @@ export class MaterialDbService {
     const [materials, err] = await handlePromise(this.materialModel.find());
 
     if (err) {
-      return new Error(cantGetMaterials(err));
+      return Promise.reject(cantGetMaterials(err));
     }
 
     return materials;
   }
 
-  async delete(id: Types.ObjectId) {
-    const softDelete = {};
-    softDelete[IS_SOFT_DELETED_KEY] = true;
+  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId): Promise<void> {
+    const softDelete = {
+      [IS_SOFT_DELETED_KEY]: true,
+      deletedBy,
+      deletionDate: new Date(Date.now()),
+    };
 
     const [, err] = await handlePromise(
       this.materialModel.updateOne({ _id: id }, { $set: softDelete }),
     );
 
     if (err) {
-      return new Error(cantDelete(id, err));
+      return Promise.reject(cantDelete(id, err));
     }
   }
 }

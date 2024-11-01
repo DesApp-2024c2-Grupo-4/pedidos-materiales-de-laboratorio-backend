@@ -1,4 +1,17 @@
-POST http://localhost:3000/auth/register
+### Get all available/unused tokens
+GET http://localhost:3000/auth/register/token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDc4NWNlNzQ2OGZmZTcyMWEyMzkwZSIsInJvbGUiOlsiTUFTVEVSIE9GIFRIRSBVTklWRVJTRSIsIlVOSVZFUlNFIE9GIFRIRSBNQVNURVIiLCJsYWIiXSwibmFtZSI6InJpY2siLCJsYXN0TmFtZSI6InNhbmNoZXoiLCJlbWFpbCI6InJzYW5jaGV6QGV4YW1wbGUuY29tIiwiaWF0IjoxNzMwMzk3NzgxLCJleHAiOjE3MzA0MDEzODF9.OLpZpZFcxBUtZmZKiIO54TTHZ5F4lOHRTWyuoIfZdEY
+
+### Create a new register token
+POST http://localhost:3000/auth/register/token
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDc4NWNlNzQ2OGZmZTcyMWEyMzkwZSIsInJvbGUiOlsiTUFTVEVSIE9GIFRIRSBVTklWRVJTRSIsIlVOSVZFUlNFIE9GIFRIRSBNQVNURVIiLCJsYWIiXSwibmFtZSI6InJpY2siLCJsYXN0TmFtZSI6InNhbmNoZXoiLCJlbWFpbCI6InJzYW5jaGV6QGV4YW1wbGUuY29tIiwiaWF0IjoxNzMwMzk3NzgxLCJleHAiOjE3MzA0MDEzODF9.OLpZpZFcxBUtZmZKiIO54TTHZ5F4lOHRTWyuoIfZdEY
+
+### Delete a register token
+DELETE http://localhost:3000/auth/register/token/<OTP>
+Content-Type: application/json
+
+### Register User
+POST http://localhost:3000/auth/register/<OTP>
 Content-Type: application/json
 
 {
@@ -9,7 +22,7 @@ Content-Type: application/json
     "dni": 1234
 }
 
-###
+### Login user
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 

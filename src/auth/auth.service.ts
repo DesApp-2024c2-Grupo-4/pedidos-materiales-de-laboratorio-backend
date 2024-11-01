@@ -7,11 +7,13 @@ import { AccessTokenPayload } from '../types/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../dto/user.dto';
 import { Document, Types } from 'mongoose';
+import { RegisterTokenDbService } from './register-token/register-token-db.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserDbService,
+    private readonly registerTokenService: RegisterTokenDbService,
     private readonly accessTokenService: JwtService,
   ) {}
 
@@ -90,6 +92,24 @@ export class AuthService {
     return {
       accessToken: await this.accessTokenService.signAsync(payload),
     };
+  }
+
+  public async createRegisterToken(
+    creatorId: Types.ObjectId,
+    createdFor?: string,
+  ) {
+    const [tokenId, err] = await handlePromise(
+      this.registerTokenService.add(creatorId, createdFor),
+    );
+
+    if (err) {
+      throw new BackendException(
+        `Cannot create register token: ${err}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return tokenId;
   }
 
   private buildAccessTokenPayload(user: User): AccessTokenPayload {
