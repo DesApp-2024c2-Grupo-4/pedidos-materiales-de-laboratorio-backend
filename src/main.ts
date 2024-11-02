@@ -18,7 +18,12 @@ export async function bootstrap() {
 bootstrap();
 
 export function configureApp(app, config) {
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // Enable transformation
+      whitelist: true, // Strips out properties that are not in the DTO
+    }),
+  );
 
   const allowedOrigins = config.get('CORS_ENABLED_ORIGINS').split(';');
   app.enableCors({

@@ -4,6 +4,10 @@ import { User, UserSchema } from '../schemas/user.schema';
 import { UserController } from './user.controller';
 import { UserDbService } from './user-db.service';
 import { UserService } from './user.service';
+import {
+  RegisterToken,
+  RegisterTokenSchema,
+} from '../schemas/register-token.schema';
 
 @Module({
   imports: [

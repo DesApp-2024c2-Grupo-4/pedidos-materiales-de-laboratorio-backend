@@ -1,24 +1,24 @@
 ### Get all available/unused tokens
 GET http://localhost:3000/auth/register/token
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDc4NWNlNzQ2OGZmZTcyMWEyMzkwZSIsInJvbGUiOlsiTUFTVEVSIE9GIFRIRSBVTklWRVJTRSIsIlVOSVZFUlNFIE9GIFRIRSBNQVNURVIiLCJsYWIiXSwibmFtZSI6InJpY2siLCJsYXN0TmFtZSI6InNhbmNoZXoiLCJlbWFpbCI6InJzYW5jaGV6QGV4YW1wbGUuY29tIiwiaWF0IjoxNzMwMzk3NzgxLCJleHAiOjE3MzA0MDEzODF9.OLpZpZFcxBUtZmZKiIO54TTHZ5F4lOHRTWyuoIfZdEY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDc4NWNlNzQ2OGZmZTcyMWEyMzkwZSIsInJvbGUiOlsiTUFTVEVSIE9GIFRIRSBVTklWRVJTRSIsIlVOSVZFUlNFIE9GIFRIRSBNQVNURVIiLCJsYWIiXSwibmFtZSI6InJpY2siLCJsYXN0TmFtZSI6InNhbmNoZXoiLCJlbWFpbCI6InJzYW5jaGV6QGV4YW1wbGUuY29tIiwiaWF0IjoxNzMwNTgxMTIyLCJleHAiOjE3MzA1ODQ3MjJ9.rz7-p707b8NZVxCppMtCgqHcMo3if34Jh3sgFJFkhyg
 
 ### Create a new register token
 POST http://localhost:3000/auth/register/token
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDc4NWNlNzQ2OGZmZTcyMWEyMzkwZSIsInJvbGUiOlsiTUFTVEVSIE9GIFRIRSBVTklWRVJTRSIsIlVOSVZFUlNFIE9GIFRIRSBNQVNURVIiLCJsYWIiXSwibmFtZSI6InJpY2siLCJsYXN0TmFtZSI6InNhbmNoZXoiLCJlbWFpbCI6InJzYW5jaGV6QGV4YW1wbGUuY29tIiwiaWF0IjoxNzMwMzk3NzgxLCJleHAiOjE3MzA0MDEzODF9.OLpZpZFcxBUtZmZKiIO54TTHZ5F4lOHRTWyuoIfZdEY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDc4NWNlNzQ2OGZmZTcyMWEyMzkwZSIsInJvbGUiOlsiTUFTVEVSIE9GIFRIRSBVTklWRVJTRSIsIlVOSVZFUlNFIE9GIFRIRSBNQVNURVIiLCJsYWIiXSwibmFtZSI6InJpY2siLCJsYXN0TmFtZSI6InNhbmNoZXoiLCJlbWFpbCI6InJzYW5jaGV6QGV4YW1wbGUuY29tIiwiaWF0IjoxNzMwNTExMTU4LCJleHAiOjE3MzA1MTQ3NTh9.KUCuWsBHeyUUu4axvvGB90_0eq2YGWgKsCpUw22wQ6M
 
 ### Delete a register token
 DELETE http://localhost:3000/auth/register/token/<OTP>
-Content-Type: application/json
+Content-Tzype: application/json
 
 ### Register User
-POST http://localhost:3000/auth/register/<OTP>
+POST http://localhost:3000/auth/register?token=672581472562d56123ac6397
 Content-Type: application/json
 
 {
     "name": "rick",
     "lastName": "sanchez",
     "password": "piclkeRick1",
-    "email": "rsanchez2@example.com",
+    "email": "rsanchez2492@example.com",
     "dni": 1234
 }
 

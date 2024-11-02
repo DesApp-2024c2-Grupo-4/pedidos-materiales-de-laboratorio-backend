@@ -8,6 +8,12 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../dto/user.dto';
 import { Document, Types } from 'mongoose';
 import { RegisterTokenDbService } from './register-token/register-token-db.service';
+import { IdDto } from '../dto/id.dto';
+import {
+  RegisterToken,
+  RegisterTokenDocument,
+} from '../schemas/register-token.schema';
+import { cantCreateUser } from '../user/user.errors';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +23,7 @@ export class AuthService {
     private readonly accessTokenService: JwtService,
   ) {}
 
-  public async registerUser(user: CreateUserDto) {
+  public async registerUser(user: CreateUserDto, tokenId: Types.ObjectId) {
     const [dbUser, getUserErr] = await handlePromise(
       this.userService.findByEmail(user.email),
     );
@@ -36,8 +42,26 @@ export class AuthService {
       );
     }
 
+    const [token, getTokenErr] = await handlePromise(
+      this.registerTokenService.get(tokenId),
+    );
+
+    if (getTokenErr) {
+      throw new BackendException(
+        cantCreateUser(user.email, `Error getting token: ${getTokenErr}`),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (!token || token?.isConsumed()) {
+      throw new BackendException(
+        cantCreateUser(user.email, `Token ${tokenId} is not available.`),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const [newUser, createUserErr] = await handlePromise(
-      this.userService.createUser(user),
+      this.userService.createUser(user, token),
     );
 
     if (createUserErr) {
@@ -97,7 +121,7 @@ export class AuthService {
   public async createRegisterToken(
     creatorId: Types.ObjectId,
     createdFor?: string,
-  ) {
+  ): Promise<IdDto> {
     const [tokenId, err] = await handlePromise(
       this.registerTokenService.add(creatorId, createdFor),
     );
@@ -110,6 +134,21 @@ export class AuthService {
     }
 
     return tokenId;
+  }
+
+  public async getRegisterToken(available: boolean): Promise<RegisterToken[]> {
+    const [tokens, err] = await handlePromise(
+      this.registerTokenService.getAll(available),
+    );
+
+    if (err) {
+      throw new BackendException(
+        `Cannot get register tokens: ${err}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return tokens;
   }
 
   private buildAccessTokenPayload(user: User): AccessTokenPayload {

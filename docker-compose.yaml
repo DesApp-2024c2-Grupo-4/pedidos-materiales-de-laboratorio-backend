@@ -1,22 +1,33 @@
 services:
   mongo:
-    image: mongo
+    image: mongo:7.0
     restart: unless-stopped
     ports:
       - 27017:27017
     volumes:
-      - ./.mongo/data:/data/db
+      - ./.mongo:/data/db
+      - ./mongo/init-mongo-keyfile.sh:/data/init-mongo-keyfile.sh # Mount the init script
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-
-  mongo-express:
-    image: mongo-express
-    restart: unless-stopped
-    ports:
-      - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-      ME_CONFIG_BASICAUTH: 'false'
+    command:
+      [
+        '/bin/sh',
+        '-c',
+        'chmod +x /data/init-mongo-keyfile.sh && /data/init-mongo-keyfile.sh',
+      ]
+    healthcheck:
+      test: "mongo --eval 'rs.initiate()' || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+#  mongo-express:
+#    image: mongo-express
+#    restart: unless-stopped
+#    ports:
+#      - 8081:8081
+#    environment:
+#      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+#      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+#      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/?replicaSet=rs0
+#      ME_CONFIG_BASICAUTH: 'false'

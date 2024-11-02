@@ -9,7 +9,11 @@ import {
   cantGetTokenById,
 } from './register-token.errors';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
-import { RegisterToken } from '../../schemas/register-token.schema';
+import {
+  RegisterToken,
+  RegisterTokenDocument,
+} from '../../schemas/register-token.schema';
+import { IdDto } from '../../dto/id.dto';
 
 @Injectable()
 export class RegisterTokenDbService {
@@ -18,10 +22,7 @@ export class RegisterTokenDbService {
     private RegisterTokenModel: Model<RegisterToken>,
   ) {}
 
-  async add(
-    creatorId: Types.ObjectId,
-    createdFor?: string,
-  ): Promise<Types.ObjectId> {
+  async add(creatorId: Types.ObjectId, createdFor?: string): Promise<IdDto> {
     const [token, createErr] = await handlePromise(
       this.RegisterTokenModel.create({
         creatorId,
@@ -32,12 +33,24 @@ export class RegisterTokenDbService {
     if (createErr) {
       return Promise.reject(cantCreateToken(createErr));
     }
-    return token._id;
+    return { id: token._id };
   }
 
+  /**
+   * Get all tokens from db
+   * @param available will return all tokens if undefined either
+   * they are available or not, if true will return only available
+   * tokens, if false will return consumed tokens only.
+   * @returns RegisterToken[]
+   */
   async getAll(available: boolean): Promise<RegisterToken[]> {
+    const query =
+      available !== undefined
+        ? { userCreated: { $exists: !available, $ne: '' } }
+        : {};
+
     const [tokens, err] = await handlePromise(
-      this.RegisterTokenModel.find({ available }),
+      this.RegisterTokenModel.find(query),
     );
 
     if (err) {
@@ -47,7 +60,7 @@ export class RegisterTokenDbService {
     return tokens;
   }
 
-  async get(id: Types.ObjectId): Promise<RegisterToken> {
+  async get(id: Types.ObjectId): Promise<RegisterTokenDocument> {
     const [token, err] = await handlePromise(
       this.RegisterTokenModel.findById(id),
     );
