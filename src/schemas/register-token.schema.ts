@@ -29,6 +29,9 @@ export class RegisterToken extends SoftDelete {
   @Prop({ required: false, type: String })
   createdFor: string;
 
+  consume: (createdUserId: Types.ObjectId) => Promise<void>;
+  isConsumed: () => Boolean;
+
   constructor(creatorId: Types.ObjectId, createdFor?: string) {
     super();
     this.creatorId = creatorId;
@@ -47,6 +50,10 @@ RegisterTokenSchema.methods.consume = async function (
 ): Promise<void> {
   this.consumedDate = new Date(Date.now());
   this.userCreated = createdUserId;
+};
+
+RegisterTokenSchema.methods.isConsumed = function (): boolean {
+  return !!this.userCreated;
 };
 
 RegisterTokenSchema.pre<RegisterTokenDocument>('save', function (next) {
