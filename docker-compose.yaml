@@ -1,6 +1,8 @@
+version: '3.8'
+
 services:
   mongo1:
-    image: mongo:8
+    image: 'mongo:8'
     restart: unless-stopped
     ports:
       - 27017:27017

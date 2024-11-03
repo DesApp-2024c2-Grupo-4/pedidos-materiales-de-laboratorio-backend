@@ -1,10 +1,10 @@
 ### Get all available/unused tokens
 GET http://localhost:3000/auth/register/token?isAvailable=true
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjZlYzA1ZGUwNDY2ZGE4ODVkZDVhYSIsInJvbGUiOltdLCJuYW1lIjoicmljayIsImxhc3ROYW1lIjoic2FuY2hleiIsImVtYWlsIjoicnNhbmNoZXpAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzA2MDQwNjMsImV4cCI6MTczMDYwNzY2M30.MdRLoQjNuvMkKz0BaOKbPyUiHUB0jSM-VGObGgJxW7k
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY2ODE2MSwiZXhwIjoxNzMwNjcxNzYxfQ.KJB0hdgPEIYU4ZHno6tBmQUyaYQr7p5-7SnMCfEMhhw
 
 ### Create a new register token
 POST http://localhost:3000/auth/register/token
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjZlYzA1ZGUwNDY2ZGE4ODVkZDVhYSIsInJvbGUiOltdLCJuYW1lIjoicmljayIsImxhc3ROYW1lIjoic2FuY2hleiIsImVtYWlsIjoicnNhbmNoZXpAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzA2MDQwNjMsImV4cCI6MTczMDYwNzY2M30.MdRLoQjNuvMkKz0BaOKbPyUiHUB0jSM-VGObGgJxW7k
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY2ODE2MSwiZXhwIjoxNzMwNjcxNzYxfQ.KJB0hdgPEIYU4ZHno6tBmQUyaYQr7p5-7SnMCfEMhhw
 
 ### Delete a register token
 DELETE http://localhost:3000/auth/register/token/<OTP>
@@ -27,6 +27,6 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-    "email": "rsanchez@example.com",
-    "password": "piclkeRick1"
+    "email": "admin@example.com",
+    "password": "admin123"
 }
