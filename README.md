@@ -27,7 +27,7 @@
 | ENV                     | Description                                                      | Type          | Default Value     |
 |-------------------------|------------------------------------------------------------------|---------------|-------------------|
 | PORT                    | The port that the app will use for http requests.                | Number        | 3000              |
-| CORS_ENABLED_ORIGINS    | Array of origins enabled for CORS separated by character ';'.    | String[]      | []                |
+| CORS_ENABLED_ORIGINS    | Array of origins enabled for CORS separated by character ';'.    | String[]      |                   |
 | ACCESS_TOKEN_SECRET     | Secret for generating access token JWT.                          | String        |                   |
 | DB_HOST                 | Database hostname.                                               | localhost     | localhost         |
 | DB_PORT                 | Database port.                                                   | Number        | 27017             |
@@ -42,7 +42,7 @@
 | DEFAULT_ADMIN_NAME      | Default admin account user name.                                 | String        | Admin             |
 | DEFAULT_ADMIN_LASTNAME  | Default admin account user last name.                            | String        | User              |
 | DEFAULT_ADMIN_DNI       | Default admin account user dni.                                  | Number        | 12345678          |
-| DEFAULT_ADMIN_ROLE      | Default admin account array of roles separated by character ';'. | String[]      | ['admin', 'lab']  |
+| DEFAULT_ADMIN_ROLE      | Default admin account array of roles separated by character ';'. | String[]      | admin;lab         |
 
 
 ## Description
