@@ -1,24 +1,24 @@
 ### Get all available/unused tokens
-GET http://localhost:3000/auth/register/token
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDc4NWNlNzQ2OGZmZTcyMWEyMzkwZSIsInJvbGUiOlsiTUFTVEVSIE9GIFRIRSBVTklWRVJTRSIsIlVOSVZFUlNFIE9GIFRIRSBNQVNURVIiLCJsYWIiXSwibmFtZSI6InJpY2siLCJsYXN0TmFtZSI6InNhbmNoZXoiLCJlbWFpbCI6InJzYW5jaGV6QGV4YW1wbGUuY29tIiwiaWF0IjoxNzMwNTgxMTIyLCJleHAiOjE3MzA1ODQ3MjJ9.rz7-p707b8NZVxCppMtCgqHcMo3if34Jh3sgFJFkhyg
+GET http://localhost:3000/auth/register/token?isAvailable=true
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjZlYzA1ZGUwNDY2ZGE4ODVkZDVhYSIsInJvbGUiOltdLCJuYW1lIjoicmljayIsImxhc3ROYW1lIjoic2FuY2hleiIsImVtYWlsIjoicnNhbmNoZXpAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzA2MDQwNjMsImV4cCI6MTczMDYwNzY2M30.MdRLoQjNuvMkKz0BaOKbPyUiHUB0jSM-VGObGgJxW7k
 
 ### Create a new register token
 POST http://localhost:3000/auth/register/token
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZDc4NWNlNzQ2OGZmZTcyMWEyMzkwZSIsInJvbGUiOlsiTUFTVEVSIE9GIFRIRSBVTklWRVJTRSIsIlVOSVZFUlNFIE9GIFRIRSBNQVNURVIiLCJsYWIiXSwibmFtZSI6InJpY2siLCJsYXN0TmFtZSI6InNhbmNoZXoiLCJlbWFpbCI6InJzYW5jaGV6QGV4YW1wbGUuY29tIiwiaWF0IjoxNzMwNTExMTU4LCJleHAiOjE3MzA1MTQ3NTh9.KUCuWsBHeyUUu4axvvGB90_0eq2YGWgKsCpUw22wQ6M
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjZlYzA1ZGUwNDY2ZGE4ODVkZDVhYSIsInJvbGUiOltdLCJuYW1lIjoicmljayIsImxhc3ROYW1lIjoic2FuY2hleiIsImVtYWlsIjoicnNhbmNoZXpAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzA2MDQwNjMsImV4cCI6MTczMDYwNzY2M30.MdRLoQjNuvMkKz0BaOKbPyUiHUB0jSM-VGObGgJxW7k
 
 ### Delete a register token
 DELETE http://localhost:3000/auth/register/token/<OTP>
 Content-Tzype: application/json
 
 ### Register User
-POST http://localhost:3000/auth/register?token=672581472562d56123ac6397
+POST http://localhost:3000/auth/register?token=6726ebfdde0466da885dd5a6
 Content-Type: application/json
 
 {
     "name": "rick",
     "lastName": "sanchez",
     "password": "piclkeRick1",
-    "email": "rsanchez2492@example.com",
+    "email": "rsanchez@example.com",
     "dni": 1234
 }
 
