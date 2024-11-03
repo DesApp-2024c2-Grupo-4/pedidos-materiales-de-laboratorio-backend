@@ -15,8 +15,12 @@ function buildMongoUri(configService: ConfigService) {
   const password = configService.get<string>('DB_PASSWORD') || 'example';
   const collection = configService.get<string>('DB_COLLECTION') || 'lab';
   const authSource = configService.get<string>('DB_AUTH_SOURCE') || 'admin';
+  const replicaSetInstances = configService.get<string>('DB_REPLICASET');
+  const replicaSet = replicaSetInstances
+    ? `&replicaSet=${replicaSetInstances}`
+    : '';
 
-  return `mongodb://${username}:${password}@${host}:${port}/${collection}?authSource=${authSource}`;
+  return `mongodb://${username}:${password}@${host}:${port}/${collection}?authSource=${authSource}${replicaSet}`;
 }
 
 export default MongooseProvider;
