@@ -22,6 +22,29 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+## ENV Variables
+
+| ENV                     | Description                                                      | Type          | Default Value     |
+|-------------------------|------------------------------------------------------------------|---------------|-------------------|
+| PORT                    | The port that the app will use for http requests.                | Number        | 3000              |
+| CORS_ENABLED_ORIGINS    | Array of origins enabled for CORS separated by character ';'.    | String[]      | []                |
+| ACCESS_TOKEN_SECRET     | Secret for generating access token JWT.                          | String        |                   |
+| DB_HOST                 | Database hostname.                                               | localhost     | localhost         |
+| DB_PORT                 | Database port.                                                   | Number        | 27017             |
+| DB_USERNAME             | Database username.                                               | String        | root              |
+| DB_PASSWORD             | Database password.                                               | String        | example           |
+| DB_COLLECTION           | Database collection.                                             | String        | lab               |
+| DB_AUTH_SOURCE          | Database collection used for authentication.                     | String        | admin             |
+| DB_REPLICASET           | Database replicaset instance names.                              | String        |                   |
+| CREATE_DEFAULT_ADMIN    | Default admin account creation if no account exists on the db.   | Boolean       | false             |
+| DEFAULT_ADMIN_EMAIL     | Default admin account email.                                     | String        | admin@example.com |
+| DEFAULT_ADMIN_PASSWORD  | Default admin account password.                                  | String        | example           |
+| DEFAULT_ADMIN_NAME      | Default admin account user name.                                 | String        | Admin             |
+| DEFAULT_ADMIN_LASTNAME  | Default admin account user last name.                            | String        | User              |
+| DEFAULT_ADMIN_DNI       | Default admin account user dni.                                  | Number        | 12345678          |
+| DEFAULT_ADMIN_ROLE      | Default admin account array of roles separated by character ';'. | String[]      | ['admin', 'lab']  |
+
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
