@@ -25,7 +25,9 @@ export function configureApp(app, config) {
     }),
   );
 
-  const allowedOrigins = config.get('CORS_ENABLED_ORIGINS').split(';');
+  const allowedOrigins: string[] =
+    config.get('CORS_ENABLED_ORIGINS')?.split(';') || [];
+
   app.enableCors({
     origin: allowedOrigins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
