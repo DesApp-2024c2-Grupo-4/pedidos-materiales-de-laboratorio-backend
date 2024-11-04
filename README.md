@@ -45,6 +45,7 @@ Una vez configuradas las variables en el archivo .env, puedes iniciar la aplicac
 | PORT                    | El puerto que usará la aplicación para las solicitudes HTTP.                      | Número        | 3000                   |
 | CORS_ENABLED_ORIGINS    | Orígenes habilitados para CORS separados por el carácter ';'.                     | String[]      |                        |
 | ACCESS_TOKEN_SECRET     | Secreto para generar el token JWT de acceso.                                      | String        |                        |
+| ACCESS_TOKEN_EXPIRATION | Tiempo de vida del token despues del cual expirará.                               | String        | 24h                    |
 | DB_HOST                 | Nombre del host de la base de datos.                                              | localhost     | localhost              |
 | DB_PORT                 | Puerto de la base de datos.                                                       | Número        | 27017                  |
 | DB_USERNAME             | Nombre de usuario de la base de datos.                                            | String        | root                   |

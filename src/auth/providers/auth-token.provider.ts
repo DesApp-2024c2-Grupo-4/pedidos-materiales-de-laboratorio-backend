@@ -7,7 +7,7 @@ export const AccessTokenProvider = {
   useFactory: async (configService: ConfigService) => ({
     secret: configService.get<string>('ACCESS_TOKEN_SECRET'),
     signOptions: {
-      expiresIn: configService.get<string>('ACCESS_TOKEN_EXPIRATION') || '60m',
+      expiresIn: configService.get<string>('ACCESS_TOKEN_EXPIRATION') || '24h',
     },
   }),
 };
