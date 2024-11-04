@@ -21,6 +21,18 @@ Para gestionar la base de datos MongoDB, se recomienda utilizar **MongoDB Compas
 
 En la primera ejecución de la aplicación, si no existen usuarios en la base de datos y la variable de entorno `CREATE_DEFAULT_ADMIN` está configurada en `true`, el sistema creará automáticamente un usuario administrador predeterminado. Esto permite iniciar la aplicación con un usuario inicial, facilitando el acceso y configuración (Ver variables de entorno `DEFAULT_ADMIN_`).
 
+El usuario creado por defecto si no se obtiene una configuración por variables de entorno es:
+```json
+{
+  "email": "admin@example.com",
+  "password": "example",
+  "name": "Admin",
+  "lastName": "User",
+  "dni": 12345678,
+  "role": ["admin", "lab"]
+}
+```
+
 ## Configuración de Variables de Entorno
 
 En la raíz del proyecto se proporciona un archivo `.env-EXAMPLE` que contiene una configuración básica de las variables de entorno necesarias para ejecutar la aplicación.
