@@ -162,6 +162,86 @@ describe('UserDbService', () => {
         `Cannot create user ${userDto.email}. Reason: ${err}`,
       );
     });
+
+    it('should throw an error if starting session fails', async () => {
+      const err = new Error('Session start error');
+      connection.startSession.mockRejectedValue(err);
+
+      const userDto: CreateUserDto = {
+        email: 'john.doe@example.com',
+        password: 'test-password',
+        name: 'John',
+        lastName: 'Doe',
+        dni: 12345678,
+        matricula: 987654,
+      };
+
+      await expect(
+        service.createUser(userDto, mockRegisterToken),
+      ).rejects.toStrictEqual(
+        `Cannot create user ${userDto.email}. Reason: Error starting session: ${err}`,
+      );
+    });
+
+    it('should throw an error if token save fails', async () => {
+      model.create.mockResolvedValue([mockUser]);
+      const tokenError = new Error('Token save error');
+      mockRegisterToken.save.mockRejectedValue(tokenError);
+
+      const mockSession = {
+        startTransaction: jest.fn(),
+        abortTransaction: jest.fn().mockResolvedValue(undefined),
+        commitTransaction: jest.fn().mockResolvedValue(undefined),
+        endSession: jest.fn().mockResolvedValue(undefined),
+      };
+
+      connection.startSession.mockResolvedValue(mockSession);
+
+      const userDto: CreateUserDto = {
+        email: 'john.doe@example.com',
+        password: 'test-password',
+        name: 'John',
+        lastName: 'Doe',
+        dni: 12345678,
+        matricula: 987654,
+      };
+
+      await expect(
+        service.createUser(userDto, mockRegisterToken),
+      ).rejects.toStrictEqual(
+        `Cannot create user ${userDto.email}. Reason: Cannot save token: ${tokenError}`,
+      );
+    });
+
+    it('should throw an error if committing transaction fails', async () => {
+      model.create.mockResolvedValue([mockUser]);
+      mockRegisterToken.save.mockResolvedValue(undefined);
+      const commitError = new Error('Commit transaction error');
+
+      const mockSession = {
+        startTransaction: jest.fn(),
+        abortTransaction: jest.fn().mockResolvedValue(undefined),
+        commitTransaction: jest.fn().mockRejectedValue(commitError),
+        endSession: jest.fn().mockResolvedValue(undefined),
+      };
+
+      connection.startSession.mockResolvedValue(mockSession);
+
+      const userDto: CreateUserDto = {
+        email: 'john.doe@example.com',
+        password: 'test-password',
+        name: 'John',
+        lastName: 'Doe',
+        dni: 12345678,
+        matricula: 987654,
+      };
+
+      await expect(
+        service.createUser(userDto, mockRegisterToken),
+      ).rejects.toStrictEqual(
+        `Cannot create user ${userDto.email}. Reason: Error committing transaction: ${commitError}`,
+      );
+    });
   });
 
   describe('getAll', () => {
