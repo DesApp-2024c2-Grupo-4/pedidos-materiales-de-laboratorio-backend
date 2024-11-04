@@ -14,6 +14,7 @@ import {
   RegisterTokenDocument,
 } from '../schemas/register-token.schema';
 import { cantCreateUser } from '../user/user.errors';
+import { cantDeleteToken } from './register-token/register-token.errors';
 
 @Injectable()
 export class AuthService {
@@ -122,33 +123,59 @@ export class AuthService {
     creatorId: Types.ObjectId,
     createdFor?: string,
   ): Promise<IdDto> {
-    const [tokenId, err] = await handlePromise(
+    const [tokenId, err] = await handlePromise<IdDto, string>(
       this.registerTokenService.add(creatorId, createdFor),
     );
 
     if (err) {
-      throw new BackendException(
-        `Cannot create register token: ${err}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return tokenId;
   }
 
-  public async getRegisterToken(available: boolean): Promise<RegisterToken[]> {
-    const [tokens, err] = await handlePromise(
+  public async getRegisterToken(available?: boolean): Promise<RegisterToken[]> {
+    const [tokens, err] = await handlePromise<RegisterToken[], string>(
       this.registerTokenService.getAll(available),
     );
 
     if (err) {
-      throw new BackendException(
-        `Cannot get register tokens: ${err}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return tokens;
+  }
+
+  public async deleteRegisterToken(
+    tokenId: Types.ObjectId,
+    deletedBy: Types.ObjectId,
+  ): Promise<void> {
+    const [token, getErr] = await handlePromise<RegisterTokenDocument, string>(
+      this.registerTokenService.get(tokenId),
+    );
+
+    if (getErr) {
+      throw new BackendException(getErr, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    if (!token) {
+      throw new BackendException('', HttpStatus.NOT_FOUND);
+    }
+
+    if (token.userCreated || token.isSoftDeleted) {
+      throw new BackendException(
+        cantDeleteToken(tokenId, `Token is not available.`),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const [, err] = await handlePromise<void, string>(
+      this.registerTokenService.delete(tokenId, deletedBy),
+    );
+
+    if (err) {
+      throw new BackendException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   private buildAccessTokenPayload(user: User): AccessTokenPayload {
