@@ -1,11 +1,19 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { IS_PUBLIC_KEY } from '../providers/accesor.metadata';
+import {
+  ALL_ROLES_KEY,
+  ANY_ROLES_KEY,
+  IS_PUBLIC_KEY,
+} from '../providers/accesor.metadata';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector) {
+  constructor(protected reflector: Reflector) {
     super();
   }
 
@@ -17,6 +25,51 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (isPublic) {
       return true;
     }
+
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+
+    const requiredRolesAll = this.reflector.get<string[]>(
+      ALL_ROLES_KEY,
+      context.getHandler(),
+    );
+    const requiredRolesAny = this.reflector.get<string[]>(
+      ANY_ROLES_KEY,
+      context.getHandler(),
+    );
+
+    if (requiredRolesAll && requiredRolesAny) {
+      throw new ForbiddenException(
+        'Conflicting role decorators: use either @RolesAll or @RolesAny, not both.',
+      );
+    }
+
+    if (
+      requiredRolesAll &&
+      (!user || !user.roles || !this.hasAllRoles(user.roles, requiredRolesAll))
+    ) {
+      throw new ForbiddenException(
+        'Access denied: insufficient permissions for all required roles.',
+      );
+    }
+
+    if (
+      requiredRolesAny &&
+      (!user || !user.roles || !this.hasAnyRole(user.roles, requiredRolesAny))
+    ) {
+      throw new ForbiddenException(
+        'Access denied: insufficient permissions for any required roles.',
+      );
+    }
+
     return super.canActivate(context);
+  }
+
+  private hasAllRoles(userRoles: string[], requiredRoles: string[]): boolean {
+    return requiredRoles.every((role) => userRoles.includes(role));
+  }
+
+  private hasAnyRole(userRoles: string[], requiredRoles: string[]): boolean {
+    return requiredRoles.some((role) => userRoles.includes(role));
   }
 }
