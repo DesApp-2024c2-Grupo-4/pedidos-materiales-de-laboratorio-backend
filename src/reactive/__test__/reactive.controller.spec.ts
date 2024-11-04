@@ -5,10 +5,17 @@ import { Reactive } from '../../schemas/requestable/reactive.schema';
 import { IdDto } from '../../dto/id.dto';
 import { UpdateReactivelDto } from '../../dto/reactive.dto';
 import { Types } from 'mongoose';
+import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
 
 describe('ReactiveController', () => {
   let controller: ReactiveController;
   let service: any;
+
+  const mockAuthenticatedRequest = {
+    user: {
+      id: new Types.ObjectId(),
+    },
+  } as AuthenticatedRequest;
 
   const mockReactive: Reactive = {
     description: 'test-description',
@@ -86,8 +93,11 @@ describe('ReactiveController', () => {
 
   describe('delete', () => {
     it('should call ReactiveService.delete with the correct id', async () => {
-      await controller.delete(mockIdDto);
-      expect(service.delete).toHaveBeenCalledWith(mockIdDto.id);
+      await controller.delete(mockAuthenticatedRequest, mockIdDto);
+      expect(service.delete).toHaveBeenCalledWith(
+        mockIdDto.id,
+        mockAuthenticatedRequest.user.id,
+      );
     });
   });
 });

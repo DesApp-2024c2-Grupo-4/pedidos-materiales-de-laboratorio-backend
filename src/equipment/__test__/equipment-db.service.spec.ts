@@ -10,6 +10,7 @@ import {
   cantUpdateEquipment,
   cantDeleteEquipment,
 } from '../equipment.errors';
+import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('EquipmentdbService', () => {
   let service: EquipmentdbService;
@@ -136,14 +137,22 @@ describe('EquipmentdbService', () => {
   });
 
   describe('delete', () => {
+    const deletedBy = new Types.ObjectId();
+
     it('should soft-delete an equipment by ID', async () => {
       equipmentModel.updateOne.mockResolvedValue({ nModified: 1 });
 
-      await service.delete(mockEquipment._id);
+      await service.delete(mockEquipment._id, deletedBy);
+
+      const softDelete = {
+        [IS_SOFT_DELETED_KEY]: true,
+        deletedBy,
+        deletionDate: expect.any(Date),
+      };
 
       expect(equipmentModel.updateOne).toHaveBeenCalledWith(
         { _id: mockEquipment._id },
-        { $set: { isSoftDeleted: true } },
+        { $set: softDelete },
       );
     });
 
@@ -151,9 +160,9 @@ describe('EquipmentdbService', () => {
       const error = new Error('Delete failed');
       equipmentModel.updateOne.mockRejectedValue(error);
 
-      await expect(service.delete(mockEquipment._id)).rejects.toThrow(
-        cantDeleteEquipment(mockEquipment._id, error),
-      );
+      await expect(
+        service.delete(mockEquipment._id, deletedBy),
+      ).rejects.toThrow(cantDeleteEquipment(mockEquipment._id, error));
     });
   });
 });

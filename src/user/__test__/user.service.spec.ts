@@ -110,13 +110,15 @@ describe('UserService', () => {
   });
 
   describe('delete', () => {
+    const deletedBy = new Types.ObjectId();
+
     it('should call delete on the database service and not throw an error', async () => {
       const id = new Types.ObjectId();
       mockUserDbService.delete.mockResolvedValue(null);
 
-      await userService.delete(id);
+      await userService.delete(id, deletedBy);
 
-      expect(userDbService.delete).toHaveBeenCalledWith(id);
+      expect(userDbService.delete).toHaveBeenCalledWith(id, deletedBy);
     });
 
     it('should throw BackendException on error', async () => {
@@ -124,7 +126,7 @@ describe('UserService', () => {
       const error = new Error('Delete failed');
       mockUserDbService.delete.mockRejectedValue(error);
 
-      await expect(userService.delete(id)).rejects.toThrow(
+      await expect(userService.delete(id, deletedBy)).rejects.toThrow(
         new BackendException(error.message, HttpStatus.INTERNAL_SERVER_ERROR),
       );
     });

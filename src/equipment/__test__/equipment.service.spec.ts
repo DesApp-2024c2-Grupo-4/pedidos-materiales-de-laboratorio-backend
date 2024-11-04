@@ -137,11 +137,19 @@ describe('EquipmentService', () => {
   });
 
   describe('delete', () => {
+    const deletedBy = new Types.ObjectId();
+
     it('should delete the equipment successfully', async () => {
       dbService.delete.mockResolvedValue(null);
 
-      const response = await equipmentService.delete(mockEquipment._id);
-      expect(dbService.delete).toHaveBeenCalledWith(mockEquipment._id);
+      const response = await equipmentService.delete(
+        mockEquipment._id,
+        deletedBy,
+      );
+      expect(dbService.delete).toHaveBeenCalledWith(
+        mockEquipment._id,
+        deletedBy,
+      );
       expect(response).toBeUndefined();
     });
 
@@ -149,9 +157,9 @@ describe('EquipmentService', () => {
       const error = new Error('Delete failed');
       dbService.delete.mockRejectedValue(error);
 
-      await expect(equipmentService.delete(mockEquipment._id)).rejects.toThrow(
-        BackendException,
-      );
+      await expect(
+        equipmentService.delete(mockEquipment._id, deletedBy),
+      ).rejects.toThrow(BackendException);
     });
   });
 });

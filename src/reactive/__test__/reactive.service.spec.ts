@@ -122,17 +122,21 @@ describe('ReactiveService', () => {
   });
 
   describe('delete', () => {
+    const deletedBy = new Types.ObjectId();
+
     it('should call dbService.delete without error', async () => {
       mockDbService.delete.mockResolvedValueOnce(undefined);
 
-      await expect(service.delete(mockId)).resolves.not.toThrow();
-      expect(mockDbService.delete).toHaveBeenCalledWith(mockId);
+      await expect(service.delete(mockId, deletedBy)).resolves.not.toThrow();
+      expect(mockDbService.delete).toHaveBeenCalledWith(mockId, deletedBy);
     });
 
     it('should throw BackendException if dbService.delete fails', async () => {
       mockDbService.delete.mockRejectedValueOnce(new Error('Database Error'));
 
-      await expect(service.delete(mockId)).rejects.toThrow(BackendException);
+      await expect(service.delete(mockId, deletedBy)).rejects.toThrow(
+        BackendException,
+      );
     });
   });
 });

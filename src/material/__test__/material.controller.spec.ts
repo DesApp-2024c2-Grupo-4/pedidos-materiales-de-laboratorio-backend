@@ -4,12 +4,18 @@ import { MaterialService } from '../material.service';
 import { Material } from '../../schemas/requestable/material.schema';
 import { UpdateMaterialDto } from '../../dto/material.dto';
 import { Types } from 'mongoose';
+import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
 
 describe('MaterialController', () => {
   let controller: MaterialController;
   let service: MaterialService;
 
-  // Mocking the MaterialService methods
+  const mockAuthenticatedRequest = {
+    user: {
+      id: new Types.ObjectId(),
+    },
+  } as AuthenticatedRequest;
+
   const mockMaterialService = {
     add: jest.fn(),
     update: jest.fn(),
@@ -111,9 +117,12 @@ describe('MaterialController', () => {
       const id = new Types.ObjectId();
       mockMaterialService.delete.mockResolvedValue(true);
 
-      const result = await controller.delete({ id });
+      const result = await controller.delete(mockAuthenticatedRequest, { id });
 
-      expect(service.delete).toHaveBeenCalledWith(id);
+      expect(service.delete).toHaveBeenCalledWith(
+        id,
+        mockAuthenticatedRequest.user.id,
+      );
       expect(result).toEqual(true);
     });
   });
