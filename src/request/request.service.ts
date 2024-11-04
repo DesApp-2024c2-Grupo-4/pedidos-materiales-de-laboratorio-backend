@@ -2,13 +2,25 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { RequestDbService } from './request-db.service';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
-import { Request } from '../schemas/request.schema';
+import { Request, RequestDocument } from '../schemas/request.schema';
 import { UpdateRequestDto } from '../dto/request.dto';
 import { Types } from 'mongoose';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RequestService {
-  constructor(private readonly dbService: RequestDbService) {}
+  daysToExpireInSeconds: number;
+
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly dbService: RequestDbService,
+  ) {
+    const daysToExpire = parseInt(
+      this.configService.get<string>('REQUEST_TTL_IN_DAYS'),
+      10,
+    );
+    this.daysToExpireInSeconds = daysToExpire * 86400;
+  }
 
   async add(request: Request) {
     const [, err] = await handlePromise<unknown, Error>(
@@ -37,7 +49,7 @@ export class RequestService {
   }
 
   async get(id: Types.ObjectId) {
-    const [request, err] = await handlePromise<unknown, Error>(
+    const [request, err] = await handlePromise<RequestDocument, Error>(
       this.dbService.get(id),
     );
 
@@ -51,6 +63,8 @@ export class RequestService {
     if (!request) {
       return new BackendException('', HttpStatus.NOT_FOUND);
     }
+
+    request.updateExpiration(this.daysToExpireInSeconds);
 
     return request;
   }

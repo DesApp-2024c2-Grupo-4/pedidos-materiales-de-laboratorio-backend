@@ -5,9 +5,11 @@ import { Request, RequestSchema } from '../schemas/request.schema';
 import { RequestController } from './request.controller';
 import { RequestService } from './request.service';
 import { RequestDbService } from './request-db.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     MongooseModule.forFeature([{ name: Request.name, schema: RequestSchema }]),
   ],
   providers: [RequestDbService, RequestService],
