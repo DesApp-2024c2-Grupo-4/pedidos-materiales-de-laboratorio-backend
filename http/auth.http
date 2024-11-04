@@ -1,24 +1,24 @@
 ### Get all available/unused tokens
 GET http://localhost:3000/auth/register/token?isAvailable=true
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY2ODE2MSwiZXhwIjoxNzMwNjcxNzYxfQ.KJB0hdgPEIYU4ZHno6tBmQUyaYQr7p5-7SnMCfEMhhw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY3OTgzNCwiZXhwIjoxNzMwNjgzNDM0fQ.-OB9SpL8vA95jrqctQM6QfgkMgxqVfXskm_KGa5GKos
 
 ### Create a new register token
 POST http://localhost:3000/auth/register/token
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY2ODE2MSwiZXhwIjoxNzMwNjcxNzYxfQ.KJB0hdgPEIYU4ZHno6tBmQUyaYQr7p5-7SnMCfEMhhw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY3OTgzNCwiZXhwIjoxNzMwNjgzNDM0fQ.-OB9SpL8vA95jrqctQM6QfgkMgxqVfXskm_KGa5GKos
 
 ### Delete a register token
-DELETE http://localhost:3000/auth/register/token/<OTP>
-Content-Tzype: application/json
+DELETE http://localhost:3000/auth/register/token/6727e695aba4acec6162bdd9
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY3OTgzNCwiZXhwIjoxNzMwNjgzNDM0fQ.-OB9SpL8vA95jrqctQM6QfgkMgxqVfXskm_KGa5GKos
 
 ### Register User
-POST http://localhost:3000/auth/register?token=6726ebfdde0466da885dd5a6
+POST http://localhost:3000/auth/register?token=6727e695aba4acec6162bdd9
 Content-Type: application/json
 
 {
     "name": "rick",
     "lastName": "sanchez",
     "password": "piclkeRick1",
-    "email": "rsanchez@example.com",
+    "email": "rsanche2z@example.com",
     "dni": 1234
 }
 

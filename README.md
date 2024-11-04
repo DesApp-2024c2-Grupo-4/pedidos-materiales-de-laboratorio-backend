@@ -13,6 +13,9 @@ Este comando iniciará los contenedores necesarios en segundo plano (-d). Ademá
 
 Asegúrate de que Docker y Docker Compose estén instalados en tu entorno antes de ejecutar el comando.
 
+Para gestionar la base de datos MongoDB, se recomienda utilizar **MongoDB Compass**. Puedes descargarlo desde el siguiente enlace:
+
+- [Descargar MongoDB Compass](https://www.mongodb.com/try/download/compass)
 
 ## Creación de Usuario Administrador Predeterminado
 

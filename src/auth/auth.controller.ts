@@ -7,6 +7,8 @@ import {
   Request,
   Query,
   Get,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './strategies/local.guard';
@@ -54,6 +56,17 @@ export class AuthController {
     const { id } = req.user;
     const { createdFor } = createRegisterTokenDto;
     return this.authService.createRegisterToken(id, createdFor);
+  }
+
+  @HttpCode(204)
+  @Delete('/register/token/:token')
+  deleteRegisterToken(
+    @Request() req: AuthenticatedRequest,
+    @Param() registerTokenIdDto: RegisterTokenIdDto,
+  ) {
+    const { id } = req.user;
+    const { token } = registerTokenIdDto;
+    return this.authService.deleteRegisterToken(token, id);
   }
 
   @Get('/register/token')
