@@ -178,8 +178,8 @@ RequestSchema.methods.isRejected = function (): boolean {
   return this.status !== RequestStatuses.REJECTED;
 };
 
-RequestSchema.methods.isExpired = function (daysToExpire: number): boolean {
-  return this.creationDate.getTime() + daysToExpire < Date.now();
+RequestSchema.methods.isExpired = function (secondsToExpire: number): boolean {
+  return this.creationDate.getTime() + secondsToExpire < Date.now();
 };
 
 RequestSchema.methods.updateExpiration = function (
