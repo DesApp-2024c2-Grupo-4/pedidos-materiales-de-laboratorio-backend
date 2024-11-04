@@ -4,10 +4,17 @@ import { UserService } from '../user.service';
 import { IdDto } from '../../dto/id.dto';
 import { UpdateUserDto } from '../../dto/user.dto';
 import { Types } from 'mongoose';
+import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
 
 describe('UserController', () => {
   let userController: UserController;
   let userService: UserService;
+
+  const mockAuthenticatedRequest = {
+    user: {
+      id: new Types.ObjectId(),
+    },
+  } as AuthenticatedRequest;
 
   const mockUserService = {
     update: jest.fn(),
@@ -72,9 +79,12 @@ describe('UserController', () => {
       const idDto: IdDto = { id: new Types.ObjectId() };
       mockUserService.delete.mockResolvedValue(undefined);
 
-      await userController.delete(idDto);
+      await userController.delete(mockAuthenticatedRequest, idDto);
 
-      expect(userService.delete).toHaveBeenCalledWith(idDto.id);
+      expect(userService.delete).toHaveBeenCalledWith(
+        idDto.id,
+        mockAuthenticatedRequest.user.id,
+      );
     });
   });
 });

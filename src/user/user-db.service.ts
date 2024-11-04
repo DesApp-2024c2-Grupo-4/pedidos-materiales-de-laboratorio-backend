@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { User } from '../schemas/user.schema';
-import * as mongoose from 'mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, Types, Connection } from 'mongoose';
 import handlePromise from '../utils/promise';
 import {
   cantCreateUser,
@@ -21,7 +20,7 @@ import { IdDto } from '../dto/id.dto';
 export class UserDbService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    @InjectConnection() private readonly connection: mongoose.Connection,
+    @InjectConnection() private readonly connection: Connection,
   ) {}
 
   async findByEmail(email: string): Promise<User> {
@@ -68,15 +67,17 @@ export class UserDbService {
 
     session.startTransaction();
 
-    const _user = new this.userModel(user);
-
-    const [savedUser, err] = await handlePromise(_user.save({ session }));
+    const [_user, err] = await handlePromise(
+      this.userModel.create([user], { session }),
+    );
 
     if (err) {
       await handlePromise(session.abortTransaction());
       await handlePromise(session.endSession());
       return Promise.reject(cantCreateUser(user.email, err));
     }
+
+    const [savedUser] = _user;
 
     token.consume(savedUser._id);
 

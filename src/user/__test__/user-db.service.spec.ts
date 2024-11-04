@@ -1,20 +1,36 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserDbService } from '../user-db.service';
-import { getModelToken } from '@nestjs/mongoose';
+import { getConnectionToken, getModelToken } from '@nestjs/mongoose';
 import { User } from '../../schemas/user.schema';
-import { Types } from 'mongoose';
+import { Connection, Types } from 'mongoose';
 import { CreateUserDto, UpdateUserDto } from '../../dto/user.dto';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 import { cantDelete } from '../user.errors';
+import {
+  RegisterToken,
+  RegisterTokenDocument,
+} from '../../schemas/register-token.schema';
 
 describe('UserDbService', () => {
   let service: UserDbService;
   let model: any;
+  let connection: any;
+
+  const mockConnection = {
+    startSession: jest.fn(),
+  } as unknown as Connection;
+
+  const mockRegisterToken = {
+    isConsumed: jest.fn(),
+    consume: jest.fn(),
+    save: jest.fn(),
+    _id: new Types.ObjectId(),
+  } as any;
 
   const mockUser = {
     _id: new Types.ObjectId(),
     email: 'test@example.com',
-    password: 'SecureP@ssw0rd!',
+    password: 'test-password',
     name: 'John',
     lastName: 'Doe',
     dni: 12345678,
@@ -38,11 +54,16 @@ describe('UserDbService', () => {
           provide: getModelToken(User.name),
           useValue: mockUserModel,
         },
+        {
+          provide: getConnectionToken(),
+          useValue: mockConnection,
+        },
       ],
     }).compile();
 
     service = module.get<UserDbService>(UserDbService);
     model = module.get(getModelToken(User.name));
+    connection = module.get<Connection>(getConnectionToken());
   });
 
   afterEach(() => {
@@ -87,34 +108,57 @@ describe('UserDbService', () => {
 
   describe('createUser', () => {
     it('should create a new user', async () => {
-      model.create.mockResolvedValue(mockUser);
+      model.create.mockResolvedValue([mockUser]);
+      mockRegisterToken.save.mockResolvedValue(undefined);
+
+      const mockSession = {
+        startTransaction: jest.fn(),
+        abortTransaction: jest.fn().mockResolvedValue(undefined),
+        commitTransaction: jest.fn().mockResolvedValue(undefined),
+        endSession: jest.fn().mockResolvedValue(undefined),
+      };
+
+      connection.startSession.mockResolvedValue(mockSession);
+
       const userDto: CreateUserDto = {
         email: 'john.doe@example.com',
-        password: 'SecureP@ssw0rd!',
+        password: 'test-password',
         name: 'John',
         lastName: 'Doe',
         dni: 12345678,
         matricula: 987654,
       };
-      const user = await service.createUser(userDto);
+      const userIdDto = await service.createUser(userDto, mockRegisterToken);
 
-      expect(model.create).toHaveBeenCalledWith(userDto);
-      expect(user).toEqual(mockUser);
+      expect(model.create).toHaveBeenCalledWith([userDto], {
+        session: mockSession,
+      });
+      expect(userIdDto).toEqual({ id: mockUser._id });
     });
 
     it('should throw an error if creating user fails', async () => {
       const err = new Error('Create error');
       model.create.mockRejectedValue(err);
+
+      connection.startSession.mockResolvedValue({
+        startTransaction: jest.fn(),
+        abortTransaction: jest.fn().mockResolvedValue(undefined),
+        commitTransaction: jest.fn().mockResolvedValue(undefined),
+        endSession: jest.fn().mockResolvedValue(undefined),
+      });
+
       const userDto: CreateUserDto = {
         email: 'john.doe@example.com',
-        password: 'SecureP@ssw0rd!',
+        password: 'test-password',
         name: 'John',
         lastName: 'Doe',
         dni: 12345678,
         matricula: 987654,
       };
 
-      await expect(service.createUser(userDto)).rejects.toStrictEqual(
+      await expect(
+        service.createUser(userDto, mockRegisterToken),
+      ).rejects.toStrictEqual(
         `Cannot create user ${userDto.email}. Reason: ${err}`,
       );
     });
@@ -162,22 +206,30 @@ describe('UserDbService', () => {
   });
 
   describe('delete', () => {
+    const deletedBy = new Types.ObjectId();
+
     it('should soft delete a user', async () => {
       model.updateOne.mockResolvedValue({ modifiedCount: 1 });
-      await service.delete(mockUser._id);
+      await service.delete(mockUser._id, deletedBy);
+
+      const softDelete = {
+        [IS_SOFT_DELETED_KEY]: true,
+        deletedBy,
+        deletionDate: expect.any(Date),
+      };
 
       expect(model.updateOne).toHaveBeenCalledWith(
         { _id: mockUser._id },
-        { $set: { [IS_SOFT_DELETED_KEY]: true } },
+        { $set: softDelete },
       );
     });
 
     it('should throw an error if delete fails', async () => {
       const err = new Error('Delete error');
       model.updateOne.mockRejectedValue(err);
-      await expect(service.delete(mockUser._id)).rejects.toStrictEqual(
-        cantDelete(mockUser._id, err),
-      );
+      await expect(
+        service.delete(mockUser._id, deletedBy),
+      ).rejects.toStrictEqual(cantDelete(mockUser._id, err));
     });
   });
 

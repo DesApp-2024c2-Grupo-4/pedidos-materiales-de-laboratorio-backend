@@ -166,12 +166,17 @@ describe('MaterialService', () => {
   });
 
   describe('delete', () => {
+    const deletedBy = new Types.ObjectId();
+
     it('should call dbService.delete and return nothing on success', async () => {
       mockMaterialDbService.delete.mockResolvedValue(undefined);
 
-      const result = await service.delete(mockMaterial._id);
+      const result = await service.delete(mockMaterial._id, deletedBy);
 
-      expect(dbService.delete).toHaveBeenCalledWith(mockMaterial._id);
+      expect(dbService.delete).toHaveBeenCalledWith(
+        mockMaterial._id,
+        deletedBy,
+      );
       expect(result).toBeUndefined();
     });
 
@@ -179,7 +184,7 @@ describe('MaterialService', () => {
       const error = new Error('Delete failed');
       mockMaterialDbService.delete.mockRejectedValue(error);
 
-      const result = await service.delete(mockMaterial._id);
+      const result = await service.delete(mockMaterial._id, deletedBy);
 
       expect(result).toBeInstanceOf(BackendException);
       expect(result.message).toBe(error.message);

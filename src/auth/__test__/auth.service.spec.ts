@@ -4,17 +4,32 @@ import { UserDbService } from '../../user/user-db.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../../dto/user.dto';
 import { BackendException } from '../../shared/backend.exception';
-import { HttpStatus } from '@nestjs/common';
+import { Types } from 'mongoose';
+import { RegisterTokenDbService } from '../register-token/register-token-db.service';
+import { RegisterTokenDocument } from 'src/schemas/register-token.schema';
 
 describe('AuthService', () => {
   let authService: AuthService;
   let userService: any;
+  let registerTokenService: any;
   let jwtService: any;
+
+  const mockRegisterToken = {
+    isConsumed: jest.fn(),
+    _id: new Types.ObjectId(),
+  } as any as RegisterTokenDocument;
 
   const mockUserService = {
     findByEmail: jest.fn(),
     createUser: jest.fn(),
     validatePassword: jest.fn(),
+  };
+
+  const mockRegisterTokenService = {
+    add: jest.fn(),
+    getAll: jest.fn(),
+    get: jest.fn(),
+    delete: jest.fn(),
   };
 
   const mockJwtService = {
@@ -25,13 +40,17 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        { provide: UserDbService, useValue: mockUserService },
         { provide: JwtService, useValue: mockJwtService },
+        { provide: UserDbService, useValue: mockUserService },
+        { provide: RegisterTokenDbService, useValue: mockRegisterTokenService },
       ],
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
     userService = module.get<UserDbService>(UserDbService);
+    registerTokenService = module.get<RegisterTokenDbService>(
+      RegisterTokenDbService,
+    );
     jwtService = module.get<JwtService>(JwtService);
   });
 
@@ -47,11 +66,14 @@ describe('AuthService', () => {
       };
       const err = new Error(`Database error`);
       userService.findByEmail.mockRejectedValue(err);
+      registerTokenService.get.mockResolvedValue(mockRegisterToken);
 
-      await expect(authService.registerUser(createUserDto)).rejects.toThrow(
-        BackendException,
-      );
-      await expect(authService.registerUser(createUserDto)).rejects.toThrow(
+      await expect(
+        authService.registerUser(createUserDto, mockRegisterToken._id),
+      ).rejects.toThrow(BackendException);
+      await expect(
+        authService.registerUser(createUserDto, mockRegisterToken._id),
+      ).rejects.toThrow(
         `Cannot create user ${createUserDto.email}. Reason: ${err}`,
       );
     });
@@ -67,13 +89,14 @@ describe('AuthService', () => {
       };
 
       userService.findByEmail.mockResolvedValue(createUserDto);
+      registerTokenService.get.mockResolvedValue(mockRegisterToken);
 
-      await expect(authService.registerUser(createUserDto)).rejects.toThrow(
-        BackendException,
-      );
-      await expect(authService.registerUser(createUserDto)).rejects.toThrow(
-        `Username ${createUserDto.email} already exists.`,
-      );
+      await expect(
+        authService.registerUser(createUserDto, mockRegisterToken._id),
+      ).rejects.toThrow(BackendException);
+      await expect(
+        authService.registerUser(createUserDto, mockRegisterToken._id),
+      ).rejects.toThrow(`Username ${createUserDto.email} already exists.`);
     });
 
     it('should throw an error if an error occurs while creating the user', async () => {
@@ -87,15 +110,18 @@ describe('AuthService', () => {
       };
 
       userService.findByEmail.mockResolvedValue(undefined);
+      registerTokenService.get.mockResolvedValue(mockRegisterToken);
 
       const err = new Error(`Database error`);
 
       userService.createUser.mockRejectedValue(err);
 
-      await expect(authService.registerUser(createUserDto)).rejects.toThrow(
-        BackendException,
-      );
-      await expect(authService.registerUser(createUserDto)).rejects.toThrow(
+      await expect(
+        authService.registerUser(createUserDto, mockRegisterToken._id),
+      ).rejects.toThrow(BackendException);
+      await expect(
+        authService.registerUser(createUserDto, mockRegisterToken._id),
+      ).rejects.toThrow(
         `Cannot create user ${createUserDto.email}. Reason: ${err}`,
       );
     });
@@ -112,9 +138,10 @@ describe('AuthService', () => {
 
       userService.findByEmail.mockResolvedValue(undefined);
       userService.createUser.mockResolvedValue(createUserDto);
+      registerTokenService.get.mockResolvedValue(mockRegisterToken);
 
       await expect(
-        authService.registerUser(createUserDto),
+        authService.registerUser(createUserDto, mockRegisterToken._id),
       ).resolves.toStrictEqual(createUserDto);
     });
   });

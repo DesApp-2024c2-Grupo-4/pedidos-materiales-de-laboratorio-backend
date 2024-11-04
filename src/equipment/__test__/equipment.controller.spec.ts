@@ -2,10 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EquipmentController } from '../equipment.controller';
 import { EquipmentService } from '../equipment.service';
 import { Types } from 'mongoose';
+import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
 
 describe('EquipmentController', () => {
   let controller: EquipmentController;
   let service: any;
+
+  const mockAuthenticatedRequest = {
+    user: {
+      id: new Types.ObjectId(),
+    },
+  } as AuthenticatedRequest;
 
   const mockEquipment = {
     _id: new Types.ObjectId(),
@@ -91,9 +98,14 @@ describe('EquipmentController', () => {
     it('should call EquipmentService.delete and return the result', async () => {
       service.delete.mockResolvedValue(undefined); // mock void return
 
-      const result = await controller.delete(mockEquipment._id);
+      const result = await controller.delete(mockAuthenticatedRequest, {
+        id: mockEquipment._id,
+      });
 
-      expect(service.delete).toHaveBeenCalledWith(mockEquipment._id);
+      expect(service.delete).toHaveBeenCalledWith(
+        mockEquipment._id,
+        mockAuthenticatedRequest.user.id,
+      );
       expect(result).toBeUndefined();
     });
   });
