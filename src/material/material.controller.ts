@@ -42,7 +42,7 @@ export class MaterialController {
 
   @Delete('/:id')
   delete(@Request() req: AuthenticatedRequest, @Param() params: IdDto) {
-    const { id } = req.user;
-    return this.materialService.delete(params.id, id);
+    const { id: deletedBy } = req.user;
+    return this.materialService.delete(params.id, deletedBy);
   }
 }

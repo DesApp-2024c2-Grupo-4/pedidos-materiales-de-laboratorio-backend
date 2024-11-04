@@ -11,6 +11,7 @@ import {
   cantUpdateReactive,
   cantDeleteReactive,
 } from '../reactive.errors';
+import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('ReactiveDbService', () => {
   let service: ReactiveDbService;
@@ -160,14 +161,22 @@ describe('ReactiveDbService', () => {
   });
 
   describe('delete', () => {
+    const deletedBy = new Types.ObjectId();
+
     it('should delete a reactive by ID', async () => {
       const mockId = new Types.ObjectId();
       mockReactiveModel.updateOne.mockResolvedValue({});
 
-      await service.delete(mockId);
-      expect(mockReactiveModel.updateOne).toHaveBeenCalledWith(
+      await service.delete(mockId, deletedBy);
+      const softDelete = {
+        [IS_SOFT_DELETED_KEY]: true,
+        deletedBy,
+        deletionDate: expect.any(Date),
+      };
+
+      expect(model.updateOne).toHaveBeenCalledWith(
         { _id: mockId },
-        { $set: { isSoftDeleted: true } },
+        { $set: softDelete },
       );
     });
 
@@ -176,13 +185,8 @@ describe('ReactiveDbService', () => {
       const id = new Types.ObjectId();
       model.updateOne.mockRejectedValue(error);
 
-      await expect(service.delete(id)).rejects.toStrictEqual(
+      await expect(service.delete(id, deletedBy)).rejects.toStrictEqual(
         cantDeleteReactive(id, error),
-      );
-
-      expect(mockReactiveModel.updateOne).toHaveBeenCalledWith(
-        { _id: id },
-        { $set: { isSoftDeleted: true } },
       );
     });
   });

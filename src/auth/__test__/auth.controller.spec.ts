@@ -3,6 +3,8 @@ import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 import { CreateUserDto, UserLoginDto } from '../../dto/user.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { Types } from 'mongoose';
+import { RegisterTokenIdDto } from '../../dto/register-token.dto';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -11,6 +13,10 @@ describe('AuthController', () => {
   const mockAuthService = {
     registerUser: jest.fn(),
     loginUser: jest.fn(),
+  };
+
+  const mockRegisterTokenIdDto: RegisterTokenIdDto = {
+    token: new Types.ObjectId(),
   };
 
   beforeEach(async () => {
@@ -41,9 +47,15 @@ describe('AuthController', () => {
 
       mockAuthService.registerUser.mockResolvedValue(createUserDto);
 
-      const result = await authController.registerUser(createUserDto);
+      const result = await authController.registerUser(
+        mockRegisterTokenIdDto,
+        createUserDto,
+      );
       expect(result).toEqual(createUserDto);
-      expect(mockAuthService.registerUser).toHaveBeenCalledWith(createUserDto);
+      expect(mockAuthService.registerUser).toHaveBeenCalledWith(
+        createUserDto,
+        mockRegisterTokenIdDto.token,
+      );
     });
 
     it('should throw an error if registration fails', async () => {
@@ -60,10 +72,13 @@ describe('AuthController', () => {
         new HttpException('User already exists', HttpStatus.BAD_REQUEST),
       );
 
-      await expect(authController.registerUser(createUserDto)).rejects.toThrow(
-        HttpException,
+      await expect(
+        authController.registerUser(mockRegisterTokenIdDto, createUserDto),
+      ).rejects.toThrow(HttpException);
+      expect(mockAuthService.registerUser).toHaveBeenCalledWith(
+        createUserDto,
+        mockRegisterTokenIdDto.token,
       );
-      expect(mockAuthService.registerUser).toHaveBeenCalledWith(createUserDto);
     });
   });
 

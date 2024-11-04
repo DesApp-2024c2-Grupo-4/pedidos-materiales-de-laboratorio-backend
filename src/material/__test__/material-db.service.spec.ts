@@ -57,42 +57,19 @@ describe('MaterialDbService', () => {
 
   describe('add', () => {
     it('should create and save a new material', async () => {
-      const saveMaterial = {
-        save: jest.fn().mockResolvedValue(mockMaterial),
-      };
-      materialModel.create.mockResolvedValue(saveMaterial);
+      materialModel.create.mockResolvedValue({});
 
       await service.add(mockMaterial);
 
       expect(materialModel.create).toHaveBeenCalledWith(mockMaterial);
-      expect(saveMaterial.save).toHaveBeenCalled();
     });
 
     it('should return an error if creation fails', async () => {
       const error = new Error('Creation failed');
       materialModel.create.mockRejectedValue(error);
 
-      const result = await service.add(mockMaterial);
-
-      expect(result).toEqual(
-        new Error(
-          `Cannot create material ${mockMaterial.type}. Reason: ${error}`,
-        ),
-      );
-    });
-
-    it('should return an error if save fails', async () => {
-      const error = new Error('Creation failed');
-      materialModel.create.mockResolvedValue({
-        save: jest.fn().mockRejectedValue(error),
-      });
-
-      const result = await service.add(mockMaterial);
-
-      expect(result).toEqual(
-        new Error(
-          `Cannot create material ${mockMaterial.type}. Reason: ${error}`,
-        ),
+      await expect(service.add(mockMaterial)).rejects.toEqual(
+        `Cannot create material ${mockMaterial.type}. Reason: ${error}`,
       );
     });
   });
@@ -117,15 +94,10 @@ describe('MaterialDbService', () => {
       const error = new Error('Update failed');
       materialModel.updateOne.mockRejectedValue(error);
 
-      const result = await service.update(
-        mockMaterial._id,
-        mockUpdateMaterialDto,
-      );
-
-      expect(result).toEqual(
-        new Error(
-          `Cannot update material with id ${mockMaterial._id}. Reason: ${error}`,
-        ),
+      await expect(
+        service.update(mockMaterial._id, mockUpdateMaterialDto),
+      ).rejects.toEqual(
+        `Cannot update material with id ${mockMaterial._id}. Reason: ${error}`,
       );
     });
   });
@@ -146,12 +118,8 @@ describe('MaterialDbService', () => {
       const error = new Error('Get failed');
       materialModel.findOne.mockRejectedValue(error);
 
-      const result = await service.get(mockMaterial._id);
-
-      expect(result).toEqual(
-        new Error(
-          `Cannot get material with id ${mockMaterial._id}. Reason: ${error}`,
-        ),
+      await expect(service.get(mockMaterial._id)).rejects.toEqual(
+        `Cannot get material with id ${mockMaterial._id}. Reason: ${error}`,
       );
     });
   });
@@ -170,22 +138,25 @@ describe('MaterialDbService', () => {
       const error = new Error('Get all failed');
       materialModel.find.mockRejectedValue(error);
 
-      const result = await service.getAll();
-
-      expect(result).toEqual(
-        new Error(`Cannot get materials. Reason: ${error}`),
+      await expect(service.getAll()).rejects.toEqual(
+        `Cannot get materials. Reason: ${error}`,
       );
     });
   });
 
   describe('delete', () => {
+    const deletedBy = new Types.ObjectId();
+
     it('should soft-delete a material by ID', async () => {
       materialModel.updateOne.mockResolvedValue(undefined);
 
-      await service.delete(mockMaterial._id);
+      await service.delete(mockMaterial._id, deletedBy);
 
-      const softDelete = {};
-      softDelete[IS_SOFT_DELETED_KEY] = true;
+      const softDelete = {
+        [IS_SOFT_DELETED_KEY]: true,
+        deletedBy,
+        deletionDate: expect.any(Date),
+      };
 
       expect(materialModel.updateOne).toHaveBeenCalledWith(
         { _id: mockMaterial._id },
@@ -197,12 +168,8 @@ describe('MaterialDbService', () => {
       const error = new Error('Delete failed');
       materialModel.updateOne.mockRejectedValue(error);
 
-      const result = await service.delete(mockMaterial._id);
-
-      expect(result).toEqual(
-        new Error(
-          `Cannot delete material with id ${mockMaterial._id}. Reason: ${error}`,
-        ),
+      await expect(service.delete(mockMaterial._id, deletedBy)).rejects.toEqual(
+        `Cannot delete material with id ${mockMaterial._id}. Reason: ${error}`,
       );
     });
   });
