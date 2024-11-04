@@ -11,7 +11,7 @@ import {
 import { EquipmentService } from './equipment.service';
 import { Equipment } from '../schemas/requestable/equipment.schema';
 import { Types } from 'mongoose';
-import { AuthenticatedRequest } from 'src/dto/authenticated-request.dto';
+import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { IdDto } from '../dto/id.dto';
 
 @Controller('/equipment')
