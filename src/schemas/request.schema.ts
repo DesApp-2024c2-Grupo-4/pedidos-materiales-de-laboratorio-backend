@@ -16,7 +16,15 @@ export class IsGmailTransformer {
   }
 }
 
+export const RequestStatuses = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  COMPLETED: 'COMPLETED',
+};
+
 export type RequestDocument = HydratedDocument<Request>;
+export type RequestStatus = keyof typeof RequestStatuses;
 
 @Schema()
 export class SolventRequest {
@@ -92,7 +100,7 @@ export class Request {
 
   @IsDate()
   @Prop({ required: true })
-  requestDate: Date;
+  creationDate: Date;
 
   @IsDate()
   @Prop({ required: true })
@@ -149,6 +157,37 @@ export class Request {
   @IsNumber()
   @Prop({ required: true })
   requestNumber: Number;
+
+  @IsString()
+  @Prop({ required: true, enum: Object.keys(RequestStatuses) })
+  status: RequestStatus;
+
+  isCompleted: () => boolean;
+  isRejected: () => boolean;
+  isExpired: (secondsToExpire: number) => boolean;
+  updateExpiration: (secondsToExpire: number) => void;
 }
 
 export const RequestSchema = SchemaFactory.createForClass(Request);
+
+RequestSchema.methods.isCompleted = function (): boolean {
+  return this.status !== RequestStatuses.COMPLETED;
+};
+
+RequestSchema.methods.isRejected = function (): boolean {
+  return this.status !== RequestStatuses.REJECTED;
+};
+
+RequestSchema.methods.isExpired = function (daysToExpire: number): boolean {
+  return this.creationDate.getTime() + daysToExpire < Date.now();
+};
+
+RequestSchema.methods.updateExpiration = function (
+  secondsToExpire: number,
+): void {
+  if (this.isCompleted()) return;
+  if (this.isRejected()) return;
+  if (!this.isExpired(secondsToExpire)) return;
+
+  this.status = RequestStatuses.REJECTED;
+};
