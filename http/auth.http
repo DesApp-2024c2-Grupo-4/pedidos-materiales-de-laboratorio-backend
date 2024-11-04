@@ -1,4 +1,7 @@
-### Get all available/unused tokens
+### Get all tokens
+# Using isAvailable = true will return available tokens
+# Using isAvailable = false will return non-available tokens
+# If isAvailable query param is not sent will return all tokens
 GET http://localhost:3000/auth/register/token?isAvailable=true
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY3OTgzNCwiZXhwIjoxNzMwNjgzNDM0fQ.-OB9SpL8vA95jrqctQM6QfgkMgxqVfXskm_KGa5GKos
 
@@ -6,7 +9,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlY
 POST http://localhost:3000/auth/register/token
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY3OTgzNCwiZXhwIjoxNzMwNjgzNDM0fQ.-OB9SpL8vA95jrqctQM6QfgkMgxqVfXskm_KGa5GKos
 
-### Delete a register token
+### Delete an available register token
 DELETE http://localhost:3000/auth/register/token/6727e695aba4acec6162bdd9
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY3OTgzNCwiZXhwIjoxNzMwNjgzNDM0fQ.-OB9SpL8vA95jrqctQM6QfgkMgxqVfXskm_KGa5GKos
 
