@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../../schemas/user.schema';
 import { ConfigService } from '@nestjs/config';
-import handlePromise from 'src/utils/promise';
+import handlePromise from '../../utils/promise';
 
 @Injectable()
 export class UserInitService implements OnModuleInit {

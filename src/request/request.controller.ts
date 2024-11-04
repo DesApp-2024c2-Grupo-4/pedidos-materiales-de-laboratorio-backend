@@ -13,7 +13,7 @@ import { RequestService } from './request.service';
 import { Request } from '../schemas/request.schema';
 import { IdDto } from '../dto/id.dto';
 import { UpdateRequestDto } from '../dto/request.dto';
-import { AuthenticatedRequest } from 'src/dto/authenticated-request.dto';
+import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 
 @Controller('request')
 export class RequestController {
