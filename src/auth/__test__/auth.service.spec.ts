@@ -7,6 +7,10 @@ import { BackendException } from '../../shared/backend.exception';
 import { Types } from 'mongoose';
 import { RegisterTokenDbService } from '../register-token/register-token-db.service';
 import { RegisterTokenDocument } from 'src/schemas/register-token.schema';
+import { IdDto } from '../../dto/id.dto';
+import { cantDeleteToken } from '../register-token/register-token.errors';
+import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
+import { cantCreateUser } from '../../user/user.errors';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -55,94 +59,176 @@ describe('AuthService', () => {
   });
 
   describe('registerUser', () => {
-    it('should throw an error if an error occurs while fetching the user', async () => {
-      const createUserDto: CreateUserDto = {
-        name: 'John',
-        lastName: 'Doe',
-        dni: 12345678,
-        email: 'john.doe@example.com',
-        password: 'password123',
-        matricula: 123,
-      };
-      const err = new Error(`Database error`);
-      userService.findByEmail.mockRejectedValue(err);
-      registerTokenService.get.mockResolvedValue(mockRegisterToken);
+    describe('registerUser', () => {
+      it('should throw an error if an error occurs while fetching the user', async () => {
+        const createUserDto: CreateUserDto = {
+          name: 'John',
+          lastName: 'Doe',
+          dni: 12345678,
+          email: 'john.doe@example.com',
+          password: 'password123',
+          matricula: 123,
+        };
+        const err = new Error(`Database error`);
+        userService.findByEmail.mockRejectedValue(err);
+        registerTokenService.get.mockResolvedValue(mockRegisterToken);
 
-      await expect(
-        authService.registerUser(createUserDto, mockRegisterToken._id),
-      ).rejects.toThrow(BackendException);
-      await expect(
-        authService.registerUser(createUserDto, mockRegisterToken._id),
-      ).rejects.toThrow(
-        `Cannot create user ${createUserDto.email}. Reason: ${err}`,
-      );
-    });
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(BackendException);
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(
+          `Cannot create user ${createUserDto.email}. Reason: ${err}`,
+        );
+      });
 
-    it('should throw an error if user already exists', async () => {
-      const createUserDto: CreateUserDto = {
-        name: 'John',
-        lastName: 'Doe',
-        dni: 12345678,
-        email: 'john.doe@example.com',
-        password: 'password123',
-        matricula: 123,
-      };
+      it('should throw an error if user already exists', async () => {
+        const createUserDto: CreateUserDto = {
+          name: 'John',
+          lastName: 'Doe',
+          dni: 12345678,
+          email: 'john.doe@example.com',
+          password: 'password123',
+          matricula: 123,
+        };
 
-      userService.findByEmail.mockResolvedValue(createUserDto);
-      registerTokenService.get.mockResolvedValue(mockRegisterToken);
+        userService.findByEmail.mockResolvedValue(createUserDto);
+        registerTokenService.get.mockResolvedValue(mockRegisterToken);
 
-      await expect(
-        authService.registerUser(createUserDto, mockRegisterToken._id),
-      ).rejects.toThrow(BackendException);
-      await expect(
-        authService.registerUser(createUserDto, mockRegisterToken._id),
-      ).rejects.toThrow(`Username ${createUserDto.email} already exists.`);
-    });
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(BackendException);
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(`Username ${createUserDto.email} already exists.`);
+      });
 
-    it('should throw an error if an error occurs while creating the user', async () => {
-      const createUserDto: CreateUserDto = {
-        name: 'John',
-        lastName: 'Doe',
-        dni: 12345678,
-        email: 'john.doe@example.com',
-        password: 'password123',
-        matricula: 123,
-      };
+      it('should throw an error if an error occurs while getting the token', async () => {
+        const createUserDto: CreateUserDto = {
+          name: 'John',
+          lastName: 'Doe',
+          dni: 12345678,
+          email: 'john.doe@example.com',
+          password: 'password123',
+          matricula: 123,
+        };
 
-      userService.findByEmail.mockResolvedValue(undefined);
-      registerTokenService.get.mockResolvedValue(mockRegisterToken);
+        userService.findByEmail.mockResolvedValue(undefined);
 
-      const err = new Error(`Database error`);
+        const getTokenErr = new Error('Error getting token');
+        registerTokenService.get.mockRejectedValue(getTokenErr);
 
-      userService.createUser.mockRejectedValue(err);
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(BackendException);
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(
+          `Cannot create user ${createUserDto.email}. Reason: Error getting token: ${getTokenErr}`,
+        );
+      });
 
-      await expect(
-        authService.registerUser(createUserDto, mockRegisterToken._id),
-      ).rejects.toThrow(BackendException);
-      await expect(
-        authService.registerUser(createUserDto, mockRegisterToken._id),
-      ).rejects.toThrow(
-        `Cannot create user ${createUserDto.email}. Reason: ${err}`,
-      );
-    });
+      it('should throw an error if an error occurs while creating the user', async () => {
+        const createUserDto: CreateUserDto = {
+          name: 'John',
+          lastName: 'Doe',
+          dni: 12345678,
+          email: 'john.doe@example.com',
+          password: 'password123',
+          matricula: 123,
+        };
 
-    it('should register user', async () => {
-      const createUserDto: CreateUserDto = {
-        name: 'John',
-        lastName: 'Doe',
-        dni: 12345678,
-        email: 'john.doe@example.com',
-        password: 'password123',
-        matricula: 123,
-      };
+        userService.findByEmail.mockResolvedValue(undefined);
+        registerTokenService.get.mockResolvedValue(mockRegisterToken);
 
-      userService.findByEmail.mockResolvedValue(undefined);
-      userService.createUser.mockResolvedValue(createUserDto);
-      registerTokenService.get.mockResolvedValue(mockRegisterToken);
+        const err = new Error(`Database error`);
 
-      await expect(
-        authService.registerUser(createUserDto, mockRegisterToken._id),
-      ).resolves.toStrictEqual(createUserDto);
+        userService.createUser.mockRejectedValue(err);
+
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(BackendException);
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(
+          `Cannot create user ${createUserDto.email}. Reason: ${err}`,
+        );
+      });
+
+      it('should throw an error if token cannot be found', async () => {
+        const createUserDto: CreateUserDto = {
+          name: 'John',
+          lastName: 'Doe',
+          dni: 12345678,
+          email: 'john.doe@example.com',
+          password: 'password123',
+          matricula: 123,
+        };
+
+        userService.findByEmail.mockResolvedValue(undefined);
+        registerTokenService.get.mockResolvedValue(undefined);
+
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(BackendException);
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(
+          cantCreateUser(
+            createUserDto.email,
+            `Token ${mockRegisterToken._id} is not available.`,
+          ),
+        );
+      });
+
+      it('should throw an error if token is consumed', async () => {
+        const createUserDto: CreateUserDto = {
+          name: 'John',
+          lastName: 'Doe',
+          dni: 12345678,
+          email: 'john.doe@example.com',
+          password: 'password123',
+          matricula: 123,
+        };
+
+        userService.findByEmail.mockResolvedValue(undefined);
+        registerTokenService.get.mockResolvedValue({
+          ...mockRegisterToken,
+          isConsumed: jest.fn().mockReturnValue(true),
+        });
+
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(BackendException);
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).rejects.toThrow(
+          cantCreateUser(
+            createUserDto.email,
+            `Token ${mockRegisterToken._id} is not available.`,
+          ),
+        );
+      });
+
+      it('should register user', async () => {
+        const createUserDto: CreateUserDto = {
+          name: 'John',
+          lastName: 'Doe',
+          dni: 12345678,
+          email: 'john.doe@example.com',
+          password: 'password123',
+          matricula: 123,
+        };
+
+        userService.findByEmail.mockResolvedValue(undefined);
+        userService.createUser.mockResolvedValue(createUserDto);
+        registerTokenService.get.mockResolvedValue(mockRegisterToken);
+
+        await expect(
+          authService.registerUser(createUserDto, mockRegisterToken._id),
+        ).resolves.toStrictEqual(createUserDto);
+      });
     });
   });
 
@@ -258,6 +344,174 @@ describe('AuthService', () => {
       await expect(authService.loginUser(email, password)).rejects.toThrow(
         `Credentials are invalid`,
       );
+    });
+  });
+
+  describe('createRegisterToken', () => {
+    it('should successfully create a register token', async () => {
+      const creatorId = new Types.ObjectId();
+      const createdFor = 'user@example.com';
+      const tokenIdResponse: IdDto = { id: creatorId };
+
+      mockRegisterTokenService.add.mockResolvedValue(tokenIdResponse);
+
+      const result = await authService.createRegisterToken(
+        creatorId,
+        createdFor,
+      );
+      expect(result).toEqual(tokenIdResponse);
+      expect(mockRegisterTokenService.add).toHaveBeenCalledWith(
+        creatorId,
+        createdFor,
+      );
+    });
+
+    it('should throw an error if an error occurs while creating a register token', async () => {
+      const creatorId = new Types.ObjectId();
+      const createdFor = 'user@example.com';
+      const errorMessage = 'Failed to create token';
+
+      mockRegisterTokenService.add.mockRejectedValue(new Error(errorMessage));
+
+      await expect(
+        authService.createRegisterToken(creatorId, createdFor),
+      ).rejects.toThrow(BackendException);
+      await expect(
+        authService.createRegisterToken(creatorId, createdFor),
+      ).rejects.toThrow(errorMessage);
+    });
+  });
+
+  describe('getRegisterToken', () => {
+    it('should return a list of register tokens', async () => {
+      const tokens = [mockRegisterToken];
+      mockRegisterTokenService.getAll.mockResolvedValue(tokens);
+
+      const result = await authService.getRegisterToken();
+      expect(result).toEqual(tokens);
+      expect(mockRegisterTokenService.getAll).toHaveBeenCalledWith(undefined);
+    });
+
+    it('should throw an error if an error occurs while retrieving tokens', async () => {
+      const errorMessage = 'Failed to get tokens';
+
+      mockRegisterTokenService.getAll.mockRejectedValue(
+        new Error(errorMessage),
+      );
+
+      await expect(authService.getRegisterToken()).rejects.toThrow(
+        BackendException,
+      );
+      await expect(authService.getRegisterToken()).rejects.toThrow(
+        errorMessage,
+      );
+    });
+  });
+
+  describe('deleteRegisterToken', () => {
+    it('should successfully delete a register token', async () => {
+      const tokenId = new Types.ObjectId();
+      const deletedBy = new Types.ObjectId();
+
+      mockRegisterTokenService.get.mockResolvedValue(mockRegisterToken);
+      mockRegisterTokenService.delete.mockResolvedValue(undefined);
+
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).resolves.toBeUndefined();
+      expect(mockRegisterTokenService.get).toHaveBeenCalledWith(tokenId);
+      expect(mockRegisterTokenService.delete).toHaveBeenCalledWith(
+        tokenId,
+        deletedBy,
+      );
+    });
+
+    it('should throw an error if the token does not exist', async () => {
+      const tokenId = new Types.ObjectId();
+      const deletedBy = new Types.ObjectId();
+
+      mockRegisterTokenService.get.mockResolvedValue(null);
+
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow(BackendException);
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow('');
+    });
+
+    it('should throw an error if an error occurs while retrieving the token', async () => {
+      const tokenId = new Types.ObjectId();
+      const deletedBy = new Types.ObjectId();
+      const errorMessage = 'Failed to retrieve token';
+
+      mockRegisterTokenService.get.mockRejectedValue(new Error(errorMessage));
+
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow(BackendException);
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow(errorMessage);
+    });
+
+    it('should throw an error if an error occurs while deleting the token', async () => {
+      const tokenId = new Types.ObjectId();
+      const deletedBy = new Types.ObjectId();
+
+      mockRegisterTokenService.get.mockResolvedValue(mockRegisterToken);
+      mockRegisterTokenService.delete.mockRejectedValue(
+        new Error('Failed to delete token'),
+      );
+
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow(BackendException);
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow('Failed to delete token');
+    });
+
+    it('should throw an error if the token is already consumed', async () => {
+      const tokenId = new Types.ObjectId();
+      const deletedBy = new Types.ObjectId();
+
+      const token = {
+        ...mockRegisterToken,
+        _id: tokenId,
+        userCreated: new Types.ObjectId(),
+      } as any as RegisterTokenDocument;
+
+      registerTokenService.get.mockResolvedValue(token);
+
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow(BackendException);
+
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow(cantDeleteToken(tokenId, `Token is not available.`));
+    });
+
+    it('should throw an error if the token is soft deleted', async () => {
+      const tokenId = new Types.ObjectId();
+      const deletedBy = new Types.ObjectId();
+
+      const token = {
+        ...mockRegisterToken,
+        _id: tokenId,
+        [IS_SOFT_DELETED_KEY]: true,
+      } as any as RegisterTokenDocument;
+
+      registerTokenService.get.mockResolvedValue(token);
+
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow(BackendException);
+
+      await expect(
+        authService.deleteRegisterToken(tokenId, deletedBy),
+      ).rejects.toThrow(cantDeleteToken(tokenId, `Token is not available.`));
     });
   });
 });
