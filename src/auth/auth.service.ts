@@ -54,7 +54,7 @@ export class AuthService {
       );
     }
 
-    if (!token || token?.isConsumed()) {
+    if (!token || token?.isConsumed() || token?.isSoftDeleted) {
       throw new BackendException(
         cantCreateUser(user.email, `Token ${tokenId} is not available.`),
         HttpStatus.BAD_REQUEST,

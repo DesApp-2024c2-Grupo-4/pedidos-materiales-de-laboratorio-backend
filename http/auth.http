@@ -2,26 +2,26 @@
 # Using isAvailable = true will return available tokens
 # Using isAvailable = false will return non-available tokens
 # If isAvailable query param is not sent will return all tokens
-GET http://localhost:3000/auth/register/token?isAvailable=true
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDczMjg1MCwiZXhwIjoxNzMwODE5MjUwfQ.-ktXXoLjKp2zup8j48FR5n9TCj7UEO6XHlAhDLr-2pg
+GET http://localhost:3000/auth/register/token?isAvailable=false
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Mjk3MTllMWY2YjhhODE2YWZlZTZiMSIsInJvbGVzIjpbImFkbWluIiwibGFiIl0sIm5hbWUiOiJBZG1pbiIsImxhc3ROYW1lIjoiVXNlciIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpYXQiOjE3MzA3NjkzMjUsImV4cCI6MTczMDg1NTcyNX0.VaF5QqI_oh4K4eQYhIAJtS6JgJu44k03aoDp5IXP86Q
 
 ### Create a new register token
 POST http://localhost:3000/auth/register/token
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY3OTgzNCwiZXhwIjoxNzMwNjgzNDM0fQ.-OB9SpL8vA95jrqctQM6QfgkMgxqVfXskm_KGa5GKos
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Mjk2ZjUzMTMzNzY1MWQyMWE2ZDUyMiIsInJvbGVzIjpbImFkbWluIiwibGFiIl0sIm5hbWUiOiJBZG1pbiIsImxhc3ROYW1lIjoiVXNlciIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpYXQiOjE3MzA3Njg3NDUsImV4cCI6MTczMDg1NTE0NX0.yHvyMcutFeVsej3oFA7TjanO-rJKtjtozBKGygY3w7M
 
 ### Delete an available register token
-DELETE http://localhost:3000/auth/register/token/6727e695aba4acec6162bdd9
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MjdlNjVlYWJhNGFjZWM2MTYyYmRkNCIsInJvbGUiOlsiYWRtaW4iLCJsYWIiXSwibmFtZSI6IkFkbWluIiwibGFzdE5hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTczMDY3OTgzNCwiZXhwIjoxNzMwNjgzNDM0fQ.-OB9SpL8vA95jrqctQM6QfgkMgxqVfXskm_KGa5GKos
+DELETE http://localhost:3000/auth/register/token/67297175c7f715f6e4b623b5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Mjk2ZjUzMTMzNzY1MWQyMWE2ZDUyMiIsInJvbGVzIjpbImFkbWluIiwibGFiIl0sIm5hbWUiOiJBZG1pbiIsImxhc3ROYW1lIjoiVXNlciIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpYXQiOjE3MzA3Njg3NDUsImV4cCI6MTczMDg1NTE0NX0.yHvyMcutFeVsej3oFA7TjanO-rJKtjtozBKGygY3w7M
 
 ### Register User
-POST http://localhost:3000/auth/register?token=6727e695aba4acec6162bdd9
+POST http://localhost:3000/auth/register?token=67297175c7f715f6e4b623b5
 Content-Type: application/json
 
 {
     "name": "rick",
     "lastName": "sanchez",
     "password": "piclkeRick1",
-    "email": "rsanche2z@example.com",
+    "email": "rsanchez@example.com",
     "dni": 1234
 }
 

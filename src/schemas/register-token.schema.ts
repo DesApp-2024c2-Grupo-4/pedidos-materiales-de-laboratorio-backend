@@ -30,6 +30,7 @@ export class RegisterToken extends SoftDelete {
   createdFor: string;
 
   consume: (createdUserId: Types.ObjectId) => Promise<void>;
+
   isConsumed: () => Boolean;
 
   constructor(creatorId: Types.ObjectId, createdFor?: string) {

@@ -27,6 +27,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return true;
     }
 
+    /* Calling super here allows for response.user to be populated with JWT payload */
     const canActivateSuper = await super.canActivate(context);
     if (!canActivateSuper) return false;
 
@@ -43,7 +44,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     );
 
     if (requiredRolesAll && requiredRolesAny) {
-      throw new ForbiddenException(
+      throw new Error(
         'Conflicting role decorators: use either @RolesAll or @RolesAny, not both.',
       );
     }
