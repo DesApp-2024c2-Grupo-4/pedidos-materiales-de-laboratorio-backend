@@ -26,7 +26,7 @@ export class UserInitService implements OnModuleInit {
     if (userCount === 0) {
       console.warn('No user accounts detected, creating default admin user.');
 
-      const envRoles = this.configService.get<string>('DEFAULT_ADMIN_ROLE');
+      const envRoles = this.configService.get<string>('DEFAULT_ADMIN_ROLES');
       const roles: string[] = envRoles ? envRoles.split(';') : ['admin', 'lab'];
       const email =
         this.configService.get<string>('DEFAULT_ADMIN_EMAIL') ||

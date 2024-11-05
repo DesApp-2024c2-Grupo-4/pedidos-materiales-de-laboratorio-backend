@@ -29,7 +29,7 @@ El usuario creado por defecto si no se obtiene una configuración por variables 
   "name": "Admin",
   "lastName": "User",
   "dni": 12345678,
-  "role": ["admin", "lab"]
+  "roles": ["admin", "lab"]
 }
 ```
 
@@ -71,7 +71,7 @@ Una vez configuradas las variables en el archivo .env, puedes iniciar la aplicac
 | DEFAULT_ADMIN_NAME      | Nombre de usuario de la cuenta de administrador predeterminada.                   | String        | Admin                  |
 | DEFAULT_ADMIN_LASTNAME  | Apellido de usuario de la cuenta de administrador predeterminada.                 | String        | User                   |
 | DEFAULT_ADMIN_DNI       | DNI de usuario de la cuenta de administrador predeterminada.                      | Número        | 12345678               |
-| DEFAULT_ADMIN_ROLE      | Roles de la cuenta de administrador predeterminada separados por el carácter ';'. | String[]      | admin;lab              |
+| DEFAULT_ADMIN_ROLES     | Roles de la cuenta de administrador predeterminada separados por el carácter ';'. | String[]      | admin;lab              |
 
 
 ## Iniciando el Proyecto

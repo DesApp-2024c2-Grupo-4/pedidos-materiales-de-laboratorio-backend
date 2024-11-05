@@ -71,7 +71,7 @@ describe('UserInitService', () => {
   it('should create an admin user if no users exist and CREATE_DEFAULT_ADMIN is true', async () => {
     mockConfigService.get.mockImplementation((key: string) => {
       if (key === 'CREATE_DEFAULT_ADMIN') return 'true';
-      if (key === 'DEFAULT_ADMIN_ROLE') return 'admin;lab';
+      if (key === 'DEFAULT_ADMIN_ROLES') return 'admin;lab';
       if (key === 'DEFAULT_ADMIN_EMAIL') return 'admin@example.com';
       if (key === 'DEFAULT_ADMIN_PASSWORD') return 'example';
       if (key === 'DEFAULT_ADMIN_NAME') return 'Admin';
@@ -88,7 +88,7 @@ describe('UserInitService', () => {
       name: 'Admin',
       lastName: 'User',
       dni: 12345678,
-      role: ['admin', 'lab'],
+      roles: ['admin', 'lab'],
     };
 
     mockUserModel.create.mockResolvedValueOnce(mockAdminUser);
@@ -134,7 +134,7 @@ describe('UserInitService', () => {
       name: 'Admin',
       lastName: 'User',
       dni: 12345678,
-      role: ['admin', 'lab'],
+      roles: ['admin', 'lab'],
     };
 
     mockUserModel.create.mockResolvedValueOnce(defaultAdminUser);
