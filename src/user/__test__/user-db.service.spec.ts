@@ -35,7 +35,7 @@ describe('UserDbService', () => {
     lastName: 'Doe',
     dni: 12345678,
     matricula: 987654,
-    role: ['admin'],
+    roles: ['admin'],
     comparePassword: jest.fn(),
   };
 

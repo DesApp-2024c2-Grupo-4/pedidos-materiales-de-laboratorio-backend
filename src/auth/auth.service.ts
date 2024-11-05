@@ -54,7 +54,7 @@ export class AuthService {
       );
     }
 
-    if (!token || token?.isConsumed()) {
+    if (!token || token?.isConsumed() || token?.isSoftDeleted) {
       throw new BackendException(
         cantCreateUser(user.email, `Token ${tokenId} is not available.`),
         HttpStatus.BAD_REQUEST,
@@ -179,12 +179,12 @@ export class AuthService {
   }
 
   private buildAccessTokenPayload(user: User): AccessTokenPayload {
-    const { role, name, lastName, email } = user;
+    const { roles, name, lastName, email } = user;
     const { _id: id } = user as any as Document<Types.ObjectId, any, User>;
 
     return {
       id,
-      role,
+      roles,
       name,
       lastName,
       email,
