@@ -179,12 +179,12 @@ export class AuthService {
   }
 
   private buildAccessTokenPayload(user: User): AccessTokenPayload {
-    const { role, name, lastName, email } = user;
+    const { roles, name, lastName, email } = user;
     const { _id: id } = user as any as Document<Types.ObjectId, any, User>;
 
     return {
       id,
-      role,
+      roles,
       name,
       lastName,
       email,

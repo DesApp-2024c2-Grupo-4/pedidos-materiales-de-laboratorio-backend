@@ -17,14 +17,18 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(context: ExecutionContext) {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
+
     if (isPublic) {
       return true;
     }
+
+    const canActivateSuper = await super.canActivate(context);
+    if (!canActivateSuper) return false;
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
@@ -48,6 +52,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       requiredRolesAll &&
       (!user || !user.roles || !this.hasAllRoles(user.roles, requiredRolesAll))
     ) {
+      console.log({ user, requiredRolesAll });
       throw new ForbiddenException(
         'Access denied: insufficient permissions for all required roles.',
       );
@@ -62,7 +67,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       );
     }
 
-    return super.canActivate(context);
+    return true;
   }
 
   private hasAllRoles(userRoles: string[], requiredRoles: string[]): boolean {

@@ -26,7 +26,7 @@ export class User extends SoftDelete {
   matricula?: number; // FIXME: Why do we need this? also let's pick a name for this attribute
 
   @Prop({ required: true })
-  role: string[];
+  roles: string[];
 
   comparePassword: (candidatePassword: string) => Promise<boolean>;
 }
