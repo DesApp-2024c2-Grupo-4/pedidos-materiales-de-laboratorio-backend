@@ -16,6 +16,7 @@ import { UpdateMaterialDto } from '../dto/material.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
 import { Roles } from '../const/roles.const';
+import { MaterialTypes } from './material.const';
 
 @Controller('material')
 export class MaterialController {
@@ -51,5 +52,11 @@ export class MaterialController {
   delete(@Request() req: AuthenticatedRequest, @Param() params: IdDto) {
     const { id: deletedBy } = req.user;
     return this.materialService.delete(params.id, deletedBy);
+  }
+
+  @Get('/constants/types')
+  @AnyRoles(Roles.LAB, Roles.TEACHER)
+  getTypes() {
+    return MaterialTypes;
   }
 }

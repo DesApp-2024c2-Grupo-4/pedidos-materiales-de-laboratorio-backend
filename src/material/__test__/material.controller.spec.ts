@@ -5,6 +5,7 @@ import { Material } from '../../schemas/requestable/material.schema';
 import { UpdateMaterialDto } from '../../dto/material.dto';
 import { Types } from 'mongoose';
 import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
+import { MaterialTypes } from '../material.const';
 
 describe('MaterialController', () => {
   let controller: MaterialController;
@@ -124,6 +125,13 @@ describe('MaterialController', () => {
         mockAuthenticatedRequest.user.id,
       );
       expect(result).toEqual(true);
+    });
+  });
+
+  describe('getReactiveTypes', () => {
+    it('should return reactive types', () => {
+      const result = controller.getTypes();
+      expect(result).toEqual(MaterialTypes);
     });
   });
 });

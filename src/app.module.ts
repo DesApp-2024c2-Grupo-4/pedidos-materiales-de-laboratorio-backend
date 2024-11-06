@@ -14,6 +14,7 @@ import { ConversationModule } from './conversation/conversation.module';
 import { MaterialModule } from './material/material.module';
 import { ReactiveModule } from './reactive/reactive.module';
 import { UserInitModule } from './user/user-init/user-init.module';
+import { RequestModule } from './request/request.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UserInitModule } from './user/user-init/user-init.module';
     ConversationModule,
     MaterialModule,
     ReactiveModule,
+    RequestModule,
   ],
   controllers: [],
   providers: [AuthGuardProvider],

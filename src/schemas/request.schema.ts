@@ -2,29 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongooseModels } from '../const/mongoose.const';
 import { IsArray, IsDate, IsNumber, IsString } from 'class-validator';
-
-import { Injectable } from '@nestjs/common';
-import { Transform } from 'class-transformer';
-
-@Injectable()
-export class IsGmailTransformer {
-  @Transform(({ value }) => {
-    return value.toLowerCase().endsWith('@gmail.com');
-  })
-  transform(value: string) {
-    return value;
-  }
-}
-
-export const RequestStatuses = {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED',
-  COMPLETED: 'COMPLETED',
-};
+import {
+  RequestStatuses,
+  RequestStatusesValue,
+} from '../request/request.const';
 
 export type RequestDocument = HydratedDocument<Request>;
-export type RequestStatus = keyof typeof RequestStatuses;
 
 @Schema()
 export class SolventRequest {
@@ -160,7 +143,7 @@ export class Request {
 
   @IsString()
   @Prop({ required: true, enum: Object.keys(RequestStatuses) })
-  status: RequestStatus;
+  status: RequestStatusesValue;
 
   isCompleted: () => boolean;
   isRejected: () => boolean;

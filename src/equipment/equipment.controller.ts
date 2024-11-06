@@ -15,6 +15,7 @@ import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { IdDto } from '../dto/id.dto';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
 import { Roles } from '../const/roles.const';
+import { EquipmentTypes } from './equipment.const';
 
 @Controller('/equipment')
 export class EquipmentController {
@@ -49,5 +50,11 @@ export class EquipmentController {
   @AllRoles(Roles.LAB)
   update(@Param('id') id: Types.ObjectId, @Body() equipment: Equipment) {
     return this.EquipmentService.update(id, equipment);
+  }
+
+  @Get('/constants/types')
+  @AnyRoles(Roles.LAB, Roles.TEACHER)
+  getTypes() {
+    return EquipmentTypes;
   }
 }

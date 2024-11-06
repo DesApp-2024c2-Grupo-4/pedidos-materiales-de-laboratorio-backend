@@ -15,6 +15,12 @@ import { UpdateReactivelDto } from '../dto/reactive.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
 import { Roles } from '../const/roles.const';
+import {
+  ReactiveQualities,
+  ReactiveSolvents,
+  ReactiveTypes,
+  ReactiveUnits,
+} from './reactive.const';
 
 @Controller('/reactive')
 export class ReactiveController {
@@ -52,5 +58,29 @@ export class ReactiveController {
   delete(@Request() req: AuthenticatedRequest, @Param() params: IdDto) {
     const { id } = req.user;
     return this.ReactiveService.delete(params.id, id);
+  }
+
+  @Get('/constants/types')
+  @AnyRoles(Roles.LAB, Roles.TEACHER)
+  getReactiveTypes() {
+    return ReactiveTypes;
+  }
+
+  @Get('/constants/qualities')
+  @AnyRoles(Roles.LAB, Roles.TEACHER)
+  getReactiveQualities() {
+    return ReactiveQualities;
+  }
+
+  @Get('/constants/units')
+  @AnyRoles(Roles.LAB, Roles.TEACHER)
+  getReactiveUnits() {
+    return ReactiveUnits;
+  }
+
+  @Get('/constants/solvents')
+  @AnyRoles(Roles.LAB, Roles.TEACHER)
+  getReactiveSolvents() {
+    return ReactiveSolvents;
   }
 }
