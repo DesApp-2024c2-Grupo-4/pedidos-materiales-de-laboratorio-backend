@@ -16,6 +16,7 @@ import { UpdateRequestDto } from '../dto/request.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { Roles } from '../const/roles.const';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
+import { RequestStatuses } from './request.const';
 
 @Controller('request')
 export class RequestController {
@@ -44,6 +45,12 @@ export class RequestController {
   @AllRoles(Roles.LAB)
   getAll() {
     return this.requestService.getAll();
+  }
+
+  @Get('/constants/statuses')
+  @AnyRoles(Roles.LAB, Roles.TEACHER)
+  getStatuses() {
+    return RequestStatuses;
   }
 
   @Delete('/:id')

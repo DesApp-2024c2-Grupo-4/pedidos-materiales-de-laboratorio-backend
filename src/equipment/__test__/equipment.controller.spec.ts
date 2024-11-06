@@ -3,6 +3,7 @@ import { EquipmentController } from '../equipment.controller';
 import { EquipmentService } from '../equipment.service';
 import { Types } from 'mongoose';
 import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
+import { EquipmentTypes } from '../equipment.const';
 
 describe('EquipmentController', () => {
   let controller: EquipmentController;
@@ -121,6 +122,13 @@ describe('EquipmentController', () => {
         mockEquipment,
       );
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe('getReactiveTypes', () => {
+    it('should return reactive types', () => {
+      const result = controller.getTypes();
+      expect(result).toEqual(EquipmentTypes);
     });
   });
 });

@@ -6,6 +6,12 @@ import { IdDto } from '../../dto/id.dto';
 import { UpdateReactivelDto } from '../../dto/reactive.dto';
 import { Types } from 'mongoose';
 import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
+import {
+  ReactiveTypes,
+  ReactiveQualities,
+  ReactiveUnits,
+  ReactiveSolvents,
+} from '../reactive.const';
 
 describe('ReactiveController', () => {
   let controller: ReactiveController;
@@ -42,6 +48,10 @@ describe('ReactiveController', () => {
     get: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    getReactiveTypes: jest.fn().mockReturnValue(ReactiveTypes),
+    getReactiveQualities: jest.fn().mockReturnValue(ReactiveQualities),
+    getReactiveUnits: jest.fn().mockReturnValue(ReactiveUnits),
+    getReactiveSolvents: jest.fn().mockReturnValue(ReactiveSolvents),
   };
 
   beforeEach(async () => {
@@ -98,6 +108,34 @@ describe('ReactiveController', () => {
         mockIdDto.id,
         mockAuthenticatedRequest.user.id,
       );
+    });
+  });
+
+  describe('getReactiveTypes', () => {
+    it('should return reactive types', () => {
+      const result = controller.getReactiveTypes();
+      expect(result).toEqual(ReactiveTypes);
+    });
+  });
+
+  describe('getReactiveQualities', () => {
+    it('should return reactive qualities', () => {
+      const result = controller.getReactiveQualities();
+      expect(result).toEqual(ReactiveQualities);
+    });
+  });
+
+  describe('getReactiveUnits', () => {
+    it('should return reactive units', () => {
+      const result = controller.getReactiveUnits();
+      expect(result).toEqual(ReactiveUnits);
+    });
+  });
+
+  describe('getReactiveSolvents', () => {
+    it('should return reactive solvents', () => {
+      const result = controller.getReactiveSolvents();
+      expect(result).toEqual(ReactiveSolvents);
     });
   });
 });
