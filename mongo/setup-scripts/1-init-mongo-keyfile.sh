@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generate a key file for MongoDB replica set authentication
 if [ ! -f "$KEYFILE_PATH" ]; then
-  echo "Generating MongoDB keyfile..."
+  echo "Generating MongoDB keyfile on $KEYFILE_PATH..."
   openssl rand -base64 756 > "$KEYFILE_PATH"
   chmod 600 "$KEYFILE_PATH"
   echo "Keyfile generated at $KEYFILE_PATH"
