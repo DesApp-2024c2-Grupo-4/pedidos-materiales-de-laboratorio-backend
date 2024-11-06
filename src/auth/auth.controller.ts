@@ -72,10 +72,16 @@ export class AuthController {
     return this.authService.deleteRegisterToken(token, id);
   }
 
-  @AllRoles(Roles.ADMIN, Roles.LAB)
   @Get('/register/token')
+  @AllRoles(Roles.ADMIN, Roles.LAB)
   getRegisterTokens(@Query() getRegisterTokenDto: GetRegisterTokenDto) {
     const { isAvailable } = getRegisterTokenDto;
     return this.authService.getRegisterToken(isAvailable);
+  }
+
+  @Get('/constants/roles')
+  @AllRoles(Roles.ADMIN)
+  getRoles() {
+    return Roles;
   }
 }

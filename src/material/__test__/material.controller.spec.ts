@@ -128,8 +128,8 @@ describe('MaterialController', () => {
     });
   });
 
-  describe('getReactiveTypes', () => {
-    it('should return reactive types', () => {
+  describe('getTypes', () => {
+    it('should return material types', () => {
       const result = controller.getTypes();
       expect(result).toEqual(MaterialTypes);
     });

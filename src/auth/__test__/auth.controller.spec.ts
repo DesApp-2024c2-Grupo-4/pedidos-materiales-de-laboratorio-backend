@@ -10,6 +10,7 @@ import {
   GetRegisterTokenDto,
 } from '../../dto/register-token.dto';
 import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
+import { Roles } from '../../const/roles.const';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -240,6 +241,13 @@ describe('AuthController', () => {
       expect(mockAuthService.getRegisterToken).toHaveBeenCalledWith(
         mockGetRegisterTokenDto.isAvailable,
       );
+    });
+  });
+
+  describe('getRoles', () => {
+    it('should return roles', () => {
+      const result = authController.getRoles();
+      expect(result).toEqual(Roles);
     });
   });
 });

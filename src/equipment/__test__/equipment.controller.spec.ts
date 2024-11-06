@@ -125,8 +125,8 @@ describe('EquipmentController', () => {
     });
   });
 
-  describe('getReactiveTypes', () => {
-    it('should return reactive types', () => {
+  describe('getTypes', () => {
+    it('should return equipment types', () => {
       const result = controller.getTypes();
       expect(result).toEqual(EquipmentTypes);
     });
