@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Request,
 } from '@nestjs/common';
 import { ReactiveService } from './reactive.service';
@@ -21,6 +22,7 @@ import {
   ReactiveTypes,
   ReactiveUnits,
 } from './reactive.const';
+import { IsAvailableDto } from '../dto/is-available.dto';
 
 @Controller('/reactive')
 export class ReactiveController {
@@ -34,8 +36,9 @@ export class ReactiveController {
 
   @Get()
   @AnyRoles(Roles.LAB, Roles.TEACHER)
-  getAll() {
-    return this.ReactiveService.getAll();
+  getAll(@Query() isAvailableDto: IsAvailableDto) {
+    const { isAvailable } = isAvailableDto
+    return this.ReactiveService.getAll(isAvailable);
   }
 
   @Get('/:id')

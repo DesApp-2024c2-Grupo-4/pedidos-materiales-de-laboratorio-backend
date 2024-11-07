@@ -6,22 +6,25 @@ import { Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ReactiveDbService } from './reactive-db.service';
 import { UpdateReactivelDto } from '../dto/reactive.dto';
+import { IdDto } from '../dto/id.dto';
 
 @Injectable()
 export class ReactiveService {
   constructor(private readonly dbService: ReactiveDbService) {}
 
-  async add(reactive: Reactive): Promise<void> {
-    const [, err] = await handlePromise<unknown, Error>(
+  async add(reactive: Reactive) {
+    const [id, err] = await handlePromise<unknown, Error>(
       this.dbService.add(reactive),
     );
 
     if (err) {
       throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    return { id }
   }
 
-  async getAll(available: boolean = true): Promise<Reactive[]> {
+  async getAll(available?: boolean): Promise<Reactive[]> {
     const [reactives, err] = await handlePromise<Reactive[], Error>(
       this.dbService.getAll(available),
     );

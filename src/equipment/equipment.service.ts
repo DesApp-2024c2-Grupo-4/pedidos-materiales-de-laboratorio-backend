@@ -10,7 +10,7 @@ import { UpdateEquipmentDto } from '../dto/equipment.dto';
 export class EquipmentService {
   constructor(private readonly dbEquipment: EquipmentdbService) {}
 
-  async add(equipment: Equipment): Promise<Types.ObjectId> {
+  async add(equipment: Equipment) {
     const [id, err] = await handlePromise(this.dbEquipment.add(equipment));
 
     if (err) {
@@ -20,7 +20,7 @@ export class EquipmentService {
       );
     }
 
-    return id;
+    return {id};
   }
 
   async getAll(isAvailable?: boolean): Promise<Equipment[]> {

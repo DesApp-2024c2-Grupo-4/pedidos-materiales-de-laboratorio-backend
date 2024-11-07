@@ -32,13 +32,21 @@ export class ReactiveDbService {
     return e._id;
   }
 
-  async getAll(available: boolean): Promise<Reactive[]> {
+  async getAll(isAvailable?: boolean): Promise<Reactive[]> {
     const [reactives, err] = await handlePromise(
-      this.ReactiveModel.find({ available }),
+      this.ReactiveModel.find(),
     );
 
     if (err) {
       return Promise.reject(cantGetRactives(err));
+    }
+    
+    if (isAvailable) {
+      return reactives.filter((e) => !e[IS_SOFT_DELETED_KEY]);
+    }
+
+    if(isAvailable === false){
+      return reactives.filter((e) => e[IS_SOFT_DELETED_KEY]);
     }
 
     return reactives;
