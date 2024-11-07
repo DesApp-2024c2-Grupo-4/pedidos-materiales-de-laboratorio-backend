@@ -68,7 +68,7 @@ describe('EquipmentController', () => {
     it('should call EquipmentService.getEquipments and return the result', async () => {
       service.getAll.mockResolvedValue([mockEquipment]);
 
-      const result = await controller.getAll();
+      const result = await controller.getAll({});
 
       expect(service.getAll).toHaveBeenCalled();
       expect(result).toEqual([mockEquipment]);

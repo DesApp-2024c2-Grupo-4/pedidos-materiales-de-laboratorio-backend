@@ -7,10 +7,10 @@ import { Types } from 'mongoose';
 import {
   RegisterTokenIdDto,
   CreateRegisterTokenDto,
-  GetRegisterTokenDto,
 } from '../../dto/register-token.dto';
 import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
 import { Roles } from '../../const/roles.const';
+import { IsAvailableDto } from '../../dto/is-available.dto';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -32,7 +32,7 @@ describe('AuthController', () => {
     createdFor: 'test@example.com',
   };
 
-  const mockGetRegisterTokenDto: GetRegisterTokenDto = {
+  const mockGetRegisterTokenDto: IsAvailableDto = {
     isAvailable: true,
   };
 

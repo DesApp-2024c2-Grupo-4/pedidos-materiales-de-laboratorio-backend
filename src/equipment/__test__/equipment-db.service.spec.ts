@@ -122,7 +122,6 @@ describe('EquipmentdbService', () => {
       expect(equipmentModel.updateOne).toHaveBeenCalledWith(
         { _id: mockEquipment._id },
         mockEquipment,
-        { new: true },
       );
     });
 

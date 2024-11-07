@@ -12,15 +12,15 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './strategies/local.guard';
-import { AllRoles, AnyRoles, Public } from './providers/accesor.metadata';
+import { AllRoles, Public } from './providers/accesor.metadata';
 import { CreateUserDto, UserLoginDto } from '../dto/user.dto';
 import {
   CreateRegisterTokenDto,
-  GetRegisterTokenDto,
   RegisterTokenIdDto,
 } from '../dto/register-token.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { Roles } from '../const/roles.const';
+import { IsAvailableDto } from '../dto/is-available.dto';
 
 @Controller('/auth')
 export class AuthController {
@@ -74,7 +74,7 @@ export class AuthController {
 
   @Get('/register/token')
   @AllRoles(Roles.ADMIN, Roles.LAB)
-  getRegisterTokens(@Query() getRegisterTokenDto: GetRegisterTokenDto) {
+  getRegisterTokens(@Query() getRegisterTokenDto: IsAvailableDto) {
     const { isAvailable } = getRegisterTokenDto;
     return this.authService.getRegisterToken(isAvailable);
   }

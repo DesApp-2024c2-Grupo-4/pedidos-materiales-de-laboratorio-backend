@@ -4,6 +4,7 @@ import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { Types } from 'mongoose';
 import { EquipmentdbService } from './equipment-db.service';
+import { UpdateEquipmentDto } from '../dto/equipment.dto';
 
 @Injectable()
 export class EquipmentService {
@@ -58,7 +59,7 @@ export class EquipmentService {
     return equipment;
   }
 
-  async update(id: Types.ObjectId, equipment: Equipment) {
+  async update(id: Types.ObjectId, equipment: UpdateEquipmentDto) {
     const [, err] = await handlePromise(this.dbEquipment.update(id, equipment));
 
     if (err) {

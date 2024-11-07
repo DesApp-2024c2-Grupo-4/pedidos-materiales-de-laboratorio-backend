@@ -11,6 +11,7 @@ import {
   cantGetEquipmentById,
 } from './equipment.errors';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
+import { UpdateEquipmentDto } from '../dto/equipment.dto';
 
 @Injectable()
 export class EquipmentdbService {
@@ -52,9 +53,12 @@ export class EquipmentdbService {
     return equipment;
   }
 
-  async update(id: Types.ObjectId, equipment: Equipment): Promise<void> {
+  async update(
+    id: Types.ObjectId,
+    equipment: UpdateEquipmentDto,
+  ): Promise<void> {
     const [, err] = await handlePromise(
-      this.EquipmentModel.updateOne({ _id: id }, equipment, { new: true }),
+      this.EquipmentModel.updateOne({ _id: id }, equipment),
     );
     if (err) {
       throw new Error(cantUpdateEquipment(id, err));

@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { EquipmentService } from './equipment.service';
 import { Equipment } from '../schemas/requestable/equipment.schema';
@@ -16,6 +17,8 @@ import { IdDto } from '../dto/id.dto';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
 import { Roles } from '../const/roles.const';
 import { EquipmentTypes } from './equipment.const';
+import { UpdateEquipmentDto } from '../dto/equipment.dto';
+import { IsAvailableDto } from '../dto/is-available.dto';
 
 @Controller('/equipment')
 export class EquipmentController {
@@ -24,13 +27,16 @@ export class EquipmentController {
   @Post()
   @AllRoles(Roles.LAB)
   add(@Body() equipment: Equipment) {
+    console.log({ equipment });
     return this.EquipmentService.add(equipment);
   }
 
   @Get()
   @AnyRoles(Roles.LAB, Roles.TEACHER)
-  getAll() {
-    return this.EquipmentService.getAll();
+  getAll(@Query() isAvailableDto: IsAvailableDto) {
+    const { isAvailable } = isAvailableDto;
+
+    return this.EquipmentService.getAll(isAvailable);
   }
 
   @Get('/:id')
@@ -48,7 +54,10 @@ export class EquipmentController {
 
   @Put('/:id')
   @AllRoles(Roles.LAB)
-  update(@Param('id') id: Types.ObjectId, @Body() equipment: Equipment) {
+  update(
+    @Param('id') id: Types.ObjectId,
+    @Body() equipment: UpdateEquipmentDto,
+  ) {
     return this.EquipmentService.update(id, equipment);
   }
 
