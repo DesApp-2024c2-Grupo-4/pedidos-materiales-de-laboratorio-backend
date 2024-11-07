@@ -77,7 +77,7 @@ describe('ReactiveController', () => {
 
   describe('getAll', () => {
     it('should call ReactiveService.getAll', async () => {
-      await controller.getAll();
+      await controller.getAll({});
       expect(service.getAll).toHaveBeenCalled();
     });
   });

@@ -5,6 +5,7 @@ import { Types } from 'mongoose';
 import { BackendException } from '../../shared/backend.exception';
 import { HttpStatus } from '@nestjs/common';
 import { UpdateMaterialDto } from '../../dto/material.dto';
+import { cantCreateMaterial } from '../material.error';
 
 describe('MaterialService', () => {
   let service: MaterialService;
@@ -54,24 +55,26 @@ describe('MaterialService', () => {
   });
 
   describe('add', () => {
-    it('should call dbService.add and return nothing on success', async () => {
-      mockMaterialDbService.add.mockResolvedValue(undefined);
+    it('should call dbService.add and return id', async () => {
+      mockMaterialDbService.add.mockResolvedValue(1234);
 
       const result = await service.add(mockMaterial);
 
       expect(dbService.add).toHaveBeenCalledWith(mockMaterial);
-      expect(result).toBeUndefined();
+      expect(result).toStrictEqual({id:1234});
     });
 
     it('should return BackendException if dbService.add throws an error', async () => {
-      const error = new Error('Add failed');
+      const error = 'Add failed';
       mockMaterialDbService.add.mockRejectedValue(error);
 
-      const result = await service.add(mockMaterial);
+      await expect(service.add(mockMaterial)).rejects.toThrow(
+        new BackendException(
+        cantCreateMaterial(mockMaterial.description,error),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+      );
 
-      expect(result).toBeInstanceOf(BackendException);
-      expect(result.message).toBe(error.message);
-      expect(result.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     });
   });
 
