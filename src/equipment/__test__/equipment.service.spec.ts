@@ -15,7 +15,7 @@ describe('EquipmentService', () => {
     stock: 10,
     unitMeasure: 'pcs',
     inRepair: 0,
-    available: true,
+    isAvailable: true,
   };
 
   const mockEquipmentDbService = {
@@ -51,7 +51,7 @@ describe('EquipmentService', () => {
       dbService.add.mockResolvedValue(id);
 
       const result = await equipmentService.add(mockEquipment);
-      expect(result).toBe(id);
+      expect(result).toStrictEqual({id});
       expect(dbService.add).toHaveBeenCalledWith(mockEquipment);
     });
 

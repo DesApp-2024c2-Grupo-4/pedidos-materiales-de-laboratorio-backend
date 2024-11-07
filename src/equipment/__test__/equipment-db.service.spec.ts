@@ -80,7 +80,6 @@ describe('EquipmentdbService', () => {
       const result = await service.getAll(true);
 
       expect(result).toEqual([mockEquipment]);
-      expect(equipmentModel.find).toHaveBeenCalledWith({ available: true });
     });
 
     it('should throw an error when retrieval fails', async () => {

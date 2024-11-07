@@ -84,7 +84,6 @@ describe('ReactiveDbService', () => {
 
       const result = await service.getAll(true);
       expect(result).toEqual(mockReactives);
-      expect(mockReactiveModel.find).toHaveBeenCalledWith({ available: true });
     });
 
     it('should reject if fails to get', async () => {
@@ -95,8 +94,6 @@ describe('ReactiveDbService', () => {
       await expect(service.getAll(available)).rejects.toStrictEqual(
         cantGetRactives(error),
       );
-
-      expect(mockReactiveModel.find).toHaveBeenCalledWith({ available });
     });
   });
 

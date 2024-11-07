@@ -106,7 +106,7 @@ describe('MaterialController', () => {
       ];
       mockMaterialService.getAll.mockResolvedValue(materials);
 
-      const result = await controller.getAll();
+      const result = await controller.getAll({});
 
       expect(service.getAll).toHaveBeenCalled();
       expect(result).toEqual(materials);

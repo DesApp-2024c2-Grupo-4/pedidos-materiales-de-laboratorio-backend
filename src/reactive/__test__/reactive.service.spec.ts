@@ -63,7 +63,7 @@ describe('ReactiveService', () => {
     it('should return all reactives if dbService.getAll succeeds', async () => {
       mockDbService.getAll.mockResolvedValueOnce([mockReactive]);
 
-      const result = await service.getAll();
+      const result = await service.getAll(true);
       expect(result).toEqual([mockReactive]);
       expect(mockDbService.getAll).toHaveBeenCalledWith(true);
     });
