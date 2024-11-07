@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Request,
 } from '@nestjs/common';
 import { MaterialService } from './material.service';
@@ -17,6 +18,7 @@ import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
 import { Roles } from '../const/roles.const';
 import { MaterialTypes } from './material.const';
+import { IsAvailableDto } from '../dto/is-available.dto';
 
 @Controller('material')
 export class MaterialController {
@@ -43,8 +45,9 @@ export class MaterialController {
 
   @Get()
   @AnyRoles(Roles.LAB, Roles.TEACHER)
-  getAll() {
-    return this.materialService.getAll();
+  getAll(@Query() isAvailableDto: IsAvailableDto) {
+    const {isAvailable} = isAvailableDto;
+    return this.materialService.getAll(isAvailable);
   }
 
   @Delete('/:id')
