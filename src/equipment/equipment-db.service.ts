@@ -41,6 +41,10 @@ export class EquipmentdbService {
       return equipments.filter((e) => !e[IS_SOFT_DELETED_KEY]);
     }
 
+    if(isAvailable === false){
+      return equipments.filter((e) => e[IS_SOFT_DELETED_KEY]);
+    }
+
     return equipments;
   }
 

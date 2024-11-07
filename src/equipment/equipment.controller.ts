@@ -27,7 +27,6 @@ export class EquipmentController {
   @Post()
   @AllRoles(Roles.LAB)
   add(@Body() equipment: Equipment) {
-    console.log({ equipment });
     return this.EquipmentService.add(equipment);
   }
 

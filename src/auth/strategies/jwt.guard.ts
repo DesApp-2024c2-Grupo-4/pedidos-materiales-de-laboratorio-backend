@@ -53,7 +53,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       requiredRolesAll &&
       (!user || !user.roles || !this.hasAllRoles(user.roles, requiredRolesAll))
     ) {
-      console.log({ user, requiredRolesAll });
       throw new ForbiddenException(
         'Access denied: insufficient permissions for all required roles.',
       );
