@@ -20,7 +20,7 @@ export class MaterialDbService {
     private materialModel: Model<Material>,
   ) {}
 
-  async add(material: Material) {
+  async add(material: Material): Promise<Types.ObjectId> {
     const [newMaterial, err] = await handlePromise(
       this.materialModel.create(material),
     );
@@ -54,11 +54,19 @@ export class MaterialDbService {
     return material;
   }
 
-  async getAll() {
+  async getAll(isAvailable?:boolean) {
     const [materials, err] = await handlePromise(this.materialModel.find());
 
     if (err) {
       return Promise.reject(cantGetMaterials(err));
+    }
+
+    if (isAvailable) {
+      return materials.filter((e) => !e[IS_SOFT_DELETED_KEY]);
+    }
+
+    if(isAvailable === false){
+      return materials.filter((e) => e[IS_SOFT_DELETED_KEY]);
     }
 
     return materials;

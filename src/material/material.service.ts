@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { MaterialDbService } from './material-db.service';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
-import { Material } from '../schemas/requestable/material.schema';
+import { Material, MaterialDocument } from '../schemas/requestable/material.schema';
 import { Types } from 'mongoose';
 import { UpdateMaterialDto } from '../dto/material.dto';
 
@@ -11,7 +11,7 @@ export class MaterialService {
   constructor(private readonly dbService: MaterialDbService) {}
 
   async add(material: Material) {
-    const [, err] = await handlePromise<unknown, Error>(
+    const [id, err] = await handlePromise<Types.ObjectId, Error>(
       this.dbService.add(material),
     );
 
@@ -21,6 +21,8 @@ export class MaterialService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+
+    return {id}
   }
 
   async update(id: Types.ObjectId, material: UpdateMaterialDto) {
@@ -55,9 +57,9 @@ export class MaterialService {
     return material;
   }
 
-  async getAll() {
+  async getAll(isAvailable?:boolean) {
     const [materials, err] = await handlePromise<unknown, Error>(
-      this.dbService.getAll(),
+      this.dbService.getAll(isAvailable),
     );
 
     if (err) {
