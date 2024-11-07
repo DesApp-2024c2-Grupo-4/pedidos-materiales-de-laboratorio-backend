@@ -29,7 +29,7 @@ export class Equipment extends SoftDelete {
 
   @IsBoolean()
   @Prop({ required: true, default: true })
-  available: boolean;
+  isAvailable: boolean;
 }
 
 export const EquipmentSchema = SchemaFactory.createForClass(Equipment);
