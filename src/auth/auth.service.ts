@@ -54,7 +54,7 @@ export class AuthService {
       );
     }
 
-    if (!token || token?.isConsumed() || token?.isSoftDeleted) {
+    if (!token || !token?.isAvailable()) {
       throw new BackendException(
         cantCreateUser(user.email, `Token ${tokenId} is not available.`),
         HttpStatus.BAD_REQUEST,
@@ -162,7 +162,7 @@ export class AuthService {
       throw new BackendException('', HttpStatus.NOT_FOUND);
     }
 
-    if (token.userCreated || token.isSoftDeleted) {
+    if (!token.isAvailable()) {
       throw new BackendException(
         cantDeleteToken(tokenId, `Token is not available.`),
         HttpStatus.BAD_REQUEST,

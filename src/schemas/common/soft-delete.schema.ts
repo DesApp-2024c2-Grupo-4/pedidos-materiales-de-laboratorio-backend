@@ -4,12 +4,14 @@ import { Types } from 'mongoose';
 import { MongooseModels } from '../../const/mongoose.const';
 import { IsObjectId } from '../../utils/id-validator';
 
+export const IS_SOFT_DELETED_KEY = 'isSoftDeleted';
+
 @Schema()
 export class SoftDelete {
   @IsOptional()
   @IsBoolean()
   @Prop({ type: Boolean })
-  isSoftDeleted?: boolean;
+  [IS_SOFT_DELETED_KEY]?: boolean;
 
   @IsOptional()
   @IsObjectId({ message: 'Id should be in Mongo ObjectId format' })
@@ -21,5 +23,3 @@ export class SoftDelete {
   @Prop({ required: false, type: Date })
   deletionDate?: Date;
 }
-
-export const IS_SOFT_DELETED_KEY = 'isSoftDeleted';

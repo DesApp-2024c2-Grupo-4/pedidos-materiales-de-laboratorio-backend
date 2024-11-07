@@ -3,7 +3,7 @@ import { HydratedDocument, Types } from 'mongoose';
 import { MongooseModels } from '../const/mongoose.const';
 import { IsEmail, IsOptional } from 'class-validator';
 import { IsObjectId } from '../utils/id-validator';
-import { SoftDelete } from './common/soft-delete.schema';
+import { IS_SOFT_DELETED_KEY, SoftDelete } from './common/soft-delete.schema';
 
 export type RegisterTokenDocument = HydratedDocument<RegisterToken>;
 
@@ -32,6 +32,7 @@ export class RegisterToken extends SoftDelete {
   consume: (createdUserId: Types.ObjectId) => Promise<void>;
 
   isConsumed: () => Boolean;
+  isAvailable: () => Boolean;
 
   constructor(creatorId: Types.ObjectId, createdFor?: string) {
     super();
@@ -55,6 +56,10 @@ RegisterTokenSchema.methods.consume = async function (
 
 RegisterTokenSchema.methods.isConsumed = function (): boolean {
   return !!this.userCreated;
+};
+
+RegisterTokenSchema.methods.isAvailable = function (): boolean {
+  return !this.isConsumed() && !this[IS_SOFT_DELETED_KEY];
 };
 
 RegisterTokenSchema.pre<RegisterTokenDocument>('save', function (next) {

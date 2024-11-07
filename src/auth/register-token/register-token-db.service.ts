@@ -82,7 +82,7 @@ export class RegisterTokenDbService {
       return {
         $or: [
           { userCreated: { $exists: true, $ne: '' } },
-          { isSoftDeleted: { $exists: true, $eq: true } },
+          { [IS_SOFT_DELETED_KEY]: { $exists: true, $eq: true } },
         ],
       };
 

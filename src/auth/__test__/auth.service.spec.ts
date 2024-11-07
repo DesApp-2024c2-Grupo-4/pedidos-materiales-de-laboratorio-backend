@@ -19,9 +19,9 @@ describe('AuthService', () => {
   let jwtService: any;
 
   const mockRegisterToken = {
-    isConsumed: jest.fn(),
+    isAvailable: jest.fn(),
     _id: new Types.ObjectId(),
-  } as any as RegisterTokenDocument;
+  } as any;
 
   const mockUserService = {
     findByEmail: jest.fn(),
@@ -139,6 +139,7 @@ describe('AuthService', () => {
           matricula: 123,
         };
 
+        mockRegisterToken.isAvailable.mockReturnValue(true);
         userService.findByEmail.mockResolvedValue(undefined);
         registerTokenService.get.mockResolvedValue(mockRegisterToken);
 
@@ -182,7 +183,7 @@ describe('AuthService', () => {
         );
       });
 
-      it('should throw an error if token is consumed', async () => {
+      it('should throw an error if token is not available', async () => {
         const createUserDto: CreateUserDto = {
           name: 'John',
           lastName: 'Doe',
@@ -192,11 +193,10 @@ describe('AuthService', () => {
           matricula: 123,
         };
 
+        mockRegisterToken.isAvailable.mockReturnValue(false);
+
         userService.findByEmail.mockResolvedValue(undefined);
-        registerTokenService.get.mockResolvedValue({
-          ...mockRegisterToken,
-          isConsumed: jest.fn().mockReturnValue(true),
-        });
+        registerTokenService.get.mockResolvedValue(mockRegisterToken);
 
         await expect(
           authService.registerUser(createUserDto, mockRegisterToken._id),
@@ -220,6 +220,8 @@ describe('AuthService', () => {
           password: 'password123',
           matricula: 123,
         };
+
+        mockRegisterToken.isAvailable.mockReturnValue(true);
 
         userService.findByEmail.mockResolvedValue(undefined);
         userService.createUser.mockResolvedValue(createUserDto);
@@ -413,6 +415,8 @@ describe('AuthService', () => {
       const tokenId = new Types.ObjectId();
       const deletedBy = new Types.ObjectId();
 
+      mockRegisterToken.isAvailable.mockReturnValue(true);
+
       mockRegisterTokenService.get.mockResolvedValue(mockRegisterToken);
       mockRegisterTokenService.delete.mockResolvedValue(undefined);
 
@@ -459,6 +463,8 @@ describe('AuthService', () => {
       const tokenId = new Types.ObjectId();
       const deletedBy = new Types.ObjectId();
 
+      mockRegisterToken.isAvailable.mockReturnValue(true);
+
       mockRegisterTokenService.get.mockResolvedValue(mockRegisterToken);
       mockRegisterTokenService.delete.mockRejectedValue(
         new Error('Failed to delete token'),
@@ -472,46 +478,25 @@ describe('AuthService', () => {
       ).rejects.toThrow('Failed to delete token');
     });
 
-    it('should throw an error if the token is already consumed', async () => {
-      const tokenId = new Types.ObjectId();
+    it('should throw an error if the token is not available', async () => {
       const deletedBy = new Types.ObjectId();
+
+      mockRegisterToken.isAvailable.mockReturnValue(false);
 
       const token = {
         ...mockRegisterToken,
-        _id: tokenId,
         userCreated: new Types.ObjectId(),
       } as any as RegisterTokenDocument;
 
       registerTokenService.get.mockResolvedValue(token);
 
       await expect(
-        authService.deleteRegisterToken(tokenId, deletedBy),
+        authService.deleteRegisterToken(token._id, deletedBy),
       ).rejects.toThrow(BackendException);
 
       await expect(
-        authService.deleteRegisterToken(tokenId, deletedBy),
-      ).rejects.toThrow(cantDeleteToken(tokenId, `Token is not available.`));
-    });
-
-    it('should throw an error if the token is soft deleted', async () => {
-      const tokenId = new Types.ObjectId();
-      const deletedBy = new Types.ObjectId();
-
-      const token = {
-        ...mockRegisterToken,
-        _id: tokenId,
-        [IS_SOFT_DELETED_KEY]: true,
-      } as any as RegisterTokenDocument;
-
-      registerTokenService.get.mockResolvedValue(token);
-
-      await expect(
-        authService.deleteRegisterToken(tokenId, deletedBy),
-      ).rejects.toThrow(BackendException);
-
-      await expect(
-        authService.deleteRegisterToken(tokenId, deletedBy),
-      ).rejects.toThrow(cantDeleteToken(tokenId, `Token is not available.`));
+        authService.deleteRegisterToken(token._id, deletedBy),
+      ).rejects.toThrow(cantDeleteToken(token._id, `Token is not available.`));
     });
   });
 });
