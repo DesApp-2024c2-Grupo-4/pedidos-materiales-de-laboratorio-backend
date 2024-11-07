@@ -1,0 +1,7 @@
+{
+	"baseUrl": "http://localhost:3000",
+	"token": "672ced0d61c5b39662c56617",
+	"email": "admin@example.com",
+	"password": "admin123",
+	"accessToken": "{% response 'body', 'req_c83f5ca89e1f4a8f8159ef51f1737aa4', 'b64::JC5hY2Nlc3NUb2tlbg==::46b', 'always', 60 %}"
+}
