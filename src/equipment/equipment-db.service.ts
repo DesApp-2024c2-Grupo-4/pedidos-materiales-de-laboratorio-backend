@@ -30,14 +30,17 @@ export class EquipmentdbService {
     return e._id;
   }
 
-  async getAll(available: boolean): Promise<Equipment[]> {
-    const [equipments, err] = await handlePromise(
-      this.EquipmentModel.find({ available: available }),
-    );
+  async getAll(isAvailable?: boolean): Promise<Equipment[]> {
+    const [equipments, err] = await handlePromise(this.EquipmentModel.find());
 
     if (err) {
       throw new Error(cantGetEquipment(err));
     }
+
+    if (isAvailable) {
+      return equipments.filter((e) => !e[IS_SOFT_DELETED_KEY]);
+    }
+
     return equipments;
   }
 

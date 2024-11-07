@@ -23,9 +23,9 @@ export class EquipmentService {
     return id;
   }
 
-  async getAll(available: boolean = true): Promise<Equipment[]> {
+  async getAll(isAvailable?: boolean): Promise<Equipment[]> {
     const [equipments, err] = await handlePromise(
-      this.dbEquipment.getAll(available),
+      this.dbEquipment.getAll(isAvailable),
     );
 
     if (err) {

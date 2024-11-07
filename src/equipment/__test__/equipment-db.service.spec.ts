@@ -23,7 +23,7 @@ describe('EquipmentdbService', () => {
     stock: 5,
     unitMeasure: 'test-unit',
     inRepair: 1,
-    available: true,
+    isAvailable: true,
     isSoftDeleted: false,
   };
 
