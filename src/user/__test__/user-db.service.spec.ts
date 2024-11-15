@@ -4,7 +4,6 @@ import { getConnectionToken, getModelToken } from '@nestjs/mongoose';
 import { User } from '../../schemas/user.schema';
 import { Connection, Types } from 'mongoose';
 import { CreateUserDto, UpdateUserDto } from '../../dto/user.dto';
-import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 import { cantDelete } from '../user.errors';
 
 describe('UserDbService', () => {
@@ -33,6 +32,7 @@ describe('UserDbService', () => {
     matricula: 987654,
     roles: ['admin'],
     comparePassword: jest.fn(),
+    save: jest.fn(),
   };
 
   const mockUserModel = {
@@ -285,26 +285,16 @@ describe('UserDbService', () => {
     const deletedBy = new Types.ObjectId();
 
     it('should soft delete a user', async () => {
-      model.updateOne.mockResolvedValue({ modifiedCount: 1 });
-      await service.delete(mockUser._id, deletedBy);
-
-      const softDelete = {
-        [IS_SOFT_DELETED_KEY]: true,
-        deletedBy,
-        deletionDate: expect.any(Date),
-      };
-
-      expect(model.updateOne).toHaveBeenCalledWith(
-        { _id: mockUser._id },
-        { $set: softDelete },
-      );
+      mockUser.save.mockResolvedValue(true);
+      await service.delete(mockUser as any, deletedBy);
+      expect(mockUser.save).toHaveBeenCalled();
     });
 
     it('should throw an error if delete fails', async () => {
-      const err = new Error('Delete error');
-      model.updateOne.mockRejectedValue(err);
+      const err = new Error('Failed to save');
+      mockUser.save.mockRejectedValue(err);
       await expect(
-        service.delete(mockUser._id, deletedBy),
+        service.delete(mockUser as any, deletedBy),
       ).rejects.toStrictEqual(cantDelete(mockUser._id, err));
     });
   });

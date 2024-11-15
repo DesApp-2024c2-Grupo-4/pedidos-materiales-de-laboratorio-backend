@@ -32,7 +32,7 @@ export class EquipmentdbService {
       this.EquipmentModel.create(equipment),
     );
     if (createErr) {
-      throw new Error(cantCreateEquipment(createErr));
+      return Promise.reject(cantCreateEquipment(createErr));
     }
     return e._id;
   }
@@ -41,7 +41,7 @@ export class EquipmentdbService {
     const [equipments, err] = await handlePromise(this.EquipmentModel.find());
 
     if (err) {
-      throw new Error(cantGetEquipment(err));
+      return Promise.reject(cantGetEquipment(err));
     }
 
     if (isAvailable) {
@@ -61,7 +61,7 @@ export class EquipmentdbService {
     );
 
     if (err) {
-      throw new Error(cantGetEquipmentById(id, err));
+      return Promise.reject(cantGetEquipmentById(id, err));
     }
 
     return equipment;
@@ -75,7 +75,7 @@ export class EquipmentdbService {
       this.EquipmentModel.updateOne({ _id: id }, equipment),
     );
     if (err) {
-      throw new Error(cantUpdateEquipment(id, err));
+      return Promise.reject(cantUpdateEquipment(id, err));
     }
   }
 
@@ -90,7 +90,7 @@ export class EquipmentdbService {
     const [, err] = await handlePromise(equipment.save());
 
     if (err) {
-      throw new Error(cantDeleteEquipment(equipment._id, err));
+      return Promise.reject(cantDeleteEquipment(equipment._id, err));
     }
   }
 }

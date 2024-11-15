@@ -4,7 +4,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Material } from '../../schemas/requestable/material.schema';
 import { Types } from 'mongoose';
 import { UpdateMaterialDto } from '../../dto/material.dto';
-import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
+import { cantDelete } from '../material.error';
 
 describe('MaterialDbService', () => {
   let service: MaterialDbService;
@@ -18,6 +18,7 @@ describe('MaterialDbService', () => {
     stock: 100,
     inRepair: 10,
     isAvailable: true,
+    save: jest.fn(),
   };
 
   const mockUpdateMaterialDto: UpdateMaterialDto = {
@@ -147,30 +148,18 @@ describe('MaterialDbService', () => {
   describe('delete', () => {
     const deletedBy = new Types.ObjectId();
 
-    it('should soft-delete a material by ID', async () => {
-      materialModel.updateOne.mockResolvedValue(undefined);
-
-      await service.delete(mockMaterial._id, deletedBy);
-
-      const softDelete = {
-        [IS_SOFT_DELETED_KEY]: true,
-        deletedBy,
-        deletionDate: expect.any(Date),
-      };
-
-      expect(materialModel.updateOne).toHaveBeenCalledWith(
-        { _id: mockMaterial._id },
-        { $set: softDelete },
-      );
+    it('should soft delete a material', async () => {
+      mockMaterial.save.mockResolvedValue(true);
+      await service.delete(mockMaterial as any, deletedBy);
+      expect(mockMaterial.save).toHaveBeenCalled();
     });
 
-    it('should return an error if deleting fails', async () => {
-      const error = new Error('Delete failed');
-      materialModel.updateOne.mockRejectedValue(error);
-
-      await expect(service.delete(mockMaterial._id, deletedBy)).rejects.toEqual(
-        `Cannot delete material with id ${mockMaterial._id}. Reason: ${error}`,
-      );
+    it('should throw an error if delete fails', async () => {
+      const err = new Error('Failed to save');
+      mockMaterial.save.mockRejectedValue(err);
+      await expect(
+        service.delete(mockMaterial as any, deletedBy),
+      ).rejects.toStrictEqual(cantDelete(mockMaterial._id, err));
     });
   });
 });

@@ -51,7 +51,7 @@ export class UserService {
 
   async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
     const [user, getErr] = await handlePromise<UserDocument, Error>(
-      this.get(id),
+      this.dbService.get(id),
     );
 
     if (getErr) {

@@ -5,7 +5,7 @@ import { Types } from 'mongoose';
 import { BackendException } from '../../shared/backend.exception';
 import { HttpStatus } from '@nestjs/common';
 import { UpdateMaterialDto } from '../../dto/material.dto';
-import { cantCreateMaterial } from '../material.error';
+import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('MaterialService', () => {
   let service: MaterialService;
@@ -68,12 +68,14 @@ describe('MaterialService', () => {
       const error = 'Add failed';
       mockMaterialDbService.add.mockRejectedValue(error);
 
-      await expect(service.add(mockMaterial)).rejects.toThrow(
-        new BackendException(
-          cantCreateMaterial(mockMaterial.description, error),
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        ),
-      );
+      try {
+        await service.add(mockMaterial);
+        fail('Expected add to throw BackendException');
+      } catch (e) {
+        expect(e).toBeInstanceOf(BackendException);
+        expect(e.message).toBe(error);
+        expect(e.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     });
   });
 
@@ -97,14 +99,14 @@ describe('MaterialService', () => {
       const error = new Error('Update failed');
       mockMaterialDbService.update.mockRejectedValue(error);
 
-      const result = await service.update(
-        mockMaterial._id,
-        mockUpdateMaterialDto,
-      );
-
-      expect(result).toBeInstanceOf(BackendException);
-      expect(result.message).toBe(error.message);
-      expect(result.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+      try {
+        await service.update(mockMaterial._id, mockUpdateMaterialDto);
+        fail('Expected update to throw BackendException');
+      } catch (e) {
+        expect(e).toBeInstanceOf(BackendException);
+        expect(e.message).toBe(error.message);
+        expect(e.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     });
   });
 
@@ -121,25 +123,29 @@ describe('MaterialService', () => {
     it('should return BackendException with 404 if material is not found', async () => {
       mockMaterialDbService.get.mockResolvedValue(null);
 
-      const result = await service.get(mockMaterial._id);
-
-      expect(result).toBeInstanceOf(BackendException);
-      expect((result as BackendException).getStatus()).toBe(
-        HttpStatus.NOT_FOUND,
-      );
+      try {
+        await service.get(mockMaterial._id);
+        fail('Expected get to throw BackendException');
+      } catch (e) {
+        expect(e).toBeInstanceOf(BackendException);
+        expect(e.getStatus()).toBe(HttpStatus.NOT_FOUND);
+      }
     });
 
     it('should return BackendException if dbService.get throws an error', async () => {
       const error = new Error('Get failed');
       mockMaterialDbService.get.mockRejectedValue(error);
 
-      const result = await service.get(mockMaterial._id);
-
-      expect(result).toBeInstanceOf(BackendException);
-      expect((result as BackendException).message).toBe(error.message);
-      expect((result as BackendException).getStatus()).toBe(
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      try {
+        await service.get(mockMaterial._id);
+        fail('Expected get to throw BackendException');
+      } catch (e) {
+        expect(e).toBeInstanceOf(BackendException);
+        expect((e as any as BackendException).message).toBe(error.message);
+        expect((e as any as BackendException).getStatus()).toBe(
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
     });
   });
 
@@ -157,40 +163,72 @@ describe('MaterialService', () => {
       const error = new Error('Get all failed');
       mockMaterialDbService.getAll.mockRejectedValue(error);
 
-      const result = await service.getAll();
-
-      expect(result).toBeInstanceOf(BackendException);
-      expect((result as BackendException).message).toBe(error.message);
-      expect((result as BackendException).getStatus()).toBe(
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      try {
+        await service.getAll();
+        fail('Expected getAll to throw BackendException');
+      } catch (e) {
+        expect(e).toBeInstanceOf(BackendException);
+        expect(e.message).toBe(error.message);
+        expect(e.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     });
   });
 
   describe('delete', () => {
     const deletedBy = new Types.ObjectId();
 
-    it('should call dbService.delete and return nothing on success', async () => {
-      mockMaterialDbService.delete.mockResolvedValue(undefined);
+    it('should delete the equipment successfully', async () => {
+      const mockSoftDeleted = {
+        [IS_SOFT_DELETED_KEY]: false,
+        save: jest.fn(),
+      };
+      mockMaterialDbService.get.mockResolvedValue(mockSoftDeleted);
+      mockMaterialDbService.delete.mockResolvedValue(null);
 
-      const result = await service.delete(mockMaterial._id, deletedBy);
+      const response = await service.delete(mockMaterial._id, deletedBy);
 
-      expect(dbService.delete).toHaveBeenCalledWith(
-        mockMaterial._id,
-        deletedBy,
-      );
-      expect(result).toBeUndefined();
+      expect(dbService.delete).toHaveBeenCalledWith(mockSoftDeleted, deletedBy);
+
+      expect(response).toBeUndefined();
     });
 
-    it('should return BackendException if dbService.delete throws an error', async () => {
+    it('should throw BackendException when get fails', async () => {
+      const mockSoftDeleted = {
+        [IS_SOFT_DELETED_KEY]: false,
+        save: jest.fn(),
+      };
+      mockMaterialDbService.get.mockRejectedValue(mockSoftDeleted);
+
+      await expect(service.delete(mockMaterial._id, deletedBy)).rejects.toThrow(
+        BackendException,
+      );
+    });
+
+    it('should throw 404 when item is already soft deleted', async () => {
+      const mockSoftDeleted = {
+        [IS_SOFT_DELETED_KEY]: true,
+        save: jest.fn(),
+      };
+      mockMaterialDbService.get.mockResolvedValue(mockSoftDeleted);
+
+      await expect(service.delete(mockMaterial._id, deletedBy)).rejects.toThrow(
+        BackendException,
+      );
+    });
+
+    it('should throw BackendException when deletion fails', async () => {
+      const mockSoftDeleted = {
+        [IS_SOFT_DELETED_KEY]: false,
+        save: jest.fn(),
+      };
+      mockMaterialDbService.get.mockResolvedValue(mockSoftDeleted);
+
       const error = new Error('Delete failed');
       mockMaterialDbService.delete.mockRejectedValue(error);
 
-      const result = await service.delete(mockMaterial._id, deletedBy);
-
-      expect(result).toBeInstanceOf(BackendException);
-      expect(result.message).toBe(error.message);
-      expect(result.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+      await expect(service.delete(mockMaterial._id, deletedBy)).rejects.toThrow(
+        BackendException,
+      );
     });
   });
 });

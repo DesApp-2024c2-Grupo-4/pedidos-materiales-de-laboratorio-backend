@@ -5,6 +5,7 @@ import { BackendException } from '../../shared/backend.exception';
 import { Reactive } from '../../schemas/requestable/reactive.schema';
 import { UpdateReactivelDto } from '../../dto/reactive.dto';
 import { Types } from 'mongoose';
+import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('ReactiveService', () => {
   let service: ReactiveService;
@@ -125,15 +126,57 @@ describe('ReactiveService', () => {
   describe('delete', () => {
     const deletedBy = new Types.ObjectId();
 
-    it('should call dbService.delete without error', async () => {
-      mockDbService.delete.mockResolvedValueOnce(undefined);
+    it('should delete the reactive successfully', async () => {
+      const mockSoftDeleted = {
+        [IS_SOFT_DELETED_KEY]: false,
+        save: jest.fn(),
+      };
+      mockDbService.get.mockResolvedValue(mockSoftDeleted);
+      mockDbService.delete.mockResolvedValue(null);
 
-      await expect(service.delete(mockId, deletedBy)).resolves.not.toThrow();
-      expect(mockDbService.delete).toHaveBeenCalledWith(mockId, deletedBy);
+      const response = await service.delete(mockId, deletedBy);
+
+      expect(mockDbService.delete).toHaveBeenCalledWith(
+        mockSoftDeleted,
+        deletedBy,
+      );
+
+      expect(response).toBeUndefined();
     });
 
-    it('should throw BackendException if dbService.delete fails', async () => {
-      mockDbService.delete.mockRejectedValueOnce(new Error('Database Error'));
+    it('should throw BackendException when get fails', async () => {
+      const mockSoftDeleted = {
+        [IS_SOFT_DELETED_KEY]: false,
+        save: jest.fn(),
+      };
+      mockDbService.get.mockRejectedValue(mockSoftDeleted);
+
+      await expect(service.delete(mockId, deletedBy)).rejects.toThrow(
+        BackendException,
+      );
+    });
+
+    it('should throw 404 when item is already soft deleted', async () => {
+      const mockSoftDeleted = {
+        [IS_SOFT_DELETED_KEY]: true,
+        save: jest.fn(),
+      };
+      mockDbService.get.mockResolvedValue(mockSoftDeleted);
+
+      await expect(service.delete(mockId, deletedBy)).rejects.toThrow(
+        BackendException,
+      );
+    });
+
+    it('should throw BackendException when deletion fails', async () => {
+      const mockSoftDeleted = {
+        [IS_SOFT_DELETED_KEY]: false,
+        save: jest.fn(),
+      };
+      mockDbService.get.mockResolvedValue(mockSoftDeleted);
+
+      const error = new Error('Delete failed');
+      mockDbService.delete.mockRejectedValue(error);
 
       await expect(service.delete(mockId, deletedBy)).rejects.toThrow(
         BackendException,

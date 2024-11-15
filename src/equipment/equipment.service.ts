@@ -76,7 +76,7 @@ export class EquipmentService {
 
   async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
     const [equipment, getErr] = await handlePromise<EquipmentDocument, Error>(
-      this.get(id),
+      this.dbEquipment.get(id),
     );
 
     if (getErr) {
