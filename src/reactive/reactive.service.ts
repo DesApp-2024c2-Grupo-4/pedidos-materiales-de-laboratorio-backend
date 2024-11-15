@@ -1,10 +1,14 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Reactive } from '../schemas/requestable/reactive.schema';
+import {
+  Reactive,
+  ReactiveDocument,
+} from '../schemas/requestable/reactive.schema';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { Types } from 'mongoose';
 import { ReactiveDbService } from './reactive-db.service';
 import { UpdateReactivelDto } from '../dto/reactive.dto';
+import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()
 export class ReactiveService {
@@ -38,8 +42,8 @@ export class ReactiveService {
     return reactives;
   }
 
-  async get(id: Types.ObjectId): Promise<Reactive> {
-    const [reactive, err] = await handlePromise<Reactive, Error>(
+  async get(id: Types.ObjectId): Promise<ReactiveDocument> {
+    const [reactive, err] = await handlePromise<ReactiveDocument, Error>(
       this.dbService.get(id),
     );
     if (err) {
@@ -67,8 +71,23 @@ export class ReactiveService {
   }
 
   async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
+    const [reactive, getErr] = await handlePromise<ReactiveDocument, Error>(
+      this.get(id),
+    );
+
+    if (getErr) {
+      throw new BackendException(
+        getErr.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (reactive[IS_SOFT_DELETED_KEY]) {
+      throw new BackendException('', HttpStatus.NOT_FOUND);
+    }
+
     const [, err] = await handlePromise<unknown, Error>(
-      this.dbService.delete(id, deletedBy),
+      this.dbService.delete(reactive, deletedBy),
     );
 
     if (err) {

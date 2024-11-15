@@ -6,6 +6,7 @@ import { Request, RequestDocument } from '../schemas/request.schema';
 import { UpdateRequestDto } from '../dto/request.dto';
 import { Types } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
+import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()
 export class RequestService {
@@ -28,10 +29,7 @@ export class RequestService {
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -41,27 +39,21 @@ export class RequestService {
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async get(id: Types.ObjectId) {
+  async get(id: Types.ObjectId): Promise<RequestDocument> {
     const [request, err] = await handlePromise<RequestDocument, Error>(
       this.dbService.get(id),
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     if (!request) {
-      return new BackendException('', HttpStatus.NOT_FOUND);
+      throw new BackendException('', HttpStatus.NOT_FOUND);
     }
 
     request.updateExpiration(this.daysToExpireInSeconds);
@@ -75,25 +67,34 @@ export class RequestService {
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return requests;
   }
 
   async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
+    const [req, getErr] = await handlePromise<RequestDocument, Error>(
+      this.get(id),
+    );
+
+    if (getErr) {
+      throw new BackendException(
+        getErr.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (req[IS_SOFT_DELETED_KEY]) {
+      throw new BackendException('', HttpStatus.NOT_FOUND);
+    }
+
     const [, err] = await handlePromise<unknown, Error>(
-      this.dbService.delete(id, deletedBy),
+      this.dbService.delete(req, deletedBy),
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

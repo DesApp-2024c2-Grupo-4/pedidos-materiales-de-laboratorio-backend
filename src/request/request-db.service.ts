@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Request } from '../schemas/request.schema';
+import { Request, RequestDocument } from '../schemas/request.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import handlePromise from '../utils/promise';
 import {
@@ -10,7 +10,11 @@ import {
   cantUpdate,
 } from './request.error';
 import { Model, Types } from 'mongoose';
-import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
+import {
+  DELETED_BY_KEY,
+  DELETION_DATE_KEY,
+  IS_SOFT_DELETED_KEY,
+} from '../schemas/common/soft-delete.schema';
 import { UpdateRequestDto } from '../dto/request.dto';
 
 @Injectable()
@@ -62,19 +66,15 @@ export class RequestDbService {
     return requests;
   }
 
-  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId): Promise<void> {
-    const softDelete = {
-      [IS_SOFT_DELETED_KEY]: true,
-      deletedBy,
-      deletionDate: new Date(Date.now()),
-    };
+  async delete(req: RequestDocument, deletedBy: Types.ObjectId): Promise<void> {
+    req[IS_SOFT_DELETED_KEY] = true;
+    req[DELETED_BY_KEY] = deletedBy;
+    req[DELETION_DATE_KEY] = new Date(Date.now());
 
-    const [, err] = await handlePromise(
-      this.requestModel.updateOne({ _id: id }, { $set: softDelete }),
-    );
+    const [, err] = await handlePromise(req.save());
 
     if (err) {
-      return Promise.reject(cantDelete(id, err));
+      return Promise.reject(cantDelete(req._id, err));
     }
   }
 }
