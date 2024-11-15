@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
-import { User } from '../schemas/user.schema';
+import { User, UserDocument } from '../schemas/user.schema';
 import { Model, Types, Connection } from 'mongoose';
 import handlePromise from '../utils/promise';
 import {
@@ -12,7 +12,11 @@ import {
   cantUpdate,
 } from './user.errors';
 import { CreateUserDto, UpdateUserDto } from '../dto/user.dto';
-import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
+import {
+  DELETED_BY_KEY,
+  DELETION_DATE_KEY,
+  IS_SOFT_DELETED_KEY,
+} from '../schemas/common/soft-delete.schema';
 import { RegisterTokenDocument } from '../schemas/register-token.schema';
 import { IdDto } from '../dto/id.dto';
 
@@ -37,7 +41,7 @@ export class UserDbService {
     return user;
   }
 
-  async get(id: Types.ObjectId): Promise<User> {
+  async get(id: Types.ObjectId): Promise<UserDocument> {
     const [user, err] = await handlePromise(
       this.userModel.findOne({
         _id: id,
@@ -127,19 +131,15 @@ export class UserDbService {
     }
   }
 
-  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId): Promise<void> {
-    const softDelete = {
-      [IS_SOFT_DELETED_KEY]: true,
-      deletedBy,
-      deletionDate: new Date(Date.now()),
-    };
+  async delete(user: UserDocument, deletedBy: Types.ObjectId): Promise<void> {
+    user[IS_SOFT_DELETED_KEY] = true;
+    user[DELETED_BY_KEY] = deletedBy;
+    user[DELETION_DATE_KEY] = new Date(Date.now());
 
-    const [, err] = await handlePromise(
-      this.userModel.updateOne({ _id: id }, { $set: softDelete }),
-    );
+    const [, err] = await handlePromise(user.save());
 
     if (err) {
-      return Promise.reject(cantDelete(id, err));
+      return Promise.reject(cantDelete(user._id, err));
     }
   }
 
