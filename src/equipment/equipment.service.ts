@@ -20,7 +20,7 @@ export class EquipmentService {
       );
     }
 
-    return {id};
+    return { id };
   }
 
   async getAll(isAvailable?: boolean): Promise<Equipment[]> {

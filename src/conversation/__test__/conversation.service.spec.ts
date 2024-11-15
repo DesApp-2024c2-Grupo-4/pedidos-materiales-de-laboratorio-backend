@@ -3,7 +3,6 @@ import { ConversationService } from '../conversation.service';
 import { ConversationDbService } from '../conversation-db.service';
 import { UserDbService } from '../../user/user-db.service';
 import { Types } from 'mongoose';
-import * as handlePromise from '../../utils/promise';
 import { BackendException } from '../../shared/backend.exception';
 import { HttpStatus } from '@nestjs/common';
 import { cantAddMessage } from '../conversation.errors';

@@ -8,6 +8,7 @@ import { Types } from 'mongoose';
 
 describe('ReactiveService', () => {
   let service: ReactiveService;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let dbService: ReactiveDbService;
 
   const mockReactive: Reactive = {

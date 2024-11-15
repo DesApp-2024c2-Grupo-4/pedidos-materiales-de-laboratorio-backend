@@ -1,12 +1,8 @@
-import {
-  registerDecorator,
-  ValidationOptions,
-  ValidationArguments,
-} from 'class-validator';
+import { registerDecorator, ValidationOptions } from 'class-validator';
 import { isValidObjectId } from 'mongoose';
 
 export function IsObjectId(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'IsObjectId',
       target: object.constructor,
@@ -14,7 +10,7 @@ export function IsObjectId(validationOptions?: ValidationOptions) {
       constraints: [],
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate(value: any) {
           return isValidObjectId(value);
         },
       },

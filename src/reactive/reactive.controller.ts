@@ -37,7 +37,7 @@ export class ReactiveController {
   @Get()
   @AnyRoles(Roles.LAB, Roles.TEACHER)
   getAll(@Query() isAvailableDto: IsAvailableDto) {
-    const { isAvailable } = isAvailableDto
+    const { isAvailable } = isAvailableDto;
     return this.ReactiveService.getAll(isAvailable);
   }
 

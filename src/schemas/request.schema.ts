@@ -148,7 +148,7 @@ export class Request {
 
   @IsNumber()
   @Prop({ required: true })
-  requestNumber: Number;
+  requestNumber: number;
 
   @IsString()
   @Prop({ required: true, enum: Object.keys(RequestStatuses) })

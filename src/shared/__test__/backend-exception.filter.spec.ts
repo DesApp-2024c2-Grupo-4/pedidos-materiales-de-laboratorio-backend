@@ -6,6 +6,7 @@ import { ArgumentsHost, HttpException } from '@nestjs/common';
 describe('BackendExceptionFilter', () => {
   let filter: BackendExceptionFilter;
   let response: Response;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let host: ArgumentsHost;
   let consoleErrorSpy: any;
 

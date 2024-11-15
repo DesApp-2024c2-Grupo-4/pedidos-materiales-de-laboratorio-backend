@@ -3,10 +3,8 @@ import { Reactive } from '../schemas/requestable/reactive.schema';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { Types } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
 import { ReactiveDbService } from './reactive-db.service';
 import { UpdateReactivelDto } from '../dto/reactive.dto';
-import { IdDto } from '../dto/id.dto';
 
 @Injectable()
 export class ReactiveService {
@@ -21,7 +19,7 @@ export class ReactiveService {
       throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    return { id }
+    return { id };
   }
 
   async getAll(available?: boolean): Promise<Reactive[]> {

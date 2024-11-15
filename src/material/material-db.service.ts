@@ -54,7 +54,7 @@ export class MaterialDbService {
     return material;
   }
 
-  async getAll(isAvailable?:boolean) {
+  async getAll(isAvailable?: boolean) {
     const [materials, err] = await handlePromise(this.materialModel.find());
 
     if (err) {
@@ -65,7 +65,7 @@ export class MaterialDbService {
       return materials.filter((e) => !e[IS_SOFT_DELETED_KEY]);
     }
 
-    if(isAvailable === false){
+    if (isAvailable === false) {
       return materials.filter((e) => e[IS_SOFT_DELETED_KEY]);
     }
 
