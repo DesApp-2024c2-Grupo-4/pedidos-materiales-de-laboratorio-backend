@@ -5,6 +5,8 @@ import { MongooseModels } from '../../const/mongoose.const';
 import { IsObjectId } from '../../utils/validation/id.validator';
 
 export const IS_SOFT_DELETED_KEY = 'isSoftDeleted';
+export const DELETED_BY_KEY = 'deletedBy';
+export const DELETION_DATE_KEY = 'deletionDate';
 
 @Schema()
 export class SoftDelete {

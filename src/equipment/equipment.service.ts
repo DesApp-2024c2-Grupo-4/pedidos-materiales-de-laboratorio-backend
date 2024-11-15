@@ -1,10 +1,14 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Equipment } from '../schemas/requestable/equipment.schema';
+import {
+  Equipment,
+  EquipmentDocument,
+} from '../schemas/requestable/equipment.schema';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { Types } from 'mongoose';
 import { EquipmentdbService } from './equipment-db.service';
 import { UpdateEquipmentDto } from '../dto/equipment.dto';
+import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()
 export class EquipmentService {
@@ -42,7 +46,7 @@ export class EquipmentService {
     return equipments;
   }
 
-  async get(id: Types.ObjectId): Promise<Equipment> {
+  async get(id: Types.ObjectId): Promise<EquipmentDocument> {
     const [equipment, err] = await handlePromise(this.dbEquipment.get(id));
 
     if (err) {
@@ -71,7 +75,24 @@ export class EquipmentService {
   }
 
   async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
-    const [, err] = await handlePromise(this.dbEquipment.delete(id, deletedBy));
+    const [equipment, getErr] = await handlePromise<EquipmentDocument, Error>(
+      this.get(id),
+    );
+
+    if (getErr) {
+      throw new BackendException(
+        getErr.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (equipment[IS_SOFT_DELETED_KEY]) {
+      throw new BackendException('', HttpStatus.NOT_FOUND);
+    }
+
+    const [, err] = await handlePromise(
+      this.dbEquipment.delete(equipment, deletedBy),
+    );
 
     if (err) {
       throw new BackendException(

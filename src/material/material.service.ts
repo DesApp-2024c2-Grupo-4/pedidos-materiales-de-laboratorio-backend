@@ -2,9 +2,13 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { MaterialDbService } from './material-db.service';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
-import { Material } from '../schemas/requestable/material.schema';
+import {
+  Material,
+  MaterialDocument,
+} from '../schemas/requestable/material.schema';
 import { Types } from 'mongoose';
 import { UpdateMaterialDto } from '../dto/material.dto';
+import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()
 export class MaterialService {
@@ -16,10 +20,7 @@ export class MaterialService {
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return { id };
@@ -31,27 +32,21 @@ export class MaterialService {
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async get(id: Types.ObjectId) {
-    const [material, err] = await handlePromise<unknown, Error>(
+  async get(id: Types.ObjectId): Promise<MaterialDocument> {
+    const [material, err] = await handlePromise<MaterialDocument, Error>(
       this.dbService.get(id),
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     if (!material) {
-      return new BackendException('', HttpStatus.NOT_FOUND);
+      throw new BackendException('', HttpStatus.NOT_FOUND);
     }
 
     return material;
@@ -63,25 +58,34 @@ export class MaterialService {
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return materials;
   }
 
   async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
+    const [material, getErr] = await handlePromise<MaterialDocument, Error>(
+      this.get(id),
+    );
+
+    if (getErr) {
+      throw new BackendException(
+        getErr.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (material[IS_SOFT_DELETED_KEY]) {
+      throw new BackendException('', HttpStatus.NOT_FOUND);
+    }
+
     const [, err] = await handlePromise<unknown, Error>(
-      this.dbService.delete(id, deletedBy),
+      this.dbService.delete(material, deletedBy),
     );
 
     if (err) {
-      return new BackendException(
-        err.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import handlePromise from '../utils/promise';
-import { Reactive } from '../schemas/requestable/reactive.schema';
+import {
+  Reactive,
+  ReactiveDocument,
+} from '../schemas/requestable/reactive.schema';
 import {
   cantCreateReactive,
   cantGetRactives,
@@ -11,7 +14,11 @@ import {
   cantGetReactive as cantGetReactiveById,
 } from './reactive.errors';
 import { UpdateReactivelDto } from '../dto/reactive.dto';
-import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
+import {
+  DELETED_BY_KEY,
+  DELETION_DATE_KEY,
+  IS_SOFT_DELETED_KEY,
+} from '../schemas/common/soft-delete.schema';
 
 @Injectable()
 export class ReactiveDbService {
@@ -50,7 +57,7 @@ export class ReactiveDbService {
     return reactives;
   }
 
-  async get(id: Types.ObjectId): Promise<Reactive> {
+  async get(id: Types.ObjectId): Promise<ReactiveDocument> {
     const [reactive, err] = await handlePromise(
       this.ReactiveModel.findById(id),
     );
@@ -75,19 +82,18 @@ export class ReactiveDbService {
     }
   }
 
-  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId): Promise<void> {
-    const softDelete = {
-      [IS_SOFT_DELETED_KEY]: true,
-      deletedBy,
-      deletionDate: new Date(Date.now()),
-    };
+  async delete(
+    reactive: ReactiveDocument,
+    deletedBy: Types.ObjectId,
+  ): Promise<void> {
+    reactive[IS_SOFT_DELETED_KEY] = true;
+    reactive[DELETED_BY_KEY] = deletedBy;
+    reactive[DELETION_DATE_KEY] = new Date(Date.now());
 
-    const [, err] = await handlePromise(
-      this.ReactiveModel.updateOne({ _id: id }, { $set: softDelete }),
-    );
+    const [, err] = await handlePromise(reactive.save());
 
     if (err) {
-      return Promise.reject(cantDeleteReactive(id, err));
+      return Promise.reject(cantDeleteReactive(reactive._id, err));
     }
   }
 }

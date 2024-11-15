@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import handlePromise from '../utils/promise';
-import { Equipment } from '../schemas/requestable/equipment.schema';
+import {
+  Equipment,
+  EquipmentDocument,
+} from '../schemas/requestable/equipment.schema';
 import {
   cantCreateEquipment,
   cantGetEquipment,
@@ -10,7 +13,11 @@ import {
   cantDeleteEquipment,
   cantGetEquipmentById,
 } from './equipment.errors';
-import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
+import {
+  DELETED_BY_KEY,
+  DELETION_DATE_KEY,
+  IS_SOFT_DELETED_KEY,
+} from '../schemas/common/soft-delete.schema';
 import { UpdateEquipmentDto } from '../dto/equipment.dto';
 
 @Injectable()
@@ -48,7 +55,7 @@ export class EquipmentdbService {
     return equipments;
   }
 
-  async get(id: Types.ObjectId): Promise<Equipment> {
+  async get(id: Types.ObjectId): Promise<EquipmentDocument> {
     const [equipment, err] = await handlePromise(
       this.EquipmentModel.findById(id),
     );
@@ -72,19 +79,18 @@ export class EquipmentdbService {
     }
   }
 
-  async delete(id: Types.ObjectId, deletedBy: Types.ObjectId): Promise<void> {
-    const softDelete = {
-      [IS_SOFT_DELETED_KEY]: true,
-      deletedBy,
-      deletionDate: new Date(Date.now()),
-    };
+  async delete(
+    equipment: EquipmentDocument,
+    deletedBy: Types.ObjectId,
+  ): Promise<void> {
+    equipment[IS_SOFT_DELETED_KEY] = true;
+    equipment[DELETED_BY_KEY] = deletedBy;
+    equipment[DELETION_DATE_KEY] = new Date(Date.now());
 
-    const [, err] = await handlePromise(
-      this.EquipmentModel.updateOne({ _id: id }, { $set: softDelete }),
-    );
+    const [, err] = await handlePromise(equipment.save());
 
     if (err) {
-      throw new Error(cantDeleteEquipment(id, err));
+      throw new Error(cantDeleteEquipment(equipment._id, err));
     }
   }
 }
