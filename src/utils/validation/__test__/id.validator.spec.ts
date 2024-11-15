@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { IsObjectId } from '../validation/id.validator';
+import { IsObjectId } from '../../validation/id.validator';
 import { Types } from 'mongoose';
 
 // Sample class to test the IsObjectId decorator
@@ -15,7 +15,7 @@ describe('IsObjectId Decorator', () => {
     testInstance.id = validId;
 
     const errors = await validate(testInstance);
-    expect(errors).toHaveLength(0); // No validation errors should be present
+    expect(errors).toHaveLength(0);
   });
 
   it('should invalidate an invalid ObjectId', async () => {
@@ -24,7 +24,7 @@ describe('IsObjectId Decorator', () => {
     testInstance.id = invalidId;
 
     const errors = await validate(testInstance);
-    expect(errors).toHaveLength(1); // There should be one validation error
+    expect(errors).toHaveLength(1);
     expect(errors[0].constraints).toHaveProperty(
       'IsObjectId',
       'Invalid ObjectId',
@@ -33,10 +33,10 @@ describe('IsObjectId Decorator', () => {
 
   it('should invalidate an empty value', async () => {
     const testInstance = new TestClass();
-    testInstance.id = ''; // Empty string
+    testInstance.id = '';
 
     const errors = await validate(testInstance);
-    expect(errors).toHaveLength(1); // There should be one validation error
+    expect(errors).toHaveLength(1);
     expect(errors[0].constraints).toHaveProperty(
       'IsObjectId',
       'Invalid ObjectId',
@@ -45,10 +45,10 @@ describe('IsObjectId Decorator', () => {
 
   it('should invalidate a non-ObjectId value', async () => {
     const testInstance = new TestClass();
-    testInstance.id = '12345'; // Non-ObjectId string
+    testInstance.id = '12345';
 
     const errors = await validate(testInstance);
-    expect(errors).toHaveLength(1); // There should be one validation error
+    expect(errors).toHaveLength(1);
     expect(errors[0].constraints).toHaveProperty(
       'IsObjectId',
       'Invalid ObjectId',
