@@ -4,7 +4,8 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Material } from '../../schemas/requestable/material.schema';
 import { Types } from 'mongoose';
 import { UpdateMaterialDto } from '../../dto/material.dto';
-import { cantDelete } from '../material.error';
+import { cantDelete, cantGetMaterials } from '../material.error';
+import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('MaterialDbService', () => {
   let service: MaterialDbService;
@@ -126,21 +127,38 @@ describe('MaterialDbService', () => {
   });
 
   describe('getAll', () => {
-    it('should return all materials', async () => {
-      materialModel.find.mockResolvedValue([mockMaterial]);
+    const unavailableDoc = { ...mockMaterial, [IS_SOFT_DELETED_KEY]: true };
 
-      const result = await service.getAll();
+    it('should return an array of available materials', async () => {
+      materialModel.find.mockResolvedValue([mockMaterial, unavailableDoc]);
 
-      expect(materialModel.find).toHaveBeenCalled();
+      const result = await service.getAll(true);
+
       expect(result).toEqual([mockMaterial]);
     });
 
-    it('should return an error if fetching all materials fails', async () => {
-      const error = new Error('Get all failed');
+    it('should return an array of unavailable materials', async () => {
+      materialModel.find.mockResolvedValue([mockMaterial, unavailableDoc]);
+
+      const result = await service.getAll(false);
+
+      expect(result).toStrictEqual([unavailableDoc]);
+    });
+
+    it('should return an array with all materials', async () => {
+      materialModel.find.mockResolvedValue([mockMaterial, unavailableDoc]);
+
+      const result = await service.getAll();
+
+      expect(result).toStrictEqual([mockMaterial, unavailableDoc]);
+    });
+
+    it('should throw an error when retrieval fails', async () => {
+      const error = new Error('Retrieval failed');
       materialModel.find.mockRejectedValue(error);
 
-      await expect(service.getAll()).rejects.toEqual(
-        `Cannot get materials. Reason: ${error}`,
+      await expect(service.getAll(true)).rejects.toStrictEqual(
+        cantGetMaterials(error),
       );
     });
   });
