@@ -10,6 +10,7 @@ import {
   cantGetEquipmentById,
   cantUpdateEquipment,
 } from '../equipment.errors';
+import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('EquipmentdbService', () => {
   let service: EquipmentdbService;
@@ -74,12 +75,30 @@ describe('EquipmentdbService', () => {
   });
 
   describe('getAll', () => {
-    it('should return an array of equipments', async () => {
-      equipmentModel.find.mockResolvedValue([mockEquipment]);
+    const unavailableDoc = { ...mockEquipment, [IS_SOFT_DELETED_KEY]: true };
+
+    it('should return an array of available equipments', async () => {
+      equipmentModel.find.mockResolvedValue([mockEquipment, unavailableDoc]);
 
       const result = await service.getAll(true);
 
       expect(result).toEqual([mockEquipment]);
+    });
+
+    it('should return an array of unavailable equipments', async () => {
+      equipmentModel.find.mockResolvedValue([mockEquipment, unavailableDoc]);
+
+      const result = await service.getAll(false);
+
+      expect(result).toStrictEqual([unavailableDoc]);
+    });
+
+    it('should return an array with all equipments', async () => {
+      equipmentModel.find.mockResolvedValue([mockEquipment, unavailableDoc]);
+
+      const result = await service.getAll();
+
+      expect(result).toStrictEqual([mockEquipment, unavailableDoc]);
     });
 
     it('should throw an error when retrieval fails', async () => {

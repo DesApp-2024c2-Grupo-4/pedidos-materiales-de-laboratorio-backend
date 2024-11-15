@@ -11,6 +11,7 @@ import {
   cantUpdateReactive,
   cantDeleteReactive,
 } from '../reactive.errors';
+import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('ReactiveDbService', () => {
   let service: ReactiveDbService;
@@ -79,20 +80,37 @@ describe('ReactiveDbService', () => {
   });
 
   describe('getAll', () => {
-    it('should return all available reactives', async () => {
-      const mockReactives = [{ name: 'Reactive1' }, { name: 'Reactive2' }];
-      mockReactiveModel.find.mockResolvedValue(mockReactives);
+    const unavailableDoc = { ...mockReactive, [IS_SOFT_DELETED_KEY]: true };
+
+    it('should return an array of available reactives', async () => {
+      model.find.mockResolvedValue([mockReactive, unavailableDoc]);
 
       const result = await service.getAll(true);
-      expect(result).toEqual(mockReactives);
+
+      expect(result).toEqual([mockReactive]);
     });
 
-    it('should reject if fails to get', async () => {
-      const error = new Error('Cannot getAll');
-      const available = true;
+    it('should return an array of unavailable reactives', async () => {
+      model.find.mockResolvedValue([mockReactive, unavailableDoc]);
+
+      const result = await service.getAll(false);
+
+      expect(result).toStrictEqual([unavailableDoc]);
+    });
+
+    it('should return an array with all reactives', async () => {
+      model.find.mockResolvedValue([mockReactive, unavailableDoc]);
+
+      const result = await service.getAll();
+
+      expect(result).toStrictEqual([mockReactive, unavailableDoc]);
+    });
+
+    it('should throw an error when retrieval fails', async () => {
+      const error = new Error('Retrieval failed');
       model.find.mockRejectedValue(error);
 
-      await expect(service.getAll(available)).rejects.toStrictEqual(
+      await expect(service.getAll(true)).rejects.toStrictEqual(
         cantGetRactives(error),
       );
     });
