@@ -61,7 +61,7 @@ describe('MaterialService', () => {
       const result = await service.add(mockMaterial);
 
       expect(dbService.add).toHaveBeenCalledWith(mockMaterial);
-      expect(result).toStrictEqual({id:1234});
+      expect(result).toStrictEqual({ id: 1234 });
     });
 
     it('should return BackendException if dbService.add throws an error', async () => {
@@ -70,11 +70,10 @@ describe('MaterialService', () => {
 
       await expect(service.add(mockMaterial)).rejects.toThrow(
         new BackendException(
-        cantCreateMaterial(mockMaterial.description,error),
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      )
+          cantCreateMaterial(mockMaterial.description, error),
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
       );
-
     });
   });
 

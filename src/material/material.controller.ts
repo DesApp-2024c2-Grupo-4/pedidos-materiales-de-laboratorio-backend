@@ -46,7 +46,7 @@ export class MaterialController {
   @Get()
   @AnyRoles(Roles.LAB, Roles.TEACHER)
   getAll(@Query() isAvailableDto: IsAvailableDto) {
-    const {isAvailable} = isAvailableDto;
+    const { isAvailable } = isAvailableDto;
     return this.materialService.getAll(isAvailable);
   }
 

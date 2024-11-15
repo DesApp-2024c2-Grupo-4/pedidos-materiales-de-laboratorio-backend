@@ -9,7 +9,6 @@ import { RegisterTokenDbService } from '../register-token/register-token-db.serv
 import { RegisterTokenDocument } from 'src/schemas/register-token.schema';
 import { IdDto } from '../../dto/id.dto';
 import { cantDeleteToken } from '../register-token/register-token.errors';
-import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 import { cantCreateUser } from '../../user/user.errors';
 
 describe('AuthService', () => {

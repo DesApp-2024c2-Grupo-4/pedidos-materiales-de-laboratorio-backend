@@ -6,5 +6,5 @@ export class UpdateMaterialDto extends PartialType(Material) {}
 
 export class quantityMaterialDto extends Material {
   @IsNumber()
-  availableStock: Number;
+  availableStock: number;
 }

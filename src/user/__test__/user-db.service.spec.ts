@@ -6,10 +6,6 @@ import { Connection, Types } from 'mongoose';
 import { CreateUserDto, UpdateUserDto } from '../../dto/user.dto';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 import { cantDelete } from '../user.errors';
-import {
-  RegisterToken,
-  RegisterTokenDocument,
-} from '../../schemas/register-token.schema';
 
 describe('UserDbService', () => {
   let service: UserDbService;
