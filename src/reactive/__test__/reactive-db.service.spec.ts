@@ -11,7 +11,6 @@ import {
   cantUpdateReactive,
   cantDeleteReactive,
 } from '../reactive.errors';
-import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('ReactiveDbService', () => {
   let service: ReactiveDbService;
@@ -25,12 +24,14 @@ describe('ReactiveDbService', () => {
     findByIdAndDelete: jest.fn(),
   };
 
-  const mockReactive: Reactive = {
+  const mockReactive = {
+    _id: new Types.ObjectId(),
     description: 'test-description',
     cas: 'test-cas',
     stock: 50,
     isAvailable: true,
     isSoftDeleted: false,
+    save: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -160,31 +161,18 @@ describe('ReactiveDbService', () => {
   describe('delete', () => {
     const deletedBy = new Types.ObjectId();
 
-    it('should delete a reactive by ID', async () => {
-      const mockId = new Types.ObjectId();
-      mockReactiveModel.updateOne.mockResolvedValue({});
-
-      await service.delete(mockId, deletedBy);
-      const softDelete = {
-        [IS_SOFT_DELETED_KEY]: true,
-        deletedBy,
-        deletionDate: expect.any(Date),
-      };
-
-      expect(model.updateOne).toHaveBeenCalledWith(
-        { _id: mockId },
-        { $set: softDelete },
-      );
+    it('should soft delete a user', async () => {
+      mockReactive.save.mockResolvedValue(true);
+      await service.delete(mockReactive as any, deletedBy);
+      expect(mockReactive.save).toHaveBeenCalled();
     });
 
-    it('should reject if fails to delete', async () => {
-      const error = new Error('Cannot delete');
-      const id = new Types.ObjectId();
-      model.updateOne.mockRejectedValue(error);
-
-      await expect(service.delete(id, deletedBy)).rejects.toStrictEqual(
-        cantDeleteReactive(id, error),
-      );
+    it('should throw an error if delete fails', async () => {
+      const err = new Error('Failed to save');
+      mockReactive.save.mockRejectedValue(err);
+      await expect(
+        service.delete(mockReactive as any, deletedBy),
+      ).rejects.toStrictEqual(cantDeleteReactive(mockReactive._id, err));
     });
   });
 });

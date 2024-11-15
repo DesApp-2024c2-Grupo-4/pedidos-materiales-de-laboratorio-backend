@@ -5,6 +5,7 @@ import { UserDbService } from '../user-db.service';
 import { BackendException } from '../../shared/backend.exception';
 import { Types } from 'mongoose';
 import { UpdateUserDto } from '../../dto/user.dto';
+import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -114,17 +115,51 @@ describe('UserService', () => {
 
     it('should call delete on the database service and not throw an error', async () => {
       const id = new Types.ObjectId();
+      const mockUser = {
+        [IS_SOFT_DELETED_KEY]: false,
+        save: jest.fn(),
+      };
       mockUserDbService.delete.mockResolvedValue(null);
+      mockUserDbService.get.mockResolvedValue(mockUser);
 
       await userService.delete(id, deletedBy);
 
-      expect(userDbService.delete).toHaveBeenCalledWith(id, deletedBy);
+      expect(userDbService.delete).toHaveBeenCalledWith(mockUser, deletedBy);
     });
 
-    it('should throw BackendException on error', async () => {
+    it('should throw BackendException on get error', async () => {
       const id = new Types.ObjectId();
       const error = new Error('Delete failed');
       mockUserDbService.delete.mockRejectedValue(error);
+      mockUserDbService.get.mockRejectedValue(error);
+
+      await expect(userService.delete(id, deletedBy)).rejects.toThrow(
+        new BackendException(error.message, HttpStatus.INTERNAL_SERVER_ERROR),
+      );
+    });
+
+    it('should throw 404 when item is already soft deleted', async () => {
+      const id = new Types.ObjectId();
+
+      const mockSoftDeleted = {
+        [IS_SOFT_DELETED_KEY]: true,
+        save: jest.fn(),
+      };
+      mockUserDbService.get.mockResolvedValue(mockSoftDeleted);
+
+      await expect(userService.delete(id, deletedBy)).rejects.toThrow(
+        BackendException,
+      );
+    });
+
+    it('should throw BackendException on save error', async () => {
+      const id = new Types.ObjectId();
+      const error = new Error('Delete failed');
+      mockUserDbService.delete.mockRejectedValue(error);
+      mockUserDbService.get.mockResolvedValue({
+        [IS_SOFT_DELETED_KEY]: false,
+        save: jest.fn(),
+      });
 
       await expect(userService.delete(id, deletedBy)).rejects.toThrow(
         new BackendException(error.message, HttpStatus.INTERNAL_SERVER_ERROR),

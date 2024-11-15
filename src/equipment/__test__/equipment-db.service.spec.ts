@@ -5,12 +5,11 @@ import { EquipmentdbService } from '../equipment-db.service';
 import { Equipment } from '../../schemas/requestable/equipment.schema';
 import {
   cantCreateEquipment,
+  cantDeleteEquipment,
   cantGetEquipment,
   cantGetEquipmentById,
   cantUpdateEquipment,
-  cantDeleteEquipment,
 } from '../equipment.errors';
-import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('EquipmentdbService', () => {
   let service: EquipmentdbService;
@@ -25,6 +24,7 @@ describe('EquipmentdbService', () => {
     inRepair: 1,
     isAvailable: true,
     isSoftDeleted: false,
+    save: jest.fn(),
   };
 
   const mockEquipmentModel = {
@@ -67,9 +67,9 @@ describe('EquipmentdbService', () => {
       const error = new Error('Creation failed');
       equipmentModel.create.mockRejectedValue(error);
 
-      await expect(service.add(mockEquipment as Equipment)).rejects.toThrow(
-        cantCreateEquipment(error),
-      );
+      await expect(
+        service.add(mockEquipment as Equipment),
+      ).rejects.toStrictEqual(cantCreateEquipment(error));
     });
   });
 
@@ -86,7 +86,7 @@ describe('EquipmentdbService', () => {
       const error = new Error('Retrieval failed');
       equipmentModel.find.mockRejectedValue(error);
 
-      await expect(service.getAll(true)).rejects.toThrow(
+      await expect(service.getAll(true)).rejects.toStrictEqual(
         cantGetEquipment(error),
       );
     });
@@ -106,7 +106,7 @@ describe('EquipmentdbService', () => {
       const error = new Error('Not found');
       equipmentModel.findById.mockRejectedValue(error);
 
-      await expect(service.get(mockEquipment._id)).rejects.toThrow(
+      await expect(service.get(mockEquipment._id)).rejects.toStrictEqual(
         cantGetEquipmentById(mockEquipment._id, error),
       );
     });
@@ -130,37 +130,25 @@ describe('EquipmentdbService', () => {
 
       await expect(
         service.update(mockEquipment._id, mockEquipment as Equipment),
-      ).rejects.toThrow(cantUpdateEquipment(mockEquipment._id, error));
+      ).rejects.toStrictEqual(cantUpdateEquipment(mockEquipment._id, error));
     });
   });
 
   describe('delete', () => {
     const deletedBy = new Types.ObjectId();
 
-    it('should soft-delete an equipment by ID', async () => {
-      equipmentModel.updateOne.mockResolvedValue({ nModified: 1 });
-
-      await service.delete(mockEquipment._id, deletedBy);
-
-      const softDelete = {
-        [IS_SOFT_DELETED_KEY]: true,
-        deletedBy,
-        deletionDate: expect.any(Date),
-      };
-
-      expect(equipmentModel.updateOne).toHaveBeenCalledWith(
-        { _id: mockEquipment._id },
-        { $set: softDelete },
-      );
+    it('should soft delete a user', async () => {
+      mockEquipment.save.mockResolvedValue(true);
+      await service.delete(mockEquipment as any, deletedBy);
+      expect(mockEquipment.save).toHaveBeenCalled();
     });
 
-    it('should throw an error when deletion fails', async () => {
-      const error = new Error('Delete failed');
-      equipmentModel.updateOne.mockRejectedValue(error);
-
+    it('should throw an error if delete fails', async () => {
+      const err = new Error('Failed to save');
+      mockEquipment.save.mockRejectedValue(err);
       await expect(
-        service.delete(mockEquipment._id, deletedBy),
-      ).rejects.toThrow(cantDeleteEquipment(mockEquipment._id, error));
+        service.delete(mockEquipment as any, deletedBy),
+      ).rejects.toStrictEqual(cantDeleteEquipment(mockEquipment._id, err));
     });
   });
 });
