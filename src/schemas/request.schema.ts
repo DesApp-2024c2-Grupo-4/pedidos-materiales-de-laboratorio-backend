@@ -1,13 +1,33 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongooseModels } from '../const/mongoose.const';
-import { IsArray, IsDate, IsNumber, IsString } from 'class-validator';
 import {
+  IsArray,
+  IsDate,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import {
+  LabsKeys,
   RequestStatuses,
   RequestStatusesValue,
 } from '../request/request.const';
+import { IsLabKey } from '../utils/validation/lab.validator';
 
 export type RequestDocument = HydratedDocument<Request>;
+
+@Schema()
+export class RequestableElement {
+  @IsNumber()
+  @Prop({ required: true })
+  amount: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Prop({ required: false })
+  missingAmount: number;
+}
 
 @Schema()
 export class SolventRequest {
@@ -21,11 +41,7 @@ export class SolventRequest {
 }
 
 @Schema()
-export class ReactiveRequest {
-  @IsNumber()
-  @Prop({ required: true })
-  quantity: number;
-
+export class ReactiveRequest extends RequestableElement {
   @IsString()
   @Prop({ required: true })
   unitMeasure: string;
@@ -50,21 +66,13 @@ export class ReactiveRequest {
 }
 
 @Schema()
-export class MaterialRequest {
-  @IsNumber()
-  @Prop({ required: true })
-  quantity: number;
-
+export class MaterialRequest extends RequestableElement {
   @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.MATERIAL })
   material: Types.ObjectId;
 }
 
 @Schema()
-export class EquipmentRequest {
-  @IsNumber()
-  @Prop({ required: true })
-  quantity: number;
-
+export class EquipmentRequest extends RequestableElement {
   @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.EQUIPMENT })
   material: Types.ObjectId;
 }
@@ -89,9 +97,10 @@ export class Request {
   @Prop({ required: true })
   usageDate: Date;
 
-  @IsNumber()
+  @IsOptional()
+  @IsLabKey()
   @Prop()
-  labNumber?: number;
+  lab?: LabsKeys;
 
   @IsString()
   @Prop({ required: true })

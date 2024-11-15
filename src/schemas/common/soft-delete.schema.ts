@@ -2,7 +2,7 @@ import { Prop, Schema } from '@nestjs/mongoose';
 import { IsBoolean, IsDate, IsOptional } from 'class-validator';
 import { Types } from 'mongoose';
 import { MongooseModels } from '../../const/mongoose.const';
-import { IsObjectId } from '../../utils/id-validator';
+import { IsObjectId } from '../../utils/validation/id.validator';
 
 export const IS_SOFT_DELETED_KEY = 'isSoftDeleted';
 

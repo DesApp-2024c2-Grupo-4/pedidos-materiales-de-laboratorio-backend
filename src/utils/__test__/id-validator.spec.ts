@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { IsObjectId } from '../id-validator';
+import { IsObjectId } from '../validation/id.validator';
 import { Types } from 'mongoose';
 
 // Sample class to test the IsObjectId decorator

@@ -1,7 +1,7 @@
 import { PickType } from '@nestjs/mapped-types';
 import { RegisterToken } from '../schemas/register-token.schema';
 import { Types } from 'mongoose';
-import { IsObjectId } from '../utils/id-validator';
+import { IsObjectId } from '../utils/validation/id.validator';
 
 export class CreateRegisterTokenDto extends PickType(RegisterToken, [
   'createdFor',

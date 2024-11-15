@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongooseModels } from '../const/mongoose.const';
 import { IsEmail, IsOptional } from 'class-validator';
-import { IsObjectId } from '../utils/id-validator';
+import { IsObjectId } from '../utils/validation/id.validator';
 import { IS_SOFT_DELETED_KEY, SoftDelete } from './common/soft-delete.schema';
 
 export type RegisterTokenDocument = HydratedDocument<RegisterToken>;
