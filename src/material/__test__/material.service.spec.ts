@@ -19,6 +19,7 @@ describe('MaterialService', () => {
     stock: 50,
     inRepair: 10,
     isAvailable: true,
+    hasEnoughStockAvailable: jest.fn(),
   };
 
   const mockUpdateMaterialDto: UpdateMaterialDto = {

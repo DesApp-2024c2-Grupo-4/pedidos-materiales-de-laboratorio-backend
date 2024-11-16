@@ -32,6 +32,7 @@ describe('ReactiveDbService', () => {
     stock: 50,
     isAvailable: true,
     isSoftDeleted: false,
+    hasEnoughStockAvailable: jest.fn(),
     save: jest.fn(),
   };
 

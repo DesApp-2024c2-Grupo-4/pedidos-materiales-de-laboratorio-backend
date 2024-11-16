@@ -37,7 +37,7 @@ export class EquipmentdbService {
     return e._id;
   }
 
-  async getAll(isAvailable?: boolean): Promise<Equipment[]> {
+  async getAll(isAvailable?: boolean): Promise<EquipmentDocument[]> {
     const [equipments, err] = await handlePromise(this.EquipmentModel.find());
 
     if (err) {

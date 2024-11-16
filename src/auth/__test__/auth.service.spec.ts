@@ -6,7 +6,7 @@ import { CreateUserDto } from '../../dto/user.dto';
 import { BackendException } from '../../shared/backend.exception';
 import { Types } from 'mongoose';
 import { RegisterTokenDbService } from '../register-token/register-token-db.service';
-import { RegisterTokenDocument } from 'src/schemas/register-token.schema';
+import { RegisterTokenDocument } from '../../schemas/register-token.schema';
 import { IdDto } from '../../dto/id.dto';
 import { cantDeleteToken } from '../register-token/register-token.errors';
 import { cantCreateUser } from '../../user/user.errors';

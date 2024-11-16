@@ -17,6 +17,7 @@ describe('EquipmentService', () => {
     unitMeasure: 'pcs',
     inRepair: 0,
     isAvailable: true,
+    hasEnoughStockAvailable: jest.fn(),
   };
 
   const mockEquipmentDbService = {

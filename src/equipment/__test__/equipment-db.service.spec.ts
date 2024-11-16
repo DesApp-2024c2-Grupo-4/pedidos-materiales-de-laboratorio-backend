@@ -26,6 +26,7 @@ describe('EquipmentdbService', () => {
     isAvailable: true,
     isSoftDeleted: false,
     save: jest.fn(),
+    hasEnoughStockAvailable: jest.fn(),
   };
 
   const mockEquipmentModel = {

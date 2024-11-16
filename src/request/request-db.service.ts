@@ -24,7 +24,7 @@ export class RequestDbService {
     private requestModel: Model<Request>,
   ) {}
 
-  async add(request: Request) {
+  async add(request: Request): Promise<Types.ObjectId> {
     const [newRequest, err] = await handlePromise(
       this.requestModel.create(request),
     );
@@ -32,6 +32,8 @@ export class RequestDbService {
     if (err) {
       return Promise.reject(cantCreateRequest(err));
     }
+
+    return newRequest._id;
   }
 
   async update(id: Types.ObjectId, request: UpdateRequestDto) {

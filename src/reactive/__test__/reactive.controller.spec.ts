@@ -29,6 +29,7 @@ describe('ReactiveController', () => {
     stock: 50,
     isAvailable: true,
     isSoftDeleted: false,
+    hasEnoughStockAvailable: jest.fn(),
   };
 
   const mockIdDto: IdDto = {
