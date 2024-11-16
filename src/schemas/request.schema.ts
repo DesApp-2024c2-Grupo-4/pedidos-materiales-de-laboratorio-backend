@@ -17,6 +17,10 @@ import { IsLabKey } from '../utils/validation/lab.validator';
 
 export type RequestDocument = HydratedDocument<Request>;
 
+export interface HasEnoughStockAvailable {
+  hasEnoughStockAvailable: (requiredAmount: number) => boolean;
+}
+
 @Schema()
 export class RequestableElement {
   @IsNumber()
@@ -27,6 +31,9 @@ export class RequestableElement {
   @IsOptional()
   @Prop({ required: false })
   missingAmount: number;
+
+  @Prop({ type: Types.ObjectId })
+  id: Types.ObjectId;
 }
 
 @Schema()
@@ -62,19 +69,19 @@ export class ReactiveRequest extends RequestableElement {
   solvents: SolventRequest[];
 
   @Prop({ type: Types.ObjectId, ref: MongooseModels.REACTIVE })
-  reactive: Types.ObjectId;
+  id: Types.ObjectId;
 }
 
 @Schema()
 export class MaterialRequest extends RequestableElement {
   @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.MATERIAL })
-  material: Types.ObjectId;
+  id: Types.ObjectId;
 }
 
 @Schema()
 export class EquipmentRequest extends RequestableElement {
   @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.EQUIPMENT })
-  material: Types.ObjectId;
+  id: Types.ObjectId;
 }
 
 @Schema()

@@ -5,7 +5,7 @@ import { BackendException } from '../shared/backend.exception';
 import { Types } from 'mongoose';
 import { UpdateUserDto } from '../dto/user.dto';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
-import { UserDocument } from 'src/schemas/user.schema';
+import { UserDocument } from '../schemas/user.schema';
 
 @Injectable()
 export class UserService {

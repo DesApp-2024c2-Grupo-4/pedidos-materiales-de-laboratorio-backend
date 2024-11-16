@@ -2,11 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { SoftDelete } from '../common/soft-delete.schema';
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { HasEnoughStockAvailable } from '../request.schema';
 
 export type MaterialDocument = HydratedDocument<Material>;
 
 @Schema()
-export class Material extends SoftDelete {
+export class Material extends SoftDelete implements HasEnoughStockAvailable {
   @IsString()
   @Prop({ required: true })
   description: string;
@@ -31,6 +32,14 @@ export class Material extends SoftDelete {
   @IsBoolean()
   @Prop({ required: true, default: true })
   isAvailable: boolean;
+
+  hasEnoughStockAvailable: (requiredAmount: number) => boolean;
 }
 
 export const MaterialSchema = SchemaFactory.createForClass(Material);
+
+MaterialSchema.methods.hasEnoughStockAvailable = function (
+  requiredAmount: number,
+): boolean {
+  return this.stock - this.inRepair >= requiredAmount;
+};

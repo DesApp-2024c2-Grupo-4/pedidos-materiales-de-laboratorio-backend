@@ -20,6 +20,7 @@ describe('MaterialDbService', () => {
     inRepair: 10,
     isAvailable: true,
     save: jest.fn(),
+    hasEnoughStockAvailable: jest.fn(),
   };
 
   const mockUpdateMaterialDto: UpdateMaterialDto = {
