@@ -3,7 +3,7 @@ import { RequestDbService } from './request-db.service';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { Request, RequestDocument } from '../schemas/request.schema';
-import { UpdateRequestDto } from '../dto/request.dto';
+import { CreateRequestDto, UpdateRequestDto } from '../dto/request.dto';
 import { Types } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
@@ -31,9 +31,9 @@ export class RequestService {
     this.daysToExpireInSeconds = daysToExpire * 86400;
   }
 
-  async add(creatorUserId: Types.ObjectId, request: Request) {
+  async add(creatorUserId: Types.ObjectId, createRequestDto: CreateRequestDto) {
     const [, validationError] = await handlePromise<unknown, Error>(
-      this.isValidRequest(request),
+      this.isValidRequest(createRequestDto),
     );
 
     if (validationError) {
@@ -41,7 +41,7 @@ export class RequestService {
     }
 
     const [id, err] = await handlePromise<unknown, string>(
-      this.dbService.add(creatorUserId, request),
+      this.dbService.add(creatorUserId, createRequestDto),
     );
 
     if (err) {
@@ -51,9 +51,9 @@ export class RequestService {
     return { id };
   }
 
-  async update(id: Types.ObjectId, request: UpdateRequestDto) {
+  async update(id: Types.ObjectId, updateRequestDto: UpdateRequestDto) {
     const [, validationError] = await handlePromise<unknown, Error>(
-      this.isValidRequest(request),
+      this.isValidRequest(updateRequestDto),
     );
 
     if (validationError) {
@@ -61,7 +61,7 @@ export class RequestService {
     }
 
     const [, err] = await handlePromise<unknown, string>(
-      this.dbService.update(id, request),
+      this.dbService.update(id, updateRequestDto),
     );
 
     if (err) {

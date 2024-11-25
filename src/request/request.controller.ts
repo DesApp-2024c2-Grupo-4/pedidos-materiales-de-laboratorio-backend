@@ -12,7 +12,7 @@ import {
 import { RequestService } from './request.service';
 import { Request } from '../schemas/request.schema';
 import { IdDto } from '../dto/id.dto';
-import { UpdateRequestDto } from '../dto/request.dto';
+import { CreateRequestDto, UpdateRequestDto } from '../dto/request.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { Roles } from '../const/roles.const';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
@@ -25,15 +25,18 @@ export class RequestController {
   @HttpCode(201)
   @Post()
   @AllRoles(Roles.TEACHER)
-  add(@Body() request: Request, @NestRequest() req: AuthenticatedRequest) {
+  add(
+    @Body() createRequestDto: CreateRequestDto,
+    @NestRequest() req: AuthenticatedRequest,
+  ) {
     const { id } = req.user;
-    return this.requestService.add(id, request);
+    return this.requestService.add(id, createRequestDto);
   }
 
   @Put('/:id')
   @AnyRoles(Roles.LAB, Roles.TEACHER)
-  update(@Param() params: IdDto, @Body() request: UpdateRequestDto) {
-    return this.requestService.update(params.id, request);
+  update(@Param() params: IdDto, @Body() updateRequestDto: UpdateRequestDto) {
+    return this.requestService.update(params.id, updateRequestDto);
   }
 
   @Get('/:id')

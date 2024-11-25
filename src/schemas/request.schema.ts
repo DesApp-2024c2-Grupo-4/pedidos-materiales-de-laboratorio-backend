@@ -16,6 +16,7 @@ import {
 } from '../request/request.const';
 import { IsLabKey } from '../utils/validation/lab.validator';
 import { IsObjectId } from '../utils/validation/id.validator';
+import { Type } from 'class-transformer';
 
 export type RequestDocument = HydratedDocument<Request>;
 
@@ -104,21 +105,25 @@ export class Request {
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   createdAt?: Date;
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   updatedAt?: Date;
 
   /* required info */
 
   @IsDate()
+  @Type(() => Date)
   @Prop({ required: true })
   startDate: Date;
 
   @IsDate()
+  @Type(() => Date)
   @Prop({ required: true })
   endDate: Date;
 
