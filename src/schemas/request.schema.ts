@@ -156,7 +156,7 @@ export class Request {
   /* comuncation */
 
   @IsArray()
-  @Prop({ type: Types.ObjectId, ref: MongooseModels.Conversation })
+  @Prop({ type: Types.ObjectId, ref: MongooseModels.CONVERSATION })
   messages: Types.ObjectId;
 
   /* requestables */
@@ -187,6 +187,7 @@ RequestSchema.pre<RequestDocument>('save', async function (next) {
   if (this.isNew) {
     this.status = RequestStatuses.PENDING;
   }
+  next();
 });
 
 RequestSchema.methods.isCompleted = function (): boolean {

@@ -68,7 +68,7 @@ export async function checkItemsAvailability(
 async function areReactivesAvailable(
   requestedReactives: ReactiveRequest[],
   reactiveDbService: ReactiveDbService,
-): Promise<Boolean> {
+): Promise<boolean> {
   return fetchItemsAndCheckAvailability(
     requestedReactives,
     reactiveDbService as any,
@@ -78,7 +78,7 @@ async function areReactivesAvailable(
 async function areMaterialsAvailable(
   requestedMaterials: MaterialRequest[],
   materialDbService: MaterialDbService,
-): Promise<Boolean> {
+): Promise<boolean> {
   return fetchItemsAndCheckAvailability(
     requestedMaterials,
     materialDbService as any,
@@ -88,7 +88,7 @@ async function areMaterialsAvailable(
 async function areEquipmentsAvailable(
   requestedEquipments: EquipmentRequest[],
   equipmentDbService: EquipmentdbService,
-): Promise<Boolean> {
+): Promise<boolean> {
   return fetchItemsAndCheckAvailability(
     requestedEquipments,
     equipmentDbService as any,
@@ -102,7 +102,7 @@ async function fetchItemsAndCheckAvailability(
       isAvailable: boolean,
     ) => Promise<Document<HasEnoughStockAvailable>[]>;
   },
-): Promise<Boolean> {
+): Promise<boolean> {
   const [availableItems, err] = await handlePromise<
     Document<HasEnoughStockAvailable>[],
     string
@@ -119,12 +119,12 @@ function areItemsAvailable(
   requestedItems: RequestableElement[],
   availableItems: Document<HasEnoughStockAvailable>[],
 ): boolean {
-  let availableItemsMap = availableItems.reduce(
+  const availableItemsMap = availableItems.reduce(
     (acc, e) => (acc[e._id.toString()] = e),
     {},
   );
 
-  for (let request of requestedItems) {
+  for (const request of requestedItems) {
     const availableItem = availableItemsMap[request.id.toString()];
 
     if (
