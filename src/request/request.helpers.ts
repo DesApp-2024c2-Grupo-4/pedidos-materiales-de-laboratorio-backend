@@ -121,10 +121,10 @@ function areItemsAvailable(
   requestedItems: RequestableElement[],
   availableItems: Document<HasEnoughStockAvailable>[],
 ): boolean {
-  const availableItemsMap = availableItems.reduce(
-    (acc, e) => (acc[e._id.toString()] = e),
-    {},
-  );
+  const availableItemsMap = availableItems.reduce((acc, e) => {
+    acc[e._id.toString()] = e;
+    return acc;
+  }, {});
 
   for (const request of requestedItems) {
     const availableItem = availableItemsMap[request.id.toString()];
