@@ -11,6 +11,7 @@ import { EquipmentdbService } from '../equipment/equipment-db.service';
 import { ReactiveDbService } from '../reactive/reactive-db.service';
 import { MaterialDbService } from '../material/material-db.service';
 import { checkItemsAvailability } from './request.helpers';
+import { RequestStatusesValue } from './request.const';
 
 @Injectable()
 export class RequestService {
@@ -31,28 +32,12 @@ export class RequestService {
   }
 
   async add(creatorUserId: Types.ObjectId, request: Request) {
-    if (!request.endDate && !request.materials && !request.reactives) {
-      throw new BackendException(
-        'Cannot make an empty request',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const [itemsAvailaiblity, availabilityErr] = await handlePromise(
-      checkItemsAvailability(
-        request,
-        this.equipmentDbService,
-        this.reactiveDbService,
-        this.materialDbService,
-      ),
+    const [, validationError] = await handlePromise<unknown, Error>(
+      this.isValidRequest(request),
     );
 
-    if (availabilityErr) {
-      throw availabilityErr;
-    }
-
-    if (!itemsAvailaiblity.available) {
-      throw new BackendException(itemsAvailaiblity.err, HttpStatus.BAD_REQUEST);
+    if (validationError) {
+      throw validationError;
     }
 
     const [id, err] = await handlePromise<unknown, Error>(
@@ -67,6 +52,14 @@ export class RequestService {
   }
 
   async update(id: Types.ObjectId, request: UpdateRequestDto) {
+    const [, validationError] = await handlePromise<unknown, Error>(
+      this.isValidRequest(request),
+    );
+
+    if (validationError) {
+      throw validationError;
+    }
+
     const [, err] = await handlePromise<unknown, Error>(
       this.dbService.update(id, request),
     );
@@ -94,9 +87,9 @@ export class RequestService {
     return request;
   }
 
-  async getAll() {
+  async getAll(status?: RequestStatusesValue) {
     const [requests, err] = await handlePromise<unknown, Error>(
-      this.dbService.getAll(),
+      this.dbService.getAll(status),
     );
 
     if (err) {
@@ -128,6 +121,32 @@ export class RequestService {
 
     if (err) {
       throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  private async isValidRequest(request: Partial<Request>) {
+    if (!request.endDate && !request.materials && !request.reactives) {
+      throw new BackendException(
+        'Cannot make an empty request',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const [itemsAvailaiblity, availabilityErr] = await handlePromise(
+      checkItemsAvailability(
+        request,
+        this.equipmentDbService,
+        this.reactiveDbService,
+        this.materialDbService,
+      ),
+    );
+
+    if (availabilityErr) {
+      throw availabilityErr;
+    }
+
+    if (!itemsAvailaiblity.available) {
+      throw new BackendException(itemsAvailaiblity.err, HttpStatus.BAD_REQUEST);
     }
   }
 }
