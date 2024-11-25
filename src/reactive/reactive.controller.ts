@@ -19,7 +19,7 @@ import { Roles } from '../const/roles.const';
 import {
   ReactiveQualities,
   ReactiveSolvents,
-  ReactiveTypes,
+  ReactiveConcentrationTypes,
   ReactiveUnits,
 } from './reactive.const';
 import { IsAvailableDto } from '../dto/is-available.dto';
@@ -66,7 +66,7 @@ export class ReactiveController {
   @Get('/constants/types')
   @AnyRoles(Roles.LAB, Roles.TEACHER)
   getReactiveTypes() {
-    return ReactiveTypes;
+    return ReactiveConcentrationTypes;
   }
 
   @Get('/constants/qualities')

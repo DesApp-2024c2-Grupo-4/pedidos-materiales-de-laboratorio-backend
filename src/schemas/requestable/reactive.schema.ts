@@ -1,13 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { SoftDelete } from '../common/soft-delete.schema';
-import {
-  IsBoolean,
-  IsDate,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsDate, IsInt, IsOptional, IsString } from 'class-validator';
 import { HasEnoughStockAvailable } from '../request.schema';
 import { Type } from 'class-transformer';
 

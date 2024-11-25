@@ -1,4 +1,4 @@
-export const ReactiveTypes = {
+export const ReactiveConcentrationTypes = {
   puro: 'Puro',
   molar: 'Molar',
   normal: 'Normalidad',
@@ -7,8 +7,11 @@ export const ReactiveTypes = {
   '%v/v': '% volumen/volumen',
 } as const;
 
-export type ReactiveTypesValue =
-  (typeof ReactiveTypes)[keyof typeof ReactiveTypes];
+export type ReactiveConcentarationTypesValue =
+  (typeof ReactiveConcentrationTypes)[keyof typeof ReactiveConcentrationTypes];
+
+export type ReactiveConcentrationTypesKeys =
+  keyof typeof ReactiveConcentrationTypes;
 
 export const ReactiveQualities = {
   'p.a.': 'P/Análisis',
@@ -18,6 +21,8 @@ export const ReactiveQualities = {
 
 export type ReactiveQualitiesValue =
   (typeof ReactiveQualities)[keyof typeof ReactiveQualities];
+
+export type ReactiveQualitiesKeys = keyof typeof ReactiveQualities;
 
 export const ReactiveUnits = {
   gr: 'Gramo',
@@ -30,6 +35,8 @@ export const ReactiveUnits = {
 export type ReactiveUnitsValue =
   (typeof ReactiveUnits)[keyof typeof ReactiveUnits];
 
+export type ReactiveUnitsKeys = keyof typeof ReactiveUnits;
+
 export const ReactiveSolvents = {
   agua: 'Agua',
   alcohol: 'Alcohol',
@@ -38,3 +45,5 @@ export const ReactiveSolvents = {
 
 export type ReactiveSolventsValue =
   (typeof ReactiveSolvents)[keyof typeof ReactiveSolvents];
+
+export type ReactiveSolventsKeys = keyof typeof ReactiveSolvents;

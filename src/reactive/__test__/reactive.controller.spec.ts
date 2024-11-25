@@ -7,7 +7,7 @@ import { UpdateReactivelDto } from '../reactive.dto';
 import { Types } from 'mongoose';
 import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
 import {
-  ReactiveTypes,
+  ReactiveConcentrationTypes,
   ReactiveQualities,
   ReactiveUnits,
   ReactiveSolvents,
@@ -49,7 +49,7 @@ describe('ReactiveController', () => {
     get: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
-    getReactiveTypes: jest.fn().mockReturnValue(ReactiveTypes),
+    getReactiveTypes: jest.fn().mockReturnValue(ReactiveConcentrationTypes),
     getReactiveQualities: jest.fn().mockReturnValue(ReactiveQualities),
     getReactiveUnits: jest.fn().mockReturnValue(ReactiveUnits),
     getReactiveSolvents: jest.fn().mockReturnValue(ReactiveSolvents),
@@ -115,7 +115,7 @@ describe('ReactiveController', () => {
   describe('getReactiveTypes', () => {
     it('should return reactive types', () => {
       const result = controller.getReactiveTypes();
-      expect(result).toEqual(ReactiveTypes);
+      expect(result).toEqual(ReactiveConcentrationTypes);
     });
   });
 

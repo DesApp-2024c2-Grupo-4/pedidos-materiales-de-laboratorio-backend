@@ -18,6 +18,16 @@ import {
 import { IsLabKey } from '../utils/validation/lab.validator';
 import { IsObjectId } from '../utils/validation/id.validator';
 import { Type } from 'class-transformer';
+import {
+  ReactiveConcentrationTypes,
+  ReactiveConcentrationTypesKeys,
+  ReactiveQualities,
+  ReactiveQualitiesKeys,
+  ReactiveSolvents,
+  ReactiveSolventsKeys,
+  ReactiveUnits,
+  ReactiveUnitsKeys,
+} from '../reactive/reactive.const';
 
 export type RequestDocument = HydratedDocument<Request>;
 
@@ -42,9 +52,9 @@ export class RequestableElement {
 
 @Schema()
 export class SolventRequest {
-  @IsString()
+  @IsEnum(ReactiveSolvents, { each: true })
   @Prop({ required: true })
-  name: string;
+  name: ReactiveSolventsKeys;
 
   @IsString()
   @Prop({ required: true })
@@ -53,17 +63,17 @@ export class SolventRequest {
 
 @Schema()
 export class ReactiveRequest extends RequestableElement {
-  @IsString()
+  @IsEnum(ReactiveUnits, { each: true })
   @Prop({ required: true })
-  unitMeasure: string;
+  unitMeasure: ReactiveUnitsKeys;
 
-  @IsString()
+  @IsEnum(ReactiveQualities, { each: true })
   @Prop({ required: true })
-  quality: string;
+  quality: ReactiveQualitiesKeys;
 
-  @IsString()
+  @IsEnum(ReactiveConcentrationTypes, { each: true })
   @Prop({ required: true })
-  concentrationType: string;
+  concentrationType: ReactiveConcentrationTypesKeys;
 
   @IsString()
   @Prop({ required: true })
