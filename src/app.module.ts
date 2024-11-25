@@ -14,6 +14,7 @@ import { MaterialModule } from './material/material.module';
 import { ReactiveModule } from './reactive/reactive.module';
 import { UserInitModule } from './user/user-init/user-init.module';
 import { RequestModule } from './request/request.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { RequestModule } from './request/request.module';
     MaterialModule,
     ReactiveModule,
     RequestModule,
+    UserModule,
   ],
   controllers: [],
   providers: [AuthGuardProvider],

@@ -11,7 +11,11 @@ import {
   cantGetUsers,
   cantUpdate,
 } from './user.errors';
-import { CreateUserDto, UpdateUserDto } from '../dto/user.dto';
+import {
+  CreateUserDto,
+  UpdateSelfUserDto,
+  UpdateUserDto,
+} from '../dto/user.dto';
 import {
   DELETED_BY_KEY,
   DELETION_DATE_KEY,
@@ -137,7 +141,10 @@ export class UserDbService {
     return materials;
   }
 
-  async update(id: Types.ObjectId, material: UpdateUserDto) {
+  async update(
+    id: Types.ObjectId,
+    material: UpdateUserDto | UpdateSelfUserDto,
+  ) {
     const [, err] = await handlePromise(
       this.userModel.updateOne({ _id: id }, material),
     );

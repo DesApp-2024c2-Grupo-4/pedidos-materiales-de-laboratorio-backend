@@ -37,6 +37,20 @@ describe('UserController', () => {
     jest.clearAllMocks();
   });
 
+  describe('updateSameUser', () => {
+    it('should call userService.update with correct parameters', async () => {
+      const idDto: IdDto = { id: new Types.ObjectId() };
+      const updateUserDto: UpdateUserDto = { name: 'Updated Name' };
+      mockUserService.update.mockResolvedValue(undefined);
+
+      await userController.updateSameUser(updateUserDto, {
+        user: idDto,
+      } as any);
+
+      expect(userService.update).toHaveBeenCalledWith(idDto.id, updateUserDto);
+    });
+  });
+
   describe('update', () => {
     it('should call userService.update with correct parameters', async () => {
       const idDto: IdDto = { id: new Types.ObjectId() };

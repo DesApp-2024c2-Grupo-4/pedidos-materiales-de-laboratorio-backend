@@ -43,7 +43,7 @@ export class User extends SoftDelete {
   @IsOptional()
   @IsNumber()
   @Prop()
-  licenceNumber?: number; // FIXME: Why do we need this? also let's pick a name for this attribute
+  licenceNumber?: number;
 
   @Prop({ required: true })
   roles: RolesValue[];

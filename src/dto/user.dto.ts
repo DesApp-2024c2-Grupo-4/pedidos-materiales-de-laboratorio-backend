@@ -10,4 +10,10 @@ export class CreateUserDto extends OmitType(User, [
   'comparePassword',
 ]) {}
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {}
+export class UpdateUserDto extends PartialType(
+  OmitType(User, ['createdAt', 'updatedAt', 'comparePassword']),
+) {}
+
+export class UpdateSelfUserDto extends PartialType(
+  OmitType(CreateUserDto, ['email', 'dni', 'licenceNumber']),
+) {}
