@@ -4,7 +4,7 @@ import { MaterialDbService } from '../material-db.service';
 import { Types } from 'mongoose';
 import { BackendException } from '../../shared/backend.exception';
 import { HttpStatus } from '@nestjs/common';
-import { UpdateMaterialDto } from '../../dto/material.dto';
+import { UpdateMaterialDto } from '../material.dto';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('MaterialService', () => {

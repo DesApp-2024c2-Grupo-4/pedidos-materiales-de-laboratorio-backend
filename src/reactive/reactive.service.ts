@@ -7,7 +7,7 @@ import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { Types } from 'mongoose';
 import { ReactiveDbService } from './reactive-db.service';
-import { UpdateReactivelDto } from '../dto/reactive.dto';
+import { UpdateReactivelDto } from './reactive.dto';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()

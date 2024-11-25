@@ -7,7 +7,7 @@ import {
   MaterialDocument,
 } from '../schemas/requestable/material.schema';
 import { Types } from 'mongoose';
-import { UpdateMaterialDto } from '../dto/material.dto';
+import { UpdateMaterialDto } from './material.dto';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()

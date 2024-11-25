@@ -3,7 +3,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { isValidObjectId, Model, Types } from 'mongoose';
 import { ReactiveDbService } from '../reactive-db.service';
 import { Reactive } from '../../schemas/requestable/reactive.schema';
-import { UpdateReactivelDto } from '../../dto/reactive.dto';
+import { UpdateReactivelDto } from '../reactive.dto';
 import {
   cantCreateReactive,
   cantGetRactives,

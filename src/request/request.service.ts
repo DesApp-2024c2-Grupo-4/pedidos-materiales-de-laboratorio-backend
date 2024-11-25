@@ -3,7 +3,7 @@ import { RequestDbService } from './request-db.service';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { Request, RequestDocument } from '../schemas/request.schema';
-import { CreateRequestDto, UpdateRequestDto } from '../dto/request.dto';
+import { CreateRequestDto, UpdateRequestDto } from './request.dto';
 import { Types } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
@@ -122,9 +122,13 @@ export class RequestService {
   }
 
   private async isValidRequest(request: Partial<Request>) {
-    if (!request.equipments && !request.materials && !request.reactives) {
+    const equipmentAmount = request.equipments?.length;
+    const materialAmount = request.materials?.length;
+    const reactiveAmount = request.reactives?.length;
+
+    if (!equipmentAmount && !materialAmount && !reactiveAmount) {
       throw new BackendException(
-        'Cannot make an empty request',
+        'Request cannot be empty',
         HttpStatus.BAD_REQUEST,
       );
     }

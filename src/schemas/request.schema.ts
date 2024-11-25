@@ -4,6 +4,7 @@ import { MongooseModels } from '../const/mongoose.const';
 import {
   IsArray,
   IsDate,
+  IsEnum,
   IsNumber,
   IsOptional,
   IsString,
@@ -100,7 +101,12 @@ export class Request {
   assignedUser?: Types.ObjectId;
 
   @IsString()
-  @Prop({ required: true, enum: Object.keys(RequestStatuses) })
+  @IsEnum(RequestStatuses, { each: true })
+  @Prop({
+    required: true,
+    enum: Object.keys(RequestStatuses),
+    default: RequestStatuses.PENDING,
+  })
   status: RequestStatusesValue;
 
   @IsOptional()
@@ -151,6 +157,7 @@ export class Request {
 
   @IsOptional()
   @IsLabKey()
+  @IsEnum(Object.keys(Labs), { each: true })
   @Prop({ enum: Object.keys(Labs) })
   lab?: LabsKeys;
 
@@ -187,13 +194,6 @@ export class Request {
 }
 
 export const RequestSchema = SchemaFactory.createForClass(Request);
-
-RequestSchema.pre<RequestDocument>('save', async function (next) {
-  if (this.isNew) {
-    this.status = RequestStatuses.PENDING;
-  }
-  next();
-});
 
 RequestSchema.methods.isCompleted = function (): boolean {
   return this.status !== RequestStatuses.COMPLETED;

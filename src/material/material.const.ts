@@ -5,3 +5,5 @@ export const MaterialTypes = {
 
 export type MaterialTypesValue =
   (typeof MaterialTypes)[keyof typeof MaterialTypes];
+
+export type MaterialType = keyof typeof MaterialTypes;

@@ -14,3 +14,5 @@ export const EquipmentTypes = {
 
 export type EquipmentTypeValue =
   (typeof EquipmentTypes)[keyof typeof EquipmentTypes];
+
+export type EquipmentType = keyof typeof EquipmentTypes;

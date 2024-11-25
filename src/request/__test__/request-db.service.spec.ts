@@ -3,7 +3,7 @@ import { RequestDbService } from '../request-db.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Request } from '../../schemas/request.schema';
 import { Types } from 'mongoose';
-import { UpdateRequestDto } from '../../dto/request.dto';
+import { UpdateRequestDto } from '../request.dto';
 import {
   cantCreateRequest,
   cantDelete,

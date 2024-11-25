@@ -1,23 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { SoftDelete } from '../common/soft-delete.schema';
-import {
-  IsBoolean,
-  IsDate,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { HasEnoughStockAvailable } from '../request.schema';
 import { Type } from 'class-transformer';
+import { EquipmentTypes, EquipmentType } from '../../equipment/equipment.const';
 
 export type EquipmentDocument = HydratedDocument<Equipment>;
 
 @Schema({ timestamps: true })
 export class Equipment extends SoftDelete implements HasEnoughStockAvailable {
-  @IsString()
+  @IsEnum(Object.keys(EquipmentTypes), { each: true })
   @Prop({ required: true })
-  type: string;
+  type: EquipmentType;
 
   @IsString()
   @Prop({ required: true })
@@ -27,17 +22,9 @@ export class Equipment extends SoftDelete implements HasEnoughStockAvailable {
   @Prop({ required: true })
   stock: number;
 
-  @IsString()
-  @Prop({ required: true })
-  unitMeasure: string;
-
   @IsInt()
   @Prop()
   inRepair: number;
-
-  @IsBoolean()
-  @Prop({ required: true, default: true })
-  isAvailable: boolean;
 
   @IsOptional()
   @IsDate()

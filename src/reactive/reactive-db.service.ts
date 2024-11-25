@@ -13,7 +13,7 @@ import {
   cantDeleteReactive,
   cantGetReactive as cantGetReactiveById,
 } from './reactive.errors';
-import { UpdateReactivelDto } from '../dto/reactive.dto';
+import { UpdateReactivelDto } from './reactive.dto';
 import {
   DELETED_BY_KEY,
   DELETION_DATE_KEY,

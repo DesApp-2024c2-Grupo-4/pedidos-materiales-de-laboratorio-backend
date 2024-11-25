@@ -4,12 +4,14 @@ import { SoftDelete } from '../common/soft-delete.schema';
 import {
   IsBoolean,
   IsDate,
+  IsEnum,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 import { HasEnoughStockAvailable } from '../request.schema';
 import { Type } from 'class-transformer';
+import { MaterialType, MaterialTypes } from '../../material/material.const';
 
 export type MaterialDocument = HydratedDocument<Material>;
 
@@ -23,9 +25,9 @@ export class Material extends SoftDelete implements HasEnoughStockAvailable {
   @Prop({ required: true })
   unitMeasure: string;
 
-  @IsString()
+  @IsEnum(Object.keys(MaterialTypes), { each: true })
   @Prop({ required: true })
-  type: string;
+  type: MaterialType;
 
   @IsNumber()
   @Prop({ required: true })
@@ -35,10 +37,6 @@ export class Material extends SoftDelete implements HasEnoughStockAvailable {
   @IsNumber()
   @Prop()
   inRepair: number;
-
-  @IsBoolean()
-  @Prop({ required: true, default: true })
-  isAvailable: boolean;
 
   @IsOptional()
   @IsDate()

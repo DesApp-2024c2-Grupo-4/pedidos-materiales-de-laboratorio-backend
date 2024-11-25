@@ -17,7 +17,7 @@ import { CreateUserDto, UserLoginDto } from '../dto/user.dto';
 import {
   CreateRegisterTokenDto,
   RegisterTokenIdDto,
-} from '../dto/register-token.dto';
+} from './register-token/register-token.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { Roles } from '../const/roles.const';
 import { IsAvailableDto } from '../dto/is-available.dto';

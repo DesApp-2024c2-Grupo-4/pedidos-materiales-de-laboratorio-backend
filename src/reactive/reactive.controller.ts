@@ -12,7 +12,7 @@ import {
 import { ReactiveService } from './reactive.service';
 import { Reactive } from '../schemas/requestable/reactive.schema';
 import { IdDto } from '../dto/id.dto';
-import { UpdateReactivelDto } from '../dto/reactive.dto';
+import { UpdateReactivelDto } from './reactive.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
 import { Roles } from '../const/roles.const';

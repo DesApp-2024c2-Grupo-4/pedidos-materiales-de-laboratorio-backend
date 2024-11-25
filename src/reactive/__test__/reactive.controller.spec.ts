@@ -3,7 +3,7 @@ import { ReactiveController } from '../reactive.controller';
 import { ReactiveService } from '../reactive.service';
 import { Reactive } from '../../schemas/requestable/reactive.schema';
 import { IdDto } from '../../dto/id.dto';
-import { UpdateReactivelDto } from '../../dto/reactive.dto';
+import { UpdateReactivelDto } from '../reactive.dto';
 import { Types } from 'mongoose';
 import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
 import {

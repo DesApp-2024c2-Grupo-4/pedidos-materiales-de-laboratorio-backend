@@ -17,7 +17,7 @@ import { IdDto } from '../dto/id.dto';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
 import { Roles } from '../const/roles.const';
 import { EquipmentTypes } from './equipment.const';
-import { UpdateEquipmentDto } from '../dto/equipment.dto';
+import { UpdateEquipmentDto } from './equipment.dto';
 import { IsAvailableDto } from '../dto/is-available.dto';
 
 @Controller('/equipment')

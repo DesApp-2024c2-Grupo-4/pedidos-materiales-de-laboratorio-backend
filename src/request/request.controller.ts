@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { RequestService } from './request.service';
 import { IdDto } from '../dto/id.dto';
-import { CreateRequestDto, UpdateRequestDto } from '../dto/request.dto';
+import { CreateRequestDto, UpdateRequestDto } from './request.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { Roles } from '../const/roles.const';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
