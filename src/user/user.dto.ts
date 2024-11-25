@@ -15,5 +15,5 @@ export class UpdateUserDto extends PartialType(
 ) {}
 
 export class UpdateSelfUserDto extends PartialType(
-  OmitType(CreateUserDto, ['email', 'dni', 'licenceNumber']),
+  OmitType(UpdateUserDto, ['email', 'dni', 'licenceNumber', 'roles']),
 ) {}

@@ -13,7 +13,7 @@ import {
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './strategies/local.guard';
 import { AllRoles, Public } from './providers/accesor.metadata';
-import { CreateUserDto, UserLoginDto } from '../dto/user.dto';
+import { CreateUserDto, UserLoginDto } from '../user/user.dto';
 import {
   CreateRegisterTokenDto,
   RegisterTokenIdDto,

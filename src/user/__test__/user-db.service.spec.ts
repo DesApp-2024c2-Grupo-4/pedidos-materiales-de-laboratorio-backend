@@ -3,7 +3,7 @@ import { UserDbService } from '../user-db.service';
 import { getConnectionToken, getModelToken } from '@nestjs/mongoose';
 import { User } from '../../schemas/user.schema';
 import { Connection, Types } from 'mongoose';
-import { CreateUserDto, UpdateUserDto } from '../../dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from '../user.dto';
 import { cantDelete } from '../user.errors';
 import { Roles } from '../../const/roles.const';
 

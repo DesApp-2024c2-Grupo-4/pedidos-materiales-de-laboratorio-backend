@@ -5,7 +5,7 @@ import { BackendException } from '../shared/backend.exception';
 import { UserDbService } from '../user/user-db.service';
 import { AccessTokenPayload } from '../types/jwt-payload';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../dto/user.dto';
+import { CreateUserDto } from '../user/user.dto';
 import { Document, Types } from 'mongoose';
 import { RegisterTokenDbService } from './register-token/register-token-db.service';
 import { IdDto } from '../dto/id.dto';

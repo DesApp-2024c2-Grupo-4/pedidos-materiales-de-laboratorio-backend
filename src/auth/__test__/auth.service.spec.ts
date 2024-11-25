@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
 import { UserDbService } from '../../user/user-db.service';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../../dto/user.dto';
+import { CreateUserDto } from '../../user/user.dto';
 import { BackendException } from '../../shared/backend.exception';
 import { Types } from 'mongoose';
 import { RegisterTokenDbService } from '../register-token/register-token-db.service';

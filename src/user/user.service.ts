@@ -3,7 +3,7 @@ import { UserDbService } from './user-db.service';
 import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { Types } from 'mongoose';
-import { UpdateSelfUserDto, UpdateUserDto } from '../dto/user.dto';
+import { UpdateSelfUserDto, UpdateUserDto } from './user.dto';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 import { UserDocument } from '../schemas/user.schema';
 

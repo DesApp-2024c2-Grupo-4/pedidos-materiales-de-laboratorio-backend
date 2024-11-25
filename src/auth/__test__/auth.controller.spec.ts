@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
-import { CreateUserDto, UserLoginDto } from '../../dto/user.dto';
+import { CreateUserDto, UserLoginDto } from '../../user/user.dto';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Types } from 'mongoose';
 import {

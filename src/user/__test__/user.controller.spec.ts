@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
 import { IdDto } from '../../dto/id.dto';
-import { UpdateUserDto } from '../../dto/user.dto';
+import { UpdateUserDto } from '../user.dto';
 import { Types } from 'mongoose';
 import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
 

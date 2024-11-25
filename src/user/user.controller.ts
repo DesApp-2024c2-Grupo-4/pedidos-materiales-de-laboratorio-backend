@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { IdDto } from '../dto/id.dto';
-import { UpdateSelfUserDto, UpdateUserDto } from '../dto/user.dto';
+import { UpdateSelfUserDto, UpdateUserDto } from './user.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { AllRoles } from '../auth/providers/accesor.metadata';
 import { Roles } from '../const/roles.const';

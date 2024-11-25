@@ -11,11 +11,7 @@ import {
   cantGetUsers,
   cantUpdate,
 } from './user.errors';
-import {
-  CreateUserDto,
-  UpdateSelfUserDto,
-  UpdateUserDto,
-} from '../dto/user.dto';
+import { CreateUserDto, UpdateSelfUserDto, UpdateUserDto } from './user.dto';
 import {
   DELETED_BY_KEY,
   DELETION_DATE_KEY,

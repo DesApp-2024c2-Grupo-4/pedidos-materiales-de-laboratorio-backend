@@ -4,7 +4,7 @@ import { UserService } from '../user.service';
 import { UserDbService } from '../user-db.service';
 import { BackendException } from '../../shared/backend.exception';
 import { Types } from 'mongoose';
-import { UpdateUserDto } from '../../dto/user.dto';
+import { UpdateUserDto } from '../user.dto';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 
 describe('UserService', () => {
