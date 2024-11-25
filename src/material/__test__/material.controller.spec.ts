@@ -32,6 +32,7 @@ describe('MaterialController', () => {
     stock: 50,
     inRepair: 5,
     isAvailable: true,
+    hasEnoughStockAvailable: jest.fn(),
   };
 
   beforeEach(async () => {

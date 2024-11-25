@@ -66,7 +66,7 @@ describe('AuthController', () => {
         dni: 12345678,
         email: 'john.doe@example.com',
         password: 'password123',
-        matricula: 123,
+        licenceNumber: 123,
       };
 
       mockAuthService.registerUser.mockResolvedValue(createUserDto);
@@ -89,7 +89,7 @@ describe('AuthController', () => {
         dni: 12345678,
         email: 'john.doe@example.com',
         password: 'password123',
-        matricula: 123,
+        licenceNumber: 123,
       };
 
       mockAuthService.registerUser.mockRejectedValue(
