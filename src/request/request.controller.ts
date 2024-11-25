@@ -10,7 +10,6 @@ import {
   Request as NestRequest,
 } from '@nestjs/common';
 import { RequestService } from './request.service';
-import { Request } from '../schemas/request.schema';
 import { IdDto } from '../dto/id.dto';
 import { CreateRequestDto, UpdateRequestDto } from '../dto/request.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
