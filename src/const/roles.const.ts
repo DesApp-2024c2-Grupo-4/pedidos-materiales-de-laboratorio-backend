@@ -3,3 +3,5 @@ export const Roles = {
   LAB: 'LAB',
   TEACHER: 'TEACHER',
 };
+
+export type RolesKeys = keyof typeof Roles;

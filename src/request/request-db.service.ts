@@ -24,9 +24,12 @@ export class RequestDbService {
     private requestModel: Model<Request>,
   ) {}
 
-  async add(request: Request): Promise<Types.ObjectId> {
+  async add(
+    creatorUserId: Types.ObjectId,
+    request: Request,
+  ): Promise<Types.ObjectId> {
     const [newRequest, err] = await handlePromise(
-      this.requestModel.create(request),
+      this.requestModel.create({ ...request, requestantUser: creatorUserId }),
     );
     newRequest.save();
     if (err) {

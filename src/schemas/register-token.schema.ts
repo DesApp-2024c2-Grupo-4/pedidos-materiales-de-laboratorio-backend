@@ -1,20 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongooseModels } from '../const/mongoose.const';
-import { IsEmail, IsOptional } from 'class-validator';
+import { IsDate, IsEmail, IsOptional } from 'class-validator';
 import { IsObjectId } from '../utils/validation/id.validator';
 import { IS_SOFT_DELETED_KEY, SoftDelete } from './common/soft-delete.schema';
+import { Roles, RolesKeys } from '../const/roles.const';
 
 export type RegisterTokenDocument = HydratedDocument<RegisterToken>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class RegisterToken extends SoftDelete {
   @IsObjectId({ message: 'Id should be in Mongo ObjectId format' })
   @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.USER })
   creatorId: Types.ObjectId;
-
-  @Prop({ required: false, type: Date })
-  creationDate: Date;
 
   @Prop({ required: false, type: Date })
   consumedDate: Date;
@@ -23,11 +21,31 @@ export class RegisterToken extends SoftDelete {
   @Prop({ required: false, type: Types.ObjectId, ref: MongooseModels.USER })
   userCreated: Types.ObjectId;
 
-  /* Optional, if specified only that email can register using the token */
+  @IsOptional()
+  @IsDate()
+  @Prop()
+  createdAt?: Date;
+
+  @IsOptional()
+  @IsDate()
+  @Prop()
+  updatedAt?: Date;
+
+  /**
+   *  Optional: if specified only that email can register using the token
+   */
   @IsEmail()
   @IsOptional()
   @Prop({ required: false, type: String })
-  createdFor: string;
+  createdFor?: string;
+
+  /**
+   *  Optional: if specified this roles will be automatically asigned to the
+   *  user created with that token
+   */
+  @IsOptional()
+  @Prop({ enum: Object.keys(Roles) })
+  roles?: RolesKeys[];
 
   consume: (createdUserId: Types.ObjectId) => Promise<void>;
 
@@ -37,7 +55,6 @@ export class RegisterToken extends SoftDelete {
   constructor(creatorId: Types.ObjectId, createdFor?: string) {
     super();
     this.creatorId = creatorId;
-    this.creationDate = new Date(Date.now());
 
     if (createdFor) {
       this.createdFor = createdFor;
@@ -61,10 +78,3 @@ RegisterTokenSchema.methods.isConsumed = function (): boolean {
 RegisterTokenSchema.methods.isAvailable = function (): boolean {
   return !this.isConsumed() && !this[IS_SOFT_DELETED_KEY];
 };
-
-RegisterTokenSchema.pre<RegisterTokenDocument>('save', function (next) {
-  if (this.isNew) {
-    this.creationDate = new Date();
-  }
-  next();
-});
