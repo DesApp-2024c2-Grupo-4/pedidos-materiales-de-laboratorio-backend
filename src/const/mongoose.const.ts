@@ -1,11 +1,11 @@
 export const MongooseModels = {
-  EQUIPMENT: 'Equipment',
-  USER: 'User',
-  MATERIAL: 'Material',
-  REACTIVE: 'Reactive',
-  REQUEST: 'Request',
-  MESSAGE: 'Message',
-  Conversation: 'Conversation',
+  EQUIPMENT: 'EQUIPMENT',
+  USER: 'USER',
+  MATERIAL: 'MATERIAL',
+  REACTIVE: 'REACTIVE',
+  REQUEST: 'REQUEST',
+  MESSAGE: 'MESSAGE',
+  CONVERSATION: 'CONVERSATION',
 } as const;
 
 export type MongooseModel =
