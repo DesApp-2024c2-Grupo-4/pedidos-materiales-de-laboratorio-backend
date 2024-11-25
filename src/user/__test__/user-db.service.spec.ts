@@ -37,6 +37,7 @@ describe('UserDbService', () => {
   };
 
   const mockUserModel = {
+    findById: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
     find: jest.fn(),
@@ -87,16 +88,18 @@ describe('UserDbService', () => {
 
   describe('findById', () => {
     it('should find a user by id', async () => {
-      model.findOne.mockResolvedValue(mockUser);
+      model.findById.mockResolvedValue(mockUser);
       const user = await service.get(mockUser._id);
 
-      expect(model.findOne).toHaveBeenCalledWith({ _id: mockUser._id });
+      expect(model.findById).toHaveBeenCalledWith(mockUser._id, {
+        password: 0,
+      });
       expect(user).toEqual(mockUser);
     });
 
     it('should throw an error if finding by id fails', async () => {
       const err = new Error('Find error');
-      model.findOne.mockRejectedValue(err);
+      model.findById.mockRejectedValue(err);
       await expect(service.get(mockUser._id)).rejects.toStrictEqual(
         `Cannot get user with id ${mockUser._id}. Reason: ${err}`,
       );
@@ -305,7 +308,7 @@ describe('UserDbService', () => {
       model.find.mockResolvedValue([mockUser]);
       const users = await service.getAll();
 
-      expect(model.find).toHaveBeenCalled();
+      expect(model.find).toHaveBeenCalledWith({}, { password: 0 });
       expect(users).toEqual([mockUser]);
     });
 
