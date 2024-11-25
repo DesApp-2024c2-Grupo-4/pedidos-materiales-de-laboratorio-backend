@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongooseModels } from '../const/mongoose.const';
-import { IsDate, IsEmail, IsOptional } from 'class-validator';
+import { IsDate, IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { IsObjectId } from '../utils/validation/id.validator';
 import { IS_SOFT_DELETED_KEY, SoftDelete } from './common/soft-delete.schema';
-import { Roles, RolesKeys } from '../const/roles.const';
+import { Roles, RolesValue } from '../const/roles.const';
 
 export type RegisterTokenDocument = HydratedDocument<RegisterToken>;
 
@@ -44,8 +44,9 @@ export class RegisterToken extends SoftDelete {
    *  user created with that token
    */
   @IsOptional()
-  @Prop({ enum: Object.keys(Roles) })
-  roles?: RolesKeys[];
+  @IsEnum(Roles, { each: true })
+  @Prop()
+  roles?: RolesValue[];
 
   consume: (createdUserId: Types.ObjectId) => Promise<void>;
 

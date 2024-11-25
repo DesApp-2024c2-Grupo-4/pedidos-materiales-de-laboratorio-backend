@@ -59,26 +59,42 @@ export class UserDbService {
     user: CreateUserDto,
     token: RegisterTokenDocument,
   ): Promise<IdDto> {
+    if (token.createdFor) {
+      if (token.createdFor !== user.email) {
+        return Promise.reject(
+          cantCreateUser(
+            user.email,
+            `Token is not allowed for requested email address`,
+          ),
+        );
+      }
+    }
+
+    const finalUser = token.roles ? { ...user, roles: token.roles } : user;
+
     const [session, sessionError] = await handlePromise(
       this.connection.startSession(),
     );
 
     if (sessionError) {
       return Promise.reject(
-        cantCreateUser(user.email, `Error starting session: ${sessionError}`),
+        cantCreateUser(
+          finalUser.email,
+          `Error starting session: ${sessionError}`,
+        ),
       );
     }
 
     session.startTransaction();
 
     const [_user, err] = await handlePromise(
-      this.userModel.create([user], { session }),
+      this.userModel.create([finalUser], { session }),
     );
 
     if (err) {
       await handlePromise(session.abortTransaction());
       await handlePromise(session.endSession());
-      return Promise.reject(cantCreateUser(user.email, err));
+      return Promise.reject(cantCreateUser(finalUser.email, err));
     }
 
     const [savedUser] = _user;
@@ -91,7 +107,7 @@ export class UserDbService {
       await handlePromise(session.abortTransaction());
       await handlePromise(session.endSession());
       return Promise.reject(
-        cantCreateUser(user.email, `Cannot save token: ${saveTokenErr}`),
+        cantCreateUser(finalUser.email, `Cannot save token: ${saveTokenErr}`),
       );
     }
 
@@ -102,7 +118,7 @@ export class UserDbService {
       session.endSession();
       return Promise.reject(
         cantCreateUser(
-          user.email,
+          finalUser.email,
           `Error committing transaction: ${commitError}`,
         ),
       );

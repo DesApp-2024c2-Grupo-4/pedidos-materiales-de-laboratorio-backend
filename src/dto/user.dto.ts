@@ -1,42 +1,13 @@
-import { PartialType } from '@nestjs/mapped-types';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
+import { User } from 'src/schemas/user.schema';
 
-export class UserLoginDto {
-  @IsEmail()
-  email: string;
+export class UserLoginDto extends PickType(User, ['email', 'password']) {}
 
-  @IsNotEmpty()
-  password: string;
-}
-
-export class CreateUserDto {
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  password: string;
-
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-
-  @IsNotEmpty()
-  @IsString()
-  lastName: string;
-
-  @IsNumber()
-  dni: number;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsNumber()
-  matricula: number;
-}
+export class CreateUserDto extends OmitType(User, [
+  'createdAt',
+  'updatedAt',
+  'roles',
+  'comparePassword',
+]) {}
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}

@@ -25,8 +25,9 @@ export class RequestController {
   @HttpCode(201)
   @Post()
   @AllRoles(Roles.TEACHER)
-  add(@Body() request: Request) {
-    return this.requestService.add(request);
+  add(@Body() request: Request, @NestRequest() req: AuthenticatedRequest) {
+    const { id } = req.user;
+    return this.requestService.add(id, request);
   }
 
   @Put('/:id')
