@@ -15,7 +15,7 @@ import {
   DELETION_DATE_KEY,
   IS_SOFT_DELETED_KEY,
 } from '../schemas/common/soft-delete.schema';
-import { UpdateRequestDto } from '../dto/request.dto';
+import { CreateRequestDto, UpdateRequestDto } from '../dto/request.dto';
 import { RequestStatusesValue } from './request.const';
 
 @Injectable()
@@ -27,10 +27,13 @@ export class RequestDbService {
 
   async add(
     creatorUserId: Types.ObjectId,
-    request: Request,
+    createRequestDto: CreateRequestDto,
   ): Promise<Types.ObjectId> {
     const [newRequest, err] = await handlePromise(
-      this.requestModel.create({ ...request, requestantUser: creatorUserId }),
+      this.requestModel.create({
+        ...createRequestDto,
+        requestantUser: creatorUserId,
+      }),
     );
 
     if (err) {
@@ -40,9 +43,9 @@ export class RequestDbService {
     return newRequest._id;
   }
 
-  async update(id: Types.ObjectId, request: UpdateRequestDto) {
+  async update(id: Types.ObjectId, updateRequestDto: UpdateRequestDto) {
     const [, err] = await handlePromise(
-      this.requestModel.updateOne({ _id: id }, request),
+      this.requestModel.updateOne({ _id: id }, updateRequestDto),
     );
 
     if (err) {

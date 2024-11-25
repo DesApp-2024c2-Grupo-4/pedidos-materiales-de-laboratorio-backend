@@ -5,6 +5,7 @@ import { IsDate, IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { IsObjectId } from '../utils/validation/id.validator';
 import { IS_SOFT_DELETED_KEY, SoftDelete } from './common/soft-delete.schema';
 import { Roles, RolesValue } from '../const/roles.const';
+import { Type } from 'class-transformer';
 
 export type RegisterTokenDocument = HydratedDocument<RegisterToken>;
 
@@ -23,11 +24,13 @@ export class RegisterToken extends SoftDelete {
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   createdAt?: Date;
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   updatedAt?: Date;
 

@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongooseModels } from '../const/mongoose.const';
 import { IsDate, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export type ConversationDocument = HydratedDocument<Conversation>;
 
@@ -18,11 +19,14 @@ export class Message {
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
+  @Type(() => Date)
   @Prop()
   createdAt?: Date;
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   updatedAt?: Date;
 
@@ -40,11 +44,13 @@ export class Conversation {
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   createdAt?: Date;
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   updatedAt?: Date;
 

@@ -9,6 +9,7 @@ import {
   IsString,
 } from 'class-validator';
 import { HasEnoughStockAvailable } from '../request.schema';
+import { Type } from 'class-transformer';
 
 export type MaterialDocument = HydratedDocument<Material>;
 
@@ -41,11 +42,13 @@ export class Material extends SoftDelete implements HasEnoughStockAvailable {
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   createdAt?: Date;
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   updatedAt?: Date;
 

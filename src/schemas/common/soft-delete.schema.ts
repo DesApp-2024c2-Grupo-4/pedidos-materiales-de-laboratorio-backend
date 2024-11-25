@@ -3,6 +3,7 @@ import { IsBoolean, IsDate, IsOptional } from 'class-validator';
 import { Types } from 'mongoose';
 import { MongooseModels } from '../../const/mongoose.const';
 import { IsObjectId } from '../../utils/validation/id.validator';
+import { Type } from 'class-transformer';
 
 export const IS_SOFT_DELETED_KEY = 'isSoftDeleted';
 export const DELETED_BY_KEY = 'deletedBy';
@@ -22,6 +23,7 @@ export class SoftDelete {
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop({ required: false, type: Date })
   deletionDate?: Date;
 }

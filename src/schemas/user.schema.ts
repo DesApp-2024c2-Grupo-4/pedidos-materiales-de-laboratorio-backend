@@ -11,6 +11,7 @@ import {
   IsString,
 } from 'class-validator';
 import { RolesValue } from '../const/roles.const';
+import { Type } from 'class-transformer';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -49,11 +50,13 @@ export class User extends SoftDelete {
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   createdAt?: Date;
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   @Prop()
   updatedAt?: Date;
 
