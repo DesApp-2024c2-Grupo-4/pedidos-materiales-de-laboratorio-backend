@@ -66,7 +66,7 @@ describe('AuthService', () => {
           dni: 12345678,
           email: 'john.doe@example.com',
           password: 'password123',
-          matricula: 123,
+          licenceNumber: 123,
         };
         const err = new Error(`Database error`);
         userService.findByEmail.mockRejectedValue(err);
@@ -89,7 +89,7 @@ describe('AuthService', () => {
           dni: 12345678,
           email: 'john.doe@example.com',
           password: 'password123',
-          matricula: 123,
+          licenceNumber: 123,
         };
 
         userService.findByEmail.mockResolvedValue(createUserDto);
@@ -110,7 +110,7 @@ describe('AuthService', () => {
           dni: 12345678,
           email: 'john.doe@example.com',
           password: 'password123',
-          matricula: 123,
+          licenceNumber: 123,
         };
 
         userService.findByEmail.mockResolvedValue(undefined);
@@ -135,7 +135,7 @@ describe('AuthService', () => {
           dni: 12345678,
           email: 'john.doe@example.com',
           password: 'password123',
-          matricula: 123,
+          licenceNumber: 123,
         };
 
         mockRegisterToken.isAvailable.mockReturnValue(true);
@@ -163,7 +163,7 @@ describe('AuthService', () => {
           dni: 12345678,
           email: 'john.doe@example.com',
           password: 'password123',
-          matricula: 123,
+          licenceNumber: 123,
         };
 
         userService.findByEmail.mockResolvedValue(undefined);
@@ -189,7 +189,7 @@ describe('AuthService', () => {
           dni: 12345678,
           email: 'john.doe@example.com',
           password: 'password123',
-          matricula: 123,
+          licenceNumber: 123,
         };
 
         mockRegisterToken.isAvailable.mockReturnValue(false);
@@ -217,7 +217,7 @@ describe('AuthService', () => {
           dni: 12345678,
           email: 'john.doe@example.com',
           password: 'password123',
-          matricula: 123,
+          licenceNumber: 123,
         };
 
         mockRegisterToken.isAvailable.mockReturnValue(true);

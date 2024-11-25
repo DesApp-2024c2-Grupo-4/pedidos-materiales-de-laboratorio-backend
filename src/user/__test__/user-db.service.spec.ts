@@ -5,6 +5,7 @@ import { User } from '../../schemas/user.schema';
 import { Connection, Types } from 'mongoose';
 import { CreateUserDto, UpdateUserDto } from '../../dto/user.dto';
 import { cantDelete } from '../user.errors';
+import { Roles } from '../../const/roles.const';
 
 describe('UserDbService', () => {
   let service: UserDbService;
@@ -29,8 +30,8 @@ describe('UserDbService', () => {
     name: 'John',
     lastName: 'Doe',
     dni: 12345678,
-    matricula: 987654,
-    roles: ['admin'],
+    licenceNumber: 987654,
+    roles: [Roles.TEACHER],
     comparePassword: jest.fn(),
     save: jest.fn(),
   };
@@ -103,7 +104,7 @@ describe('UserDbService', () => {
   });
 
   describe('createUser', () => {
-    it('should create a new user', async () => {
+    it('should create a new user without roles', async () => {
       model.create.mockResolvedValue([mockUser]);
       mockRegisterToken.save.mockResolvedValue(undefined);
 
@@ -122,7 +123,7 @@ describe('UserDbService', () => {
         name: 'John',
         lastName: 'Doe',
         dni: 12345678,
-        matricula: 987654,
+        licenceNumber: 987654,
       };
       const userIdDto = await service.createUser(userDto, mockRegisterToken);
 
@@ -130,6 +131,65 @@ describe('UserDbService', () => {
         session: mockSession,
       });
       expect(userIdDto).toEqual({ id: mockUser._id });
+    });
+
+    it('should create a new user with roles', async () => {
+      model.create.mockResolvedValue([mockUser]);
+      mockRegisterToken.save.mockResolvedValue(undefined);
+
+      const mockSession = {
+        startTransaction: jest.fn(),
+        abortTransaction: jest.fn().mockResolvedValue(undefined),
+        commitTransaction: jest.fn().mockResolvedValue(undefined),
+        endSession: jest.fn().mockResolvedValue(undefined),
+      };
+
+      connection.startSession.mockResolvedValue(mockSession);
+
+      const userDto: CreateUserDto = {
+        email: 'john.doe@example.com',
+        password: 'test-password',
+        name: 'John',
+        lastName: 'Doe',
+        dni: 12345678,
+        licenceNumber: 987654,
+      };
+      const roles = [Roles.TEACHER];
+      const userIdDto = await service.createUser(userDto, {
+        ...mockRegisterToken,
+        roles,
+      });
+
+      expect(model.create).toHaveBeenCalledWith([{ ...userDto, roles }], {
+        session: mockSession,
+      });
+      expect(userIdDto).toEqual({ id: mockUser._id });
+    });
+
+    it('should throw an error if token is not valid for given email', async () => {
+      connection.startSession.mockResolvedValue({
+        startTransaction: jest.fn(),
+        abortTransaction: jest.fn().mockResolvedValue(undefined),
+        commitTransaction: jest.fn().mockResolvedValue(undefined),
+        endSession: jest.fn().mockResolvedValue(undefined),
+      });
+
+      const createdFor = 'otherUser@example.com';
+
+      const userDto: CreateUserDto = {
+        email: 'john.doe@example.com',
+        password: 'test-password',
+        name: 'John',
+        lastName: 'Doe',
+        dni: 12345678,
+        licenceNumber: 987654,
+      };
+
+      await expect(
+        service.createUser(userDto, { ...mockRegisterToken, createdFor }),
+      ).rejects.toStrictEqual(
+        `Cannot create user ${userDto.email}. Reason: Token is not allowed for requested email address`,
+      );
     });
 
     it('should throw an error if creating user fails', async () => {
@@ -149,7 +209,7 @@ describe('UserDbService', () => {
         name: 'John',
         lastName: 'Doe',
         dni: 12345678,
-        matricula: 987654,
+        licenceNumber: 987654,
       };
 
       await expect(
@@ -169,7 +229,7 @@ describe('UserDbService', () => {
         name: 'John',
         lastName: 'Doe',
         dni: 12345678,
-        matricula: 987654,
+        licenceNumber: 987654,
       };
 
       await expect(
@@ -199,7 +259,7 @@ describe('UserDbService', () => {
         name: 'John',
         lastName: 'Doe',
         dni: 12345678,
-        matricula: 987654,
+        licenceNumber: 987654,
       };
 
       await expect(
@@ -229,7 +289,7 @@ describe('UserDbService', () => {
         name: 'John',
         lastName: 'Doe',
         dni: 12345678,
-        matricula: 987654,
+        licenceNumber: 987654,
       };
 
       await expect(

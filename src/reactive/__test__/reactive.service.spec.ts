@@ -18,6 +18,7 @@ describe('ReactiveService', () => {
     stock: 50,
     isAvailable: true,
     isSoftDeleted: false,
+    hasEnoughStockAvailable: jest.fn(),
   };
 
   const mockId = new Types.ObjectId();

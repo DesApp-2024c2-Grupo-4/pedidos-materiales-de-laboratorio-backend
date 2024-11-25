@@ -1,5 +1,5 @@
 import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
-import { User } from 'src/schemas/user.schema';
+import { User } from '../schemas/user.schema';
 
 export class UserLoginDto extends PickType(User, ['email', 'password']) {}
 

@@ -24,6 +24,7 @@ describe('EquipmentController', () => {
     inRepair: 1,
     isAvailable: true,
     isSoftDeleted: false,
+    hasEnoughStockAvailable: jest.fn(),
   };
 
   const mockEquipmentService = {
