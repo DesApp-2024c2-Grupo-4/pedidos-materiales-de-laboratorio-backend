@@ -40,12 +40,12 @@ export class RequestService {
       throw validationError;
     }
 
-    const [id, err] = await handlePromise<unknown, Error>(
+    const [id, err] = await handlePromise<unknown, string>(
       this.dbService.add(creatorUserId, request),
     );
 
     if (err) {
-      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new BackendException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return { id };
@@ -60,22 +60,22 @@ export class RequestService {
       throw validationError;
     }
 
-    const [, err] = await handlePromise<unknown, Error>(
+    const [, err] = await handlePromise<unknown, string>(
       this.dbService.update(id, request),
     );
 
     if (err) {
-      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new BackendException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async get(id: Types.ObjectId): Promise<RequestDocument> {
-    const [request, err] = await handlePromise<RequestDocument, Error>(
+    const [request, err] = await handlePromise<RequestDocument, string>(
       this.dbService.get(id),
     );
 
     if (err) {
-      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new BackendException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     if (!request) {
@@ -88,39 +88,36 @@ export class RequestService {
   }
 
   async getAll(status?: RequestStatusesValue) {
-    const [requests, err] = await handlePromise<unknown, Error>(
+    const [requests, err] = await handlePromise<unknown, string>(
       this.dbService.getAll(status),
     );
 
     if (err) {
-      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new BackendException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return requests;
   }
 
   async delete(id: Types.ObjectId, deletedBy: Types.ObjectId) {
-    const [req, getErr] = await handlePromise<RequestDocument, Error>(
+    const [req, getErr] = await handlePromise<RequestDocument, string>(
       this.get(id),
     );
 
     if (getErr) {
-      throw new BackendException(
-        getErr.message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new BackendException(getErr, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     if (req[IS_SOFT_DELETED_KEY]) {
       throw new BackendException('', HttpStatus.NOT_FOUND);
     }
 
-    const [, err] = await handlePromise<unknown, Error>(
+    const [, err] = await handlePromise<unknown, string>(
       this.dbService.delete(req, deletedBy),
     );
 
     if (err) {
-      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new BackendException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

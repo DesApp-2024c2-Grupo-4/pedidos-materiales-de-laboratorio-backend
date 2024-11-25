@@ -98,6 +98,17 @@ describe('RequestService', () => {
       expect(result).toEqual({ id: mockRequest._id });
     });
 
+    it('should throw if items are not available', async () => {
+      dbService.add.mockResolvedValue(mockRequest._id);
+      (checkItemsAvailability as jest.Mock).mockResolvedValue({
+        available: false,
+      });
+
+      await expect(
+        service.add(mockCreatorId, mockRequestData as Request),
+      ).rejects.toThrow(BackendException);
+    });
+
     it('should throw a BackendException on validation error', async () => {
       (checkItemsAvailability as jest.Mock).mockRejectedValue(
         new BackendException('Validation error', HttpStatus.BAD_REQUEST),
@@ -148,6 +159,19 @@ describe('RequestService', () => {
         service.update(mockRequest._id, mockRequest as UpdateRequestDto),
       ).rejects.toThrow(BackendException);
     });
+
+    it('should throw a BackendException on update error', async () => {
+      (checkItemsAvailability as jest.Mock).mockResolvedValue({
+        available: true,
+      });
+      dbService.update.mockRejectedValue('error');
+
+      await expect(
+        service.update(mockRequest._id, mockRequestData as UpdateRequestDto),
+      ).rejects.toThrow(
+        new BackendException('error', HttpStatus.INTERNAL_SERVER_ERROR),
+      );
+    });
   });
 
   describe('get', () => {
@@ -160,11 +184,19 @@ describe('RequestService', () => {
       expect(result.updateExpiration).toHaveBeenCalled();
     });
 
-    it('should throw a BackendException if request is not found', async () => {
+    it('should throw a BackendException with if request fails', async () => {
+      dbService.get.mockRejectedValue({ message: 'error' });
+
+      await expect(service.get(mockRequest._id)).rejects.toThrow(
+        new BackendException('error', HttpStatus.INTERNAL_SERVER_ERROR),
+      );
+    });
+
+    it('should throw a BackendException with NOT_FOUND status if request is not found', async () => {
       dbService.get.mockResolvedValue(null);
 
       await expect(service.get(mockRequest._id)).rejects.toThrow(
-        BackendException,
+        new BackendException('', HttpStatus.NOT_FOUND),
       );
     });
   });
@@ -177,6 +209,14 @@ describe('RequestService', () => {
 
       expect(dbService.getAll).toHaveBeenCalled();
       expect(result).toEqual([mockRequest]);
+    });
+
+    it('should throw a BackendException if an error occurs while fetching all requests', async () => {
+      dbService.getAll.mockRejectedValue(new Error('DB error'));
+
+      await expect(service.getAll()).rejects.toThrow(
+        new BackendException('DB error', HttpStatus.INTERNAL_SERVER_ERROR),
+      );
     });
   });
 
@@ -193,6 +233,16 @@ describe('RequestService', () => {
       expect(dbService.delete).toHaveBeenCalledWith(mockRequest, mockCreatorId);
     });
 
+    it('should throw a BackendException if cant get the item', async () => {
+      jest.spyOn(service, 'get').mockRejectedValue('error');
+
+      await expect(
+        service.delete(mockRequest._id, mockCreatorId),
+      ).rejects.toThrow(
+        new BackendException('error', HttpStatus.INTERNAL_SERVER_ERROR),
+      );
+    });
+
     it('should throw a BackendException if request is already soft deleted', async () => {
       const softDeletedRequest = {
         ...mockRequest,
@@ -206,6 +256,20 @@ describe('RequestService', () => {
       await expect(
         service.delete(mockRequest._id, mockCreatorId),
       ).rejects.toThrow(BackendException);
+    });
+
+    it('should throw a BackendException if request is already soft deleted', async () => {
+      jest
+        .spyOn(service, 'get')
+        .mockResolvedValue(mockRequest as RequestDocument);
+
+      dbService.delete.mockRejectedValue('error');
+
+      await expect(
+        service.delete(mockRequest._id, mockCreatorId),
+      ).rejects.toThrow(
+        new BackendException('error', HttpStatus.INTERNAL_SERVER_ERROR),
+      );
     });
   });
 });

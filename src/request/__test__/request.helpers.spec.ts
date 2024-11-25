@@ -68,8 +68,77 @@ describe('Request Helpers', () => {
       expect(result).toEqual({ available: true });
     });
 
+    it('should return available: true when an entity is not required any item', async () => {
+      mockEquipmentDbService.getAll = jest.fn().mockResolvedValue([]);
+      mockMaterialDbService.getAll = jest.fn().mockResolvedValue([
+        {
+          _id: mockRequest.materials[0].id,
+          hasEnoughStockAvailable: () => true,
+        },
+      ]);
+      mockReactiveDbService.getAll = jest.fn().mockResolvedValue([
+        {
+          _id: mockRequest.reactives[0].id,
+          hasEnoughStockAvailable: () => true,
+        },
+      ]);
+
+      const result = await checkItemsAvailability(
+        { ...mockRequest, equipments: [] } as any,
+        mockEquipmentDbService as EquipmentdbService,
+        mockReactiveDbService as ReactiveDbService,
+        mockMaterialDbService as MaterialDbService,
+      );
+
+      expect(result).toEqual({ available: true });
+    });
+
     it('should throw a BackendException if fetching equipment fails', async () => {
       mockEquipmentDbService.getAll = jest.fn().mockRejectedValue('Error');
+
+      await expect(
+        checkItemsAvailability(
+          mockRequest as any,
+          mockEquipmentDbService as EquipmentdbService,
+          mockReactiveDbService as ReactiveDbService,
+          mockMaterialDbService as MaterialDbService,
+        ),
+      ).rejects.toThrow(BackendException);
+    });
+
+    it('should throw a BackendException if fetching materials fails', async () => {
+      mockEquipmentDbService.getAll = jest.fn().mockResolvedValue([
+        {
+          _id: mockRequest.equipments[0].id,
+          hasEnoughStockAvailable: () => true,
+        },
+      ]);
+      mockMaterialDbService.getAll = jest.fn().mockRejectedValue('Error');
+
+      await expect(
+        checkItemsAvailability(
+          mockRequest as any,
+          mockEquipmentDbService as EquipmentdbService,
+          mockReactiveDbService as ReactiveDbService,
+          mockMaterialDbService as MaterialDbService,
+        ),
+      ).rejects.toThrow(BackendException);
+    });
+
+    it('should throw a BackendException if fetching reactives fails', async () => {
+      mockEquipmentDbService.getAll = jest.fn().mockResolvedValue([
+        {
+          _id: mockRequest.equipments[0].id,
+          hasEnoughStockAvailable: () => true,
+        },
+      ]);
+      mockMaterialDbService.getAll = jest.fn().mockResolvedValue([
+        {
+          _id: mockRequest.materials[0].id,
+          hasEnoughStockAvailable: () => true,
+        },
+      ]);
+      mockReactiveDbService.getAll = jest.fn().mockRejectedValue('Error');
 
       await expect(
         checkItemsAvailability(

@@ -103,7 +103,7 @@ async function fetchItemsAndCheckAvailability(
     ) => Promise<Document<HasEnoughStockAvailable>[]>;
   },
 ): Promise<boolean> {
-  if (!requestedItems) return true;
+  if (requestedItems.length === 0) return true;
 
   const [availableItems, err] = await handlePromise<
     Document<HasEnoughStockAvailable>[],
