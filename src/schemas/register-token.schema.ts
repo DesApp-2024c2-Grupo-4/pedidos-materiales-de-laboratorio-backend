@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { MongooseModels } from '../const/mongoose.const';
-import { IsDate, IsEmail, IsEnum, IsOptional } from 'class-validator';
+import { IsArray, IsDate, IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { IsObjectId } from '../utils/validation/id.validator';
 import { IS_SOFT_DELETED_KEY, SoftDelete } from './common/soft-delete.schema';
 import { Roles, RolesValue } from '../const/roles.const';
@@ -47,6 +47,7 @@ export class RegisterToken extends SoftDelete {
    *  user created with that token
    */
   @IsOptional()
+  @IsArray()
   @IsEnum(Roles, { each: true })
   @Prop()
   roles?: RolesValue[];

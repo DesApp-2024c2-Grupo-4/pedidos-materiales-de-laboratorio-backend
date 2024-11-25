@@ -3,14 +3,16 @@ import { HydratedDocument } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { SoftDelete } from './common/soft-delete.schema';
 import {
+  IsArray,
   IsDate,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
-import { RolesValue } from '../const/roles.const';
+import { Roles, RolesValue } from '../const/roles.const';
 import { Type } from 'class-transformer';
 
 export type UserDocument = HydratedDocument<User>;
@@ -45,6 +47,8 @@ export class User extends SoftDelete {
   @Prop()
   licenceNumber?: number;
 
+  @IsArray()
+  @IsEnum(Roles, { each: true })
   @Prop({ required: true })
   roles: RolesValue[];
 
