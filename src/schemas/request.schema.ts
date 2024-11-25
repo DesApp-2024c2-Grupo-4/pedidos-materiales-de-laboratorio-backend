@@ -15,7 +15,7 @@ import {
   RequestStatusesValue,
 } from '../request/request.const';
 import { IsLabKey } from '../utils/validation/lab.validator';
-import { IsObjectId } from 'src/utils/validation/id.validator';
+import { IsObjectId } from '../utils/validation/id.validator';
 
 export type RequestDocument = HydratedDocument<Request>;
 
@@ -155,7 +155,7 @@ export class Request {
 
   /* comuncation */
 
-  @IsArray()
+  @IsObjectId()
   @Prop({ type: Types.ObjectId, ref: MongooseModels.CONVERSATION })
   messages: Types.ObjectId;
 

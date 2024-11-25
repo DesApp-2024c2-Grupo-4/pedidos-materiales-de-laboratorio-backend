@@ -32,7 +32,7 @@ export class RequestDbService {
     const [newRequest, err] = await handlePromise(
       this.requestModel.create({ ...request, requestantUser: creatorUserId }),
     );
-    newRequest.save();
+
     if (err) {
       return Promise.reject(cantCreateRequest(err));
     }
