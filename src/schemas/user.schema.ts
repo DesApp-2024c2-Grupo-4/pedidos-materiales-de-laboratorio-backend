@@ -2,33 +2,50 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { SoftDelete } from './common/soft-delete.schema';
-import { IsDate, IsOptional } from 'class-validator';
-import { Roles, RolesKeys } from '../const/roles.const';
+import {
+  IsDate,
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { Roles, RolesKeys, RolesValue } from '../const/roles.const';
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
 export class User extends SoftDelete {
+  @IsEmail()
   @Prop({ required: true })
   email: string;
 
+  @IsNotEmpty()
+  @IsString()
   @Prop({ required: true })
   password: string;
 
+  @IsNotEmpty()
+  @IsString()
   @Prop({ required: true })
   name: string;
 
+  @IsNotEmpty()
+  @IsString()
   @Prop({ required: true })
   lastName: string;
 
+  @IsNumber()
   @Prop({ required: true })
   dni: number;
 
+  @IsOptional()
+  @IsNumber()
   @Prop()
-  matricula?: number; // FIXME: Why do we need this? also let's pick a name for this attribute
+  licenceNumber?: number; // FIXME: Why do we need this? also let's pick a name for this attribute
 
-  @Prop({ required: true, enum: Object.keys(Roles) })
-  roles: RolesKeys[];
+  @Prop({ required: true })
+  roles: RolesValue[];
 
   @IsOptional()
   @IsDate()
