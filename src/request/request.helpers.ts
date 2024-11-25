@@ -15,7 +15,7 @@ import { ReactiveDbService } from '../reactive/reactive-db.service';
 import { MaterialDbService } from '../material/material-db.service';
 
 export async function checkItemsAvailability(
-  request: Request,
+  request: Partial<Request>,
   equipmentDbService: EquipmentdbService,
   reactiveDbService: ReactiveDbService,
   materialDbService: MaterialDbService,
@@ -103,6 +103,8 @@ async function fetchItemsAndCheckAvailability(
     ) => Promise<Document<HasEnoughStockAvailable>[]>;
   },
 ): Promise<boolean> {
+  if (!requestedItems) return true;
+
   const [availableItems, err] = await handlePromise<
     Document<HasEnoughStockAvailable>[],
     string
