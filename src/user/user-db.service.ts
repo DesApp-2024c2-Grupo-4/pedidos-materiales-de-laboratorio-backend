@@ -47,9 +47,7 @@ export class UserDbService {
 
   async get(id: Types.ObjectId): Promise<UserDocument> {
     const [user, err] = await handlePromise(
-      this.userModel.findOne({
-        _id: id,
-      }),
+      this.userModel.findById(id, { password: 0 }),
     );
 
     if (err) {
@@ -132,7 +130,9 @@ export class UserDbService {
   }
 
   async getAll() {
-    const [materials, err] = await handlePromise(this.userModel.find());
+    const [materials, err] = await handlePromise(
+      this.userModel.find({}, { password: 0 }),
+    );
 
     if (err) {
       return Promise.reject(cantGetUsers(err));
