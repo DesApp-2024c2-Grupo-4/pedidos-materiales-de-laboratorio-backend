@@ -16,7 +16,6 @@ describe('ReactiveService', () => {
     description: 'test-description',
     cas: 'test-cas',
     stock: 50,
-    isAvailable: true,
     isSoftDeleted: false,
     hasEnoughStockAvailable: jest.fn(),
   };

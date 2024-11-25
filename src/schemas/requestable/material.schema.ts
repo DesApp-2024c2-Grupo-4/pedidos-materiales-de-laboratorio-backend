@@ -2,7 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { SoftDelete } from '../common/soft-delete.schema';
 import {
-  IsBoolean,
   IsDate,
   IsEnum,
   IsNumber,
@@ -20,10 +19,6 @@ export class Material extends SoftDelete implements HasEnoughStockAvailable {
   @IsString()
   @Prop({ required: true })
   description: string;
-
-  @IsString()
-  @Prop({ required: true })
-  unitMeasure: string;
 
   @IsEnum(Object.keys(MaterialTypes), { each: true })
   @Prop({ required: true })

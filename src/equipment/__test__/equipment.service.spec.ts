@@ -11,12 +11,10 @@ describe('EquipmentService', () => {
 
   const mockEquipment = {
     _id: new Types.ObjectId(),
-    type: 'Test Equipment',
+    type: 'AGITADORES-CENTRIFUGAS' as any,
     description: 'Test Description',
     stock: 10,
-    unitMeasure: 'pcs',
     inRepair: 0,
-    isAvailable: true,
     hasEnoughStockAvailable: jest.fn(),
   };
 

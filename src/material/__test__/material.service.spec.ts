@@ -15,7 +15,7 @@ describe('MaterialService', () => {
     _id: new Types.ObjectId(),
     description: 'test-description',
     unitMeasure: 'test-unit',
-    type: 'test-type',
+    type: 'MATERIAL-VIDRIO' as any,
     stock: 50,
     inRepair: 10,
     isAvailable: true,
@@ -24,7 +24,6 @@ describe('MaterialService', () => {
 
   const mockUpdateMaterialDto: UpdateMaterialDto = {
     description: 'test-description-update',
-    unitMeasure: 'test-unit-update',
     stock: 60,
   };
 

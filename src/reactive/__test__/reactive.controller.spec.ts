@@ -27,7 +27,6 @@ describe('ReactiveController', () => {
     description: 'test-description',
     cas: 'test-cas',
     stock: 50,
-    isAvailable: true,
     isSoftDeleted: false,
     hasEnoughStockAvailable: jest.fn(),
   };
@@ -40,7 +39,6 @@ describe('ReactiveController', () => {
     description: 'Updated Description',
     cas: '1234-56-7',
     stock: 200,
-    isAvailable: false,
   };
 
   const mockReactiveService = {

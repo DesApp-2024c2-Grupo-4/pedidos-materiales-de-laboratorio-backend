@@ -43,8 +43,8 @@ export class RequestableElement {
 
   @IsNumber()
   @IsOptional()
-  @Prop({ required: false })
-  missingAmount: number;
+  @Prop()
+  missingAmount?: number;
 
   @Prop({ type: Types.ObjectId })
   id: Types.ObjectId;

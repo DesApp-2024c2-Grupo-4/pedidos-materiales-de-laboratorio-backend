@@ -1,4 +1,4 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { OmitType } from '@nestjs/mapped-types';
 import { Request } from '../schemas/request.schema';
 
 export class CreateRequestDto extends OmitType(Request, [

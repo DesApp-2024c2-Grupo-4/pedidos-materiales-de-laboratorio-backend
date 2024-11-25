@@ -32,8 +32,38 @@ describe('RequestService', () => {
 
   const mockCreatorId = new Types.ObjectId();
   const mockRequestData: Partial<Request> = {
-    materials: [],
-    reactives: [],
+    equipments: [
+      {
+        id: new Types.ObjectId(),
+        amount: 7,
+      },
+      {
+        id: new Types.ObjectId(),
+        amount: 2,
+      },
+    ],
+    reactives: [
+      {
+        id: new Types.ObjectId(),
+        amount: 5,
+        unitMeasure: 'ml',
+        quality: 'p.a.',
+        concentrationType: '%m/m',
+        concentrationAmount: '95%',
+        solvents: [
+          {
+            name: 'agua',
+            description: 'Distilled water',
+          },
+        ],
+      },
+    ],
+    materials: [
+      {
+        id: new Types.ObjectId(),
+        amount: 2,
+      },
+    ],
     endDate: new Date(),
   };
 

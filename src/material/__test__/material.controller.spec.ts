@@ -58,7 +58,7 @@ describe('MaterialController', () => {
     it('should call service.add and return the result', async () => {
       const material: Material = {
         ...mockMaterial,
-      };
+      } as Material;
       mockMaterialService.add.mockResolvedValue(material);
 
       const result = await controller.add(material);
@@ -72,7 +72,7 @@ describe('MaterialController', () => {
     it('should call service.update and return the result', async () => {
       const material: UpdateMaterialDto = {
         ...mockMaterial,
-      };
+      } as UpdateMaterialDto;
       const id = new Types.ObjectId();
       mockMaterialService.update.mockResolvedValue(material);
 

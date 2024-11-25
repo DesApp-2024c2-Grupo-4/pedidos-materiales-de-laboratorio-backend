@@ -70,7 +70,7 @@ describe('RequestController', () => {
 
       const result = await controller.update(
         { id: mockRequest.id },
-        mockRequest,
+        mockRequest as any,
       );
 
       expect(service.update).toHaveBeenCalledWith(mockRequest.id, mockRequest);

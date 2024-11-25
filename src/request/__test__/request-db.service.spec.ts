@@ -44,12 +44,12 @@ describe('RequestDbService', () => {
         amount: 5,
         missingAmount: 1,
         unitMeasure: 'ml',
-        quality: 'High purity',
-        concentrationType: 'percentage',
+        quality: 'molec',
+        concentrationType: 'puro',
         concentrationAmount: '95%',
         solvents: [
           {
-            name: 'Water',
+            name: 'agua',
             description: 'Distilled water',
           },
         ],
@@ -77,6 +77,7 @@ describe('RequestDbService', () => {
   };
 
   const mockUpdateRequestDto: UpdateRequestDto = {
+    ...mockRequest,
     status: RequestStatuses.APPROVED,
   };
 

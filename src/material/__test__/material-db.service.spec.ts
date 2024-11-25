@@ -6,6 +6,7 @@ import { Types } from 'mongoose';
 import { UpdateMaterialDto } from '../material.dto';
 import { cantDelete, cantGetMaterials } from '../material.error';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
+import { MaterialTypes } from '../material.const';
 
 describe('MaterialDbService', () => {
   let service: MaterialDbService;
@@ -14,22 +15,18 @@ describe('MaterialDbService', () => {
   const mockMaterial = {
     _id: new Types.ObjectId(),
     description: 'Steel',
-    unitMeasure: 'kg',
-    type: 'Raw Material',
+    type: MaterialTypes.MATERIALES,
     stock: 100,
     inRepair: 10,
-    isAvailable: true,
     save: jest.fn(),
     hasEnoughStockAvailable: jest.fn(),
   };
 
   const mockUpdateMaterialDto: UpdateMaterialDto = {
     description: 'Updated Steel',
-    unitMeasure: 'kg',
-    type: 'Updated Raw Material',
+    type: MaterialTypes.MATERIALES,
     stock: 150,
     inRepair: 5,
-    isAvailable: false,
   };
 
   const materialModelMock = {
