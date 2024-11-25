@@ -1,12 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { SoftDelete } from '../common/soft-delete.schema';
-import { IsBoolean, IsInt, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { HasEnoughStockAvailable } from '../request.schema';
 
 export type ReactiveDocument = HydratedDocument<Reactive>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Reactive extends SoftDelete implements HasEnoughStockAvailable {
   @IsString()
   @Prop({ required: true })
@@ -23,6 +29,16 @@ export class Reactive extends SoftDelete implements HasEnoughStockAvailable {
   @IsBoolean()
   @Prop({ required: true, default: true })
   isAvailable: boolean;
+
+  @IsOptional()
+  @IsDate()
+  @Prop()
+  createdAt?: Date;
+
+  @IsOptional()
+  @IsDate()
+  @Prop()
+  updatedAt?: Date;
 
   hasEnoughStockAvailable: (requiredAmount: number) => boolean;
 }

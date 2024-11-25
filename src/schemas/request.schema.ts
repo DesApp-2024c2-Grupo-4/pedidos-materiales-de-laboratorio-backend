@@ -9,11 +9,13 @@ import {
   IsString,
 } from 'class-validator';
 import {
+  Labs,
   LabsKeys,
   RequestStatuses,
   RequestStatusesValue,
 } from '../request/request.const';
 import { IsLabKey } from '../utils/validation/lab.validator';
+import { IsObjectId } from 'src/utils/validation/id.validator';
 
 export type RequestDocument = HydratedDocument<Request>;
 
@@ -84,50 +86,49 @@ export class EquipmentRequest extends RequestableElement {
   id: Types.ObjectId;
 }
 
-@Schema()
+@Schema({ timestamps: true })
 export class Request {
+  /* metadata */
+  @IsObjectId()
   @Prop({ type: Types.ObjectId, ref: MongooseModels.USER })
   requestantUser: Types.ObjectId;
 
+  @IsOptional()
+  @IsObjectId()
   @Prop({ type: Types.ObjectId, ref: MongooseModels.USER })
-  assignedUser: Types.ObjectId;
+  assignedUser?: Types.ObjectId;
 
   @IsString()
-  @Prop({ required: true })
-  description: string;
-
-  @IsDate()
-  @Prop({ required: true })
-  creationDate: Date;
-
-  @IsDate()
-  @Prop({ required: true })
-  usageDate: Date;
+  @Prop({ required: true, enum: Object.keys(RequestStatuses) })
+  status: RequestStatusesValue;
 
   @IsOptional()
-  @IsLabKey()
+  @IsDate()
   @Prop()
-  lab?: LabsKeys;
+  createdAt?: Date;
 
-  @IsString()
+  @IsOptional()
+  @IsDate()
+  @Prop()
+  updatedAt?: Date;
+
+  /* required info */
+
+  @IsDate()
   @Prop({ required: true })
-  type: string;
+  startDate: Date;
+
+  @IsDate()
+  @Prop({ required: true })
+  endDate: Date;
 
   @IsNumber()
   @Prop({ required: true })
-  studentsNumber: number;
-
-  @IsString()
-  @Prop()
-  building?: string;
+  studentsAmount: number;
 
   @IsNumber()
   @Prop({ required: true })
-  groupNumber: number;
-
-  @IsString()
-  @Prop()
-  observations?: string;
+  groupsAmount: number;
 
   @IsString()
   @Prop({ required: true })
@@ -137,9 +138,28 @@ export class Request {
   @Prop({ required: true })
   tpNumber: number;
 
+  @IsString()
+  @Prop({ required: true })
+  description: string;
+
+  /* lab members optional info */
+
+  @IsOptional()
+  @IsLabKey()
+  @Prop({ enum: Object.keys(Labs) })
+  lab?: LabsKeys;
+
+  @IsString()
+  @Prop()
+  observations?: string;
+
+  /* comuncation */
+
   @IsArray()
   @Prop({ type: Types.ObjectId, ref: MongooseModels.Conversation })
   messages: Types.ObjectId;
+
+  /* requestables */
 
   @IsArray()
   @Prop({ type: [EquipmentRequest] })
@@ -153,13 +173,7 @@ export class Request {
   @Prop({ type: [MaterialRequest] })
   materials: MaterialRequest[];
 
-  @IsNumber()
-  @Prop({ required: true })
-  requestNumber: number;
-
-  @IsString()
-  @Prop({ required: true, enum: Object.keys(RequestStatuses) })
-  status: RequestStatusesValue;
+  /* methods */
 
   isCompleted: () => boolean;
   isRejected: () => boolean;
@@ -168,6 +182,12 @@ export class Request {
 }
 
 export const RequestSchema = SchemaFactory.createForClass(Request);
+
+RequestSchema.pre<RequestDocument>('save', async function (next) {
+  if (this.isNew) {
+    this.status = RequestStatuses.PENDING;
+  }
+});
 
 RequestSchema.methods.isCompleted = function (): boolean {
   return this.status !== RequestStatuses.COMPLETED;
@@ -178,7 +198,7 @@ RequestSchema.methods.isRejected = function (): boolean {
 };
 
 RequestSchema.methods.isExpired = function (secondsToExpire: number): boolean {
-  return this.creationDate.getTime() + secondsToExpire < Date.now();
+  return this.createdAt.getTime() + secondsToExpire < Date.now();
 };
 
 RequestSchema.methods.updateExpiration = function (
