@@ -33,7 +33,7 @@ export class RequestController {
   }
 
   @Put('/:id')
-  @AnyRoles(Roles.LAB, Roles.TEACHER)
+  @AllRoles(Roles.LAB)
   update(@Param() params: IdDto, @Body() updateRequestDto: UpdateRequestDto) {
     return this.requestService.update(params.id, updateRequestDto);
   }
