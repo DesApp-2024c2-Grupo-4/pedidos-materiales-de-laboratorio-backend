@@ -12,11 +12,6 @@ import {
   cantUpdate,
 } from '../request.error';
 import { RequestStatuses } from '../request.const';
-import {
-  DELETED_BY_KEY,
-  DELETION_DATE_KEY,
-  IS_SOFT_DELETED_KEY,
-} from '../../schemas/common/soft-delete.schema';
 
 describe('RequestDbService', () => {
   let service: RequestDbService;

@@ -80,6 +80,8 @@ describe('RequestService', () => {
         available: true,
       });
 
+      configService.get = jest.fn();
+
       const result = await service.add(
         mockCreatorId,
         mockRequestData as Request,
