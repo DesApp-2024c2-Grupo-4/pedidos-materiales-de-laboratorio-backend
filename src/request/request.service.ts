@@ -125,7 +125,7 @@ export class RequestService {
   }
 
   private async isValidRequest(request: Partial<Request>) {
-    if (!request.endDate && !request.materials && !request.reactives) {
+    if (!request.equipments && !request.materials && !request.reactives) {
       throw new BackendException(
         'Cannot make an empty request',
         HttpStatus.BAD_REQUEST,
