@@ -10,7 +10,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Roles, RolesKeys, RolesValue } from '../const/roles.const';
+import { RolesValue } from '../const/roles.const';
 
 export type UserDocument = HydratedDocument<User>;
 
