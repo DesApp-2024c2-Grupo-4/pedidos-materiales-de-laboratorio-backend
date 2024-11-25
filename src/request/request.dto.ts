@@ -12,4 +12,9 @@ export class CreateRequestDto extends OmitType(Request, [
   'messages',
 ]) {}
 
-export class UpdateRequestDto extends PartialType(CreateRequestDto) {}
+export class UpdateRequestDto extends OmitType(Request, [
+  'requestantUser',
+  'createdAt',
+  'updatedAt',
+  'messages',
+]) {}

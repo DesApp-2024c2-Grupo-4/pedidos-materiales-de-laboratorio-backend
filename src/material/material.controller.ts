@@ -13,7 +13,7 @@ import {
 import { MaterialService } from './material.service';
 import { Material } from '../schemas/requestable/material.schema';
 import { IdDto } from '../dto/id.dto';
-import { UpdateMaterialDto } from '../dto/material.dto';
+import { UpdateMaterialDto } from './material.dto';
 import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
 import { Roles } from '../const/roles.const';

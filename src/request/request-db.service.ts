@@ -15,7 +15,7 @@ import {
   DELETION_DATE_KEY,
   IS_SOFT_DELETED_KEY,
 } from '../schemas/common/soft-delete.schema';
-import { CreateRequestDto, UpdateRequestDto } from '../dto/request.dto';
+import { CreateRequestDto, UpdateRequestDto } from './request.dto';
 import { RequestStatusesValue } from './request.const';
 
 @Injectable()

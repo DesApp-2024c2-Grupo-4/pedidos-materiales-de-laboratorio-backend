@@ -9,7 +9,7 @@ import { Types } from 'mongoose';
 import { BackendException } from '../../shared/backend.exception';
 import { HttpStatus } from '@nestjs/common';
 import { Request, RequestDocument } from '../../schemas/request.schema';
-import { UpdateRequestDto } from '../../dto/request.dto';
+import { UpdateRequestDto } from '../request.dto';
 import { checkItemsAvailability } from '../request.helpers';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 

@@ -3,7 +3,7 @@ import { ReactiveService } from '../reactive.service';
 import { ReactiveDbService } from '../reactive-db.service';
 import { BackendException } from '../../shared/backend.exception';
 import { Reactive } from '../../schemas/requestable/reactive.schema';
-import { UpdateReactivelDto } from '../../dto/reactive.dto';
+import { UpdateReactivelDto } from '../reactive.dto';
 import { Types } from 'mongoose';
 import { IS_SOFT_DELETED_KEY } from '../../schemas/common/soft-delete.schema';
 

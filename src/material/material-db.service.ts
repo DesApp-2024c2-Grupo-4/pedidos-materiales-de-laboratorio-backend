@@ -18,7 +18,7 @@ import {
   DELETION_DATE_KEY,
   IS_SOFT_DELETED_KEY,
 } from '../schemas/common/soft-delete.schema';
-import { UpdateMaterialDto } from '../dto/material.dto';
+import { UpdateMaterialDto } from './material.dto';
 
 @Injectable()
 export class MaterialDbService {

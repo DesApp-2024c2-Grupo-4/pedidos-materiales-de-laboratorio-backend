@@ -18,7 +18,7 @@ import {
   DELETION_DATE_KEY,
   IS_SOFT_DELETED_KEY,
 } from '../schemas/common/soft-delete.schema';
-import { UpdateEquipmentDto } from '../dto/equipment.dto';
+import { UpdateEquipmentDto } from './equipment.dto';
 
 @Injectable()
 export class EquipmentdbService {

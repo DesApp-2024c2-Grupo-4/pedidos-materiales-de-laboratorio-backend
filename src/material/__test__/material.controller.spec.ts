@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MaterialController } from '../material.controller';
 import { MaterialService } from '../material.service';
 import { Material } from '../../schemas/requestable/material.schema';
-import { UpdateMaterialDto } from '../../dto/material.dto';
+import { UpdateMaterialDto } from '../material.dto';
 import { Types } from 'mongoose';
 import { AuthenticatedRequest } from '../../dto/authenticated-request.dto';
 import { MaterialTypes } from '../material.const';

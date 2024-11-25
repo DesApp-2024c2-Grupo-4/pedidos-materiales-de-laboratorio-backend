@@ -27,10 +27,6 @@ export class Reactive extends SoftDelete implements HasEnoughStockAvailable {
   @Prop()
   stock: number;
 
-  @IsBoolean()
-  @Prop({ required: true, default: true })
-  isAvailable: boolean;
-
   @IsOptional()
   @IsDate()
   @Type(() => Date)

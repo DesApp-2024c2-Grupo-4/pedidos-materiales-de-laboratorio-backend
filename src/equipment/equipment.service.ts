@@ -7,7 +7,7 @@ import handlePromise from '../utils/promise';
 import { BackendException } from '../shared/backend.exception';
 import { Types } from 'mongoose';
 import { EquipmentdbService } from './equipment-db.service';
-import { UpdateEquipmentDto } from '../dto/equipment.dto';
+import { UpdateEquipmentDto } from './equipment.dto';
 import { IS_SOFT_DELETED_KEY } from '../schemas/common/soft-delete.schema';
 
 @Injectable()
