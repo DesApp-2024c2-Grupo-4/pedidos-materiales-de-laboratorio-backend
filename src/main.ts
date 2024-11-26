@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import { AuthenticatedSocketAdapter } from './conversation/conversation-auth.adapter';
 
 export async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,4 +35,6 @@ export function configureApp(app, config) {
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
+
+  app.useWebSocketAdapter(new AuthenticatedSocketAdapter(app));
 }

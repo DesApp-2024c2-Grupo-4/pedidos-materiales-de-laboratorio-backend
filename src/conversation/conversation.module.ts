@@ -9,6 +9,7 @@ import {
 import { ConversationDbService } from './conversation-db.service';
 import { UserDbService } from '../user/user-db.service';
 import { User, UserSchema } from '../schemas/user.schema';
+import { ConversationGateway } from './conversation.gateway';
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import { User, UserSchema } from '../schemas/user.schema';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [ConversationController],
-  providers: [ConversationService, ConversationDbService, UserDbService],
+  providers: [ConversationService, ConversationDbService, UserDbService,ConversationGateway],
 })
 export class ConversationModule {}
