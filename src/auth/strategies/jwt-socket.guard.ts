@@ -1,42 +1,39 @@
 import {
   ExecutionContext,
-  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  ALL_ROLES_KEY,
-  ANY_ROLES_KEY,
-  IS_PUBLIC_KEY,
-} from '../providers/accesor.metadata';
-import { hasAllRoles, hasAnyRole, validatePermissions } from './jtw.validation';
+import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import {
+  ConversationMessagePayload,
+  JoinRoomPayload,
+} from '../../conversation/conversation.gateway';
+import handlePromise from '../../utils/promise';
+import { RequestDocument } from '../../schemas/request.schema';
+import { Roles } from '../../const/roles.const';
+import { RequestDbService } from '../../request/request-db.service';
+import { isValidObjectId } from 'mongoose';
 
 @Injectable()
 export class JwtSocketAuthGuard extends AuthGuard('jwt-socket') {
-  constructor(protected reflector: Reflector) {
+  constructor(
+    protected reflector: Reflector,
+    private readonly requestDbService: RequestDbService,
+  ) {
     super();
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-
-    if (isPublic) {
-      return true;
-    }
-
     const client: Socket = context.switchToWs().getClient<Socket>();
     const token: string | string[] = client.handshake.query.token;
 
-    //Extract the token from query
+    // Extract the token from query
     if (token === undefined) {
-      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      throw new WsException('Unauthorized');
     }
 
     const authtoken: string = Array.isArray(token) ? token[0] : token;
@@ -46,18 +43,45 @@ export class JwtSocketAuthGuard extends AuthGuard('jwt-socket') {
     const canActivateSuper = await super.canActivate(context);
     if (!canActivateSuper) return false;
 
-    const request = context.switchToWs().getClient().handshake;
-    const user = request.user;
+    const wsRequest = context.switchToWs().getClient().handshake;
+    const user = wsRequest.user;
 
-    const requiredRolesAll = this.reflector.get<string[]>(
-      ALL_ROLES_KEY,
-      context.getHandler(),
-    );
-    const requiredRolesAny = this.reflector.get<string[]>(
-      ANY_ROLES_KEY,
-      context.getHandler(),
+    if (!user) {
+      throw new WsException('User not authenticated');
+    }
+
+    const data = context
+      .switchToWs()
+      .getData<JoinRoomPayload | ConversationMessagePayload>();
+    const { requestId } = data;
+
+    if (!requestId) {
+      throw new WsException('Request ID not provided');
+    }
+
+    if (!isValidObjectId(requestId)) {
+      throw new WsException('Request ID is not a valid Mongo ObjectId');
+    }
+
+    const [request, err] = await handlePromise<RequestDocument, string>(
+      this.requestDbService.get(requestId),
     );
 
-    return validatePermissions(user, requiredRolesAll, requiredRolesAny);
+    if (err) {
+      throw new WsException('Error while retrieving request from db');
+    }
+
+    if (!request) {
+      throw new WsException('Request not found');
+    }
+
+    const isLabRole = user.roles && user.roles.includes(Roles.LAB);
+    const isOwner = user.id === request.requestantUser;
+
+    if (!isLabRole && !isOwner) {
+      throw new WsException('Access denied');
+    }
+
+    return true;
   }
 }

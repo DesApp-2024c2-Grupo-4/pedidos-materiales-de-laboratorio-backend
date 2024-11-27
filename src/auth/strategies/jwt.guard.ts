@@ -10,7 +10,6 @@ import {
   ANY_ROLES_KEY,
   IS_PUBLIC_KEY,
 } from '../providers/accesor.metadata';
-import { validatePermissions } from './jtw.validation';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -44,8 +43,42 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getHandler(),
     );
 
-    console.log({ user });
+    if (requiredRolesAll && requiredRolesAny) {
+      throw new Error(
+        'Conflicting role decorators: use either @RolesAll or @RolesAny, not both.',
+      );
+    }
 
-    return validatePermissions(user, requiredRolesAll, requiredRolesAny);
+    if (
+      requiredRolesAll &&
+      (!user || !user.roles || !this.hasAllRoles(user.roles, requiredRolesAll))
+    ) {
+      throw new ForbiddenException(
+        'Access denied: insufficient permissions for all required roles.',
+      );
+    }
+
+    if (
+      requiredRolesAny &&
+      (!user || !user.roles || !this.hasAnyRole(user.roles, requiredRolesAny))
+    ) {
+      throw new ForbiddenException(
+        'Access denied: insufficient permissions for any required roles.',
+      );
+    }
+
+    return true;
+  }
+
+  private hasAllRoles(userRoles: string[], requiredRoles: string[]): boolean {
+    return requiredRoles.every((role) =>
+      userRoles.map((r) => r.toLocaleLowerCase()).includes(role.toLowerCase()),
+    );
+  }
+
+  private hasAnyRole(userRoles: string[], requiredRoles: string[]): boolean {
+    return requiredRoles
+      .map((r) => r.toLocaleLowerCase())
+      .some((role) => userRoles.includes(role.toLocaleLowerCase()));
   }
 }
