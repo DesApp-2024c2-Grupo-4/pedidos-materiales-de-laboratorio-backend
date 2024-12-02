@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { MongooseModels } from '../const/mongoose.const';
 import {
   IsArray,
   IsDate,
@@ -28,6 +27,11 @@ import {
   ReactiveUnits,
   ReactiveUnitsKeys,
 } from '../reactive/reactive.const';
+import { User } from './user.schema';
+import { Material } from './requestable/material.schema';
+import { Equipment } from './requestable/equipment.schema';
+import { Reactive } from './requestable/reactive.schema';
+import { Conversation } from './conversation.schema';
 
 export type RequestDocument = HydratedDocument<Request>;
 
@@ -82,19 +86,19 @@ export class ReactiveRequest extends RequestableElement {
   @Prop({ required: true, type: [SolventRequest] })
   solvents: SolventRequest[];
 
-  @Prop({ type: Types.ObjectId, ref: MongooseModels.REACTIVE })
+  @Prop({ type: Types.ObjectId, ref: Reactive.name })
   id: Types.ObjectId;
 }
 
 @Schema()
 export class MaterialRequest extends RequestableElement {
-  @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.MATERIAL })
+  @Prop({ required: true, type: Types.ObjectId, ref: Material.name })
   id: Types.ObjectId;
 }
 
 @Schema()
 export class EquipmentRequest extends RequestableElement {
-  @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.EQUIPMENT })
+  @Prop({ required: true, type: Types.ObjectId, ref: Equipment.name })
   id: Types.ObjectId;
 }
 
@@ -102,12 +106,12 @@ export class EquipmentRequest extends RequestableElement {
 export class Request {
   /* metadata */
   @IsObjectId()
-  @Prop({ type: Types.ObjectId, ref: MongooseModels.USER })
+  @Prop({ type: Types.ObjectId, ref: User.name })
   requestantUser: Types.ObjectId;
 
   @IsOptional()
   @IsObjectId()
-  @Prop({ type: Types.ObjectId, ref: MongooseModels.USER })
+  @Prop({ type: Types.ObjectId, ref: User.name })
   assignedUser?: Types.ObjectId;
 
   @IsString()
@@ -178,7 +182,7 @@ export class Request {
   /* comuncation */
 
   @IsObjectId()
-  @Prop({ type: Types.ObjectId, ref: MongooseModels.CONVERSATION })
+  @Prop({ type: Types.ObjectId, ref: Conversation.name })
   messages: Types.ObjectId;
 
   /* requestables */
@@ -226,3 +230,33 @@ RequestSchema.methods.updateExpiration = function (
 
   this.status = RequestStatuses.REJECTED;
 };
+
+RequestSchema.pre('find', function () {
+  this.populate({
+    path: 'equipments.id',
+    model: Equipment.name,
+  })
+    .populate({
+      path: 'reactives.id',
+      model: Reactive.name,
+    })
+    .populate({
+      path: 'materials.id',
+      model: Material.name,
+    });
+});
+
+RequestSchema.pre('findOne', function () {
+  this.populate({
+    path: 'equipments.id',
+    model: Equipment.name,
+  })
+    .populate({
+      path: 'reactives.id',
+      model: Reactive.name,
+    })
+    .populate({
+      path: 'materials.id',
+      model: Material.name,
+    });
+});
