@@ -72,13 +72,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   private hasAllRoles(userRoles: string[], requiredRoles: string[]): boolean {
     return requiredRoles.every((role) =>
-      userRoles.map((r) => r.toLocaleLowerCase()).includes(role.toLowerCase()),
+      userRoles.map((r) => r.toLowerCase()).includes(role.toLowerCase()),
     );
   }
 
   private hasAnyRole(userRoles: string[], requiredRoles: string[]): boolean {
-    return requiredRoles
-      .map((r) => r.toLocaleLowerCase())
-      .some((role) => userRoles.includes(role.toLocaleLowerCase()));
+    return requiredRoles.some((role) =>
+      userRoles.map((r) => r.toLowerCase()).includes(role.toLowerCase()),
+    );
   }
 }

@@ -1,14 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { MongooseModels } from '../const/mongoose.const';
 import { IsDate, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
+import { User } from './user.schema';
 
 export type ConversationDocument = HydratedDocument<Conversation>;
 
 @Schema({ timestamps: true })
 export class Message {
-  @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.USER })
+  @Prop({ required: true, type: Types.ObjectId, ref: User.name })
   ownerId: Types.ObjectId;
 
   @Prop({ required: true })

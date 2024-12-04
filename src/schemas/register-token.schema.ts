@@ -1,25 +1,25 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { MongooseModels } from '../const/mongoose.const';
 import { IsArray, IsDate, IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { IsObjectId } from '../utils/validation/id.validator';
 import { IS_SOFT_DELETED_KEY, SoftDelete } from './common/soft-delete.schema';
 import { Roles, RolesValue } from '../const/roles.const';
 import { Type } from 'class-transformer';
+import { User } from './user.schema';
 
 export type RegisterTokenDocument = HydratedDocument<RegisterToken>;
 
 @Schema({ timestamps: true })
 export class RegisterToken extends SoftDelete {
   @IsObjectId({ message: 'Id should be in Mongo ObjectId format' })
-  @Prop({ required: true, type: Types.ObjectId, ref: MongooseModels.USER })
+  @Prop({ required: true, type: Types.ObjectId, ref: User.name })
   creatorId: Types.ObjectId;
 
   @Prop({ required: false, type: Date })
   consumedDate: Date;
 
   @IsObjectId({ message: 'Id should be in Mongo ObjectId format' })
-  @Prop({ required: false, type: Types.ObjectId, ref: MongooseModels.USER })
+  @Prop({ required: false, type: Types.ObjectId, ref: User.name })
   userCreated: Types.ObjectId;
 
   @IsOptional()
