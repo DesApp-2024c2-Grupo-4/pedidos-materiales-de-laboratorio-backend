@@ -12,19 +12,25 @@ export class UserService {
   constructor(private readonly dbService: UserDbService) {}
 
   async update(id: Types.ObjectId, user: UpdateUserDto | UpdateSelfUserDto) {
-    const [dbUser, err] = await handlePromise<UserDocument, Error>(
+    const [dbUser, err] = await handlePromise<UserDocument, string>(
       this.dbService.get(id),
     );
 
     if (err) {
-      throw new BackendException(err.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new BackendException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     if (!dbUser) {
       throw new BackendException('', HttpStatus.NOT_FOUND);
     }
 
-    this.dbService.update(dbUser, user);
+    const [, updateErr] = await handlePromise<UserDocument, string>(
+      this.dbService.update(dbUser, user),
+    );
+
+    if (updateErr) {
+      throw new BackendException(updateErr, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async get(id: Types.ObjectId): Promise<UserDocument> {
