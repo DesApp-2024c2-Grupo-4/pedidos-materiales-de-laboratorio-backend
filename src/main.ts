@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 export async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,4 +35,15 @@ export function configureApp(app, config) {
     preflightContinue: false,
     optionsSuccessStatus: 204,
   });
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Lab API')
+    .setDescription(
+      '<h1>Site in construction, please refer to Insomnia collection!</h1> <br>An API for the handling of UNAHUR lab request, materials, equipments and reactives',
+    )
+    .setVersion('1.0')
+    .build();
+  const documentFactory = () =>
+    SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api', app, documentFactory);
 }
