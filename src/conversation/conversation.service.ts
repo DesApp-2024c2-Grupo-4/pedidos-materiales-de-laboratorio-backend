@@ -1,10 +1,14 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import handlePromise from '../utils/promise';
-import { BackendException } from '../shared/backend.exception';
 import { ConversationDbService } from './conversation-db.service';
 import { Types } from 'mongoose';
 import { UserDbService } from '../user/user-db.service';
-import { cantAddMessage } from './conversation.errors';
+import {
+  cantAddMessage,
+  cantDeliverMessages,
+  cantReadMessages,
+} from './conversation.errors';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class ConversationService {
@@ -17,14 +21,11 @@ export class ConversationService {
     const [conversation, getErr] = await handlePromise(this.dbService.get(id));
 
     if (getErr) {
-      throw new BackendException(
-        (getErr as Error).message,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new WsException((getErr as Error).message);
     }
 
     if (!conversation) {
-      throw new BackendException('', 404);
+      throw new WsException(`Conversation ${id} not found`);
     }
 
     return conversation;
@@ -40,17 +41,11 @@ export class ConversationService {
     );
 
     if (getConversationErr) {
-      throw new BackendException(
-        cantAddMessage(id, ownerId, getConversationErr),
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new WsException(cantAddMessage(id, ownerId, getConversationErr));
     }
 
     if (!conversation) {
-      throw new BackendException(
-        `Conversation with id ${id} not found`,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new WsException(`Conversation with id ${id} not found`);
     }
 
     const [user, getUserErr] = await handlePromise(
@@ -58,17 +53,11 @@ export class ConversationService {
     );
 
     if (getUserErr) {
-      throw new BackendException(
-        cantAddMessage(id, ownerId, getUserErr),
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new WsException(cantAddMessage(id, ownerId, getUserErr));
     }
 
     if (!user) {
-      throw new BackendException(
-        `User with id ${ownerId} not found`,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new WsException(`User with id ${ownerId} not found`);
     }
 
     conversation.addMessage(ownerId, content);
@@ -76,10 +65,71 @@ export class ConversationService {
     const [, saveErr] = await handlePromise(conversation.save());
 
     if (saveErr) {
-      throw new BackendException(
-        cantAddMessage(id, ownerId, saveErr),
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      throw new WsException(cantAddMessage(id, ownerId, saveErr));
+    }
+
+    return conversation.messages[conversation.messages.length - 1];
+  }
+
+  async readMessages(
+    conversationId: Types.ObjectId,
+    userId: Types.ObjectId,
+    messages: Types.ObjectId[],
+  ) {
+    const [conversation, getConversationErr] = await handlePromise(
+      this.dbService.get(conversationId),
+    );
+
+    if (getConversationErr) {
+      throw new WsException(
+        cantReadMessages(conversationId, userId, getConversationErr),
       );
     }
+
+    if (!conversation) {
+      throw new WsException(`Conversation with id ${conversationId} not found`);
+    }
+
+    conversation.readMessages(userId, messages);
+
+    const [, saveErr] = await handlePromise(conversation.save());
+
+    if (saveErr) {
+      throw new WsException(cantReadMessages(conversationId, userId, saveErr));
+    }
+
+    return conversation.messages[conversation.messages.length - 1];
+  }
+
+  async deliverMessages(
+    conversationId: Types.ObjectId,
+    userId: Types.ObjectId,
+    messages: Types.ObjectId[],
+  ) {
+    const [conversation, getConversationErr] = await handlePromise(
+      this.dbService.get(conversationId),
+    );
+
+    if (getConversationErr) {
+      throw new WsException(
+        cantDeliverMessages(conversationId, userId, getConversationErr),
+      );
+    }
+
+    if (!conversation) {
+      throw new WsException(`Conversation with id ${conversationId} not found`);
+    }
+
+    conversation.deliverMessages(userId, messages);
+
+    const [, saveErr] = await handlePromise(conversation.save());
+
+    if (saveErr) {
+      throw new WsException(
+        cantDeliverMessages(conversationId, userId, saveErr),
+      );
+    }
+
+    return conversation.messages[conversation.messages.length - 1];
   }
 }

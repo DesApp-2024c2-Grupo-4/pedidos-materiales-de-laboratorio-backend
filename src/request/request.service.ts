@@ -11,7 +11,7 @@ import { EquipmentdbService } from '../equipment/equipment-db.service';
 import { ReactiveDbService } from '../reactive/reactive-db.service';
 import { MaterialDbService } from '../material/material-db.service';
 import { checkItemsAvailability } from './request.helpers';
-import { RequestStatusesValue } from './request.const';
+import { RequestStatus, RequestStatusesValue } from './request.const';
 
 @Injectable()
 export class RequestService {
@@ -87,9 +87,9 @@ export class RequestService {
     return request;
   }
 
-  async getAll(status?: RequestStatusesValue) {
+  async getAll(requestantUser?: Types.ObjectId, status?: RequestStatus) {
     const [requests, err] = await handlePromise<unknown, string>(
-      this.dbService.getAll(status),
+      this.dbService.getAll(requestantUser, status),
     );
 
     if (err) {

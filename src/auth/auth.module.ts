@@ -14,6 +14,7 @@ import {
   RegisterToken,
   RegisterTokenSchema,
 } from '../schemas/register-token.schema';
+import { JwtSocketStrategy } from './strategies/jwt-socket.strategy';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import {
     UserDbService,
     RegisterTokenDbService,
     JwtStrategy,
+    JwtSocketStrategy,
     LocalStrategy,
     AuthService,
   ],

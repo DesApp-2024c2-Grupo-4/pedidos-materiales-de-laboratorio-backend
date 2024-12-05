@@ -126,7 +126,7 @@ export class UserDbService {
   }
 
   async getAll() {
-    const [materials, err] = await handlePromise(
+    const [users, err] = await handlePromise(
       this.userModel.find({}, { password: 0 }),
     );
 
@@ -134,19 +134,18 @@ export class UserDbService {
       return Promise.reject(cantGetUsers(err));
     }
 
-    return materials;
+    return users;
   }
 
-  async update(
-    id: Types.ObjectId,
-    material: UpdateUserDto | UpdateSelfUserDto,
-  ) {
-    const [, err] = await handlePromise(
-      this.userModel.updateOne({ _id: id }, material),
-    );
+  async update(dbUser: UserDocument, user: UpdateUserDto | UpdateSelfUserDto) {
+    for (let k in user) {
+      dbUser[k] = user[k];
+    }
+
+    const [, err] = await handlePromise(dbUser.save());
 
     if (err) {
-      return Promise.reject(cantUpdate(id, err));
+      return Promise.reject(cantUpdate(dbUser._id, err));
     }
   }
 

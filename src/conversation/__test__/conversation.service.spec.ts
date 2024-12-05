@@ -23,6 +23,7 @@ describe('ConversationService', () => {
     _id: new Types.ObjectId(),
     addMessage: jest.fn(),
     save: jest.fn(),
+    messages: [],
   };
   const mockUser = { _id: new Types.ObjectId() };
 

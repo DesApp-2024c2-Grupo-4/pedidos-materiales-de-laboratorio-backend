@@ -325,19 +325,17 @@ describe('UserDbService', () => {
     it('should update a user', async () => {
       model.updateOne.mockResolvedValue({ modifiedCount: 1 });
       const updateUserDto: UpdateUserDto = { email: 'updated@example.com' };
-      await service.update(mockUser._id, updateUserDto);
+      mockUser.save.mockResolvedValue(null);
+      await service.update(mockUser as any, updateUserDto);
 
-      expect(model.updateOne).toHaveBeenCalledWith(
-        { _id: mockUser._id },
-        updateUserDto,
-      );
+      expect(mockUser.save).toHaveBeenCalled();
     });
 
     it('should throw an error if update fails', async () => {
       const err = new Error('Update error');
-      model.updateOne.mockRejectedValue(err);
+      mockUser.save.mockRejectedValue(err);
       await expect(
-        service.update(mockUser._id, { email: 'updated@example.com' }),
+        service.update(mockUser as any, { email: 'updated@example.com' }),
       ).rejects.toStrictEqual(
         `Cannot update user with id ${mockUser._id}. Reason: ${err}`,
       );

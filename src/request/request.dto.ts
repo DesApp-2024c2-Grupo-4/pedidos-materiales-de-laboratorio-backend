@@ -9,12 +9,12 @@ export class CreateRequestDto extends OmitType(Request, [
   'updatedAt',
   'lab',
   'observations',
-  'messages',
+  'conversation',
 ]) {}
 
 export class UpdateRequestDto extends OmitType(Request, [
   'requestantUser',
   'createdAt',
   'updatedAt',
-  'messages',
+  'conversation',
 ]) {}
