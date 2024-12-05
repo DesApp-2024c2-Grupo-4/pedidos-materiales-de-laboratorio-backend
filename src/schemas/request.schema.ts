@@ -243,6 +243,16 @@ RequestSchema.pre('find', function () {
     .populate({
       path: 'materials.id',
       model: Material.name,
+    })
+    .populate({
+      path: 'requestantUser',
+      model: User.name,
+      select: 'name lastName email',
+    })
+    .populate({
+      path: 'assignedUser',
+      model: User.name,
+      select: 'name lastName email',
     });
 });
 
@@ -258,5 +268,15 @@ RequestSchema.pre('findOne', function () {
     .populate({
       path: 'materials.id',
       model: Material.name,
+    })
+    .populate({
+      path: 'requestantUser',
+      model: User.name,
+      select: 'name lastName email',
+    })
+    .populate({
+      path: 'assignedUser',
+      model: User.name,
+      select: 'name lastName email',
     });
 });
