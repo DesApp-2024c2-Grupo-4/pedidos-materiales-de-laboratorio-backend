@@ -16,7 +16,7 @@ import {
   IS_SOFT_DELETED_KEY,
 } from '../schemas/common/soft-delete.schema';
 import { CreateRequestDto, UpdateRequestDto } from './request.dto';
-import { RequestStatusesValue } from './request.const';
+import { RequestStatus, RequestStatusesValue } from './request.const';
 import { Conversation } from '../schemas/conversation.schema';
 
 @Injectable()
@@ -106,8 +106,9 @@ export class RequestDbService {
     return request;
   }
 
-  async getAll(status?: RequestStatusesValue) {
-    const filters = status ? { status } : {};
+  async getAll(requestantUser?: Types.ObjectId, status?: RequestStatus) {
+    let filters: any = status ? { status } : {};
+    filters = requestantUser ? { ...filters, requestantUser } : filters;
 
     const [requests, err] = await handlePromise(
       this.requestModel.find(filters),

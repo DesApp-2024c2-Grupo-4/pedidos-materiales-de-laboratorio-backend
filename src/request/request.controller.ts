@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Request as NestRequest,
+  Query,
 } from '@nestjs/common';
 import { RequestService } from './request.service';
 import { IdDto } from '../dto/id.dto';
@@ -16,6 +17,7 @@ import { AuthenticatedRequest } from '../dto/authenticated-request.dto';
 import { Roles } from '../const/roles.const';
 import { AllRoles, AnyRoles } from '../auth/providers/accesor.metadata';
 import { Labs, RequestStatuses } from './request.const';
+import { StatusDto } from '../dto/status.dto';
 
 @Controller('request')
 export class RequestController {
@@ -45,9 +47,18 @@ export class RequestController {
   }
 
   @Get()
-  @AllRoles(Roles.LAB)
-  getAll() {
-    return this.requestService.getAll();
+  @AnyRoles(Roles.LAB, Roles.TEACHER)
+  getAll(
+    @NestRequest() req: AuthenticatedRequest,
+    @Query() statusDto: StatusDto,
+  ) {
+    const { roles, id } = req.user;
+    const { status } = statusDto;
+    const isLabUser = roles
+      .map((r) => r.toLowerCase())
+      .includes(Roles.LAB.toLowerCase());
+    const requestantUser = isLabUser ? undefined : id;
+    return this.requestService.getAll(requestantUser, status);
   }
 
   @Get('/constants/statuses')
