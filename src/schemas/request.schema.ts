@@ -183,7 +183,7 @@ export class Request {
 
   @IsObjectId()
   @Prop({ type: Types.ObjectId, ref: Conversation.name })
-  messages: Types.ObjectId;
+  conversation: Types.ObjectId;
 
   /* requestables */
 

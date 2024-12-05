@@ -3,11 +3,13 @@ import { HydratedDocument, Types } from 'mongoose';
 import { IsDate, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 import { User } from './user.schema';
+import { IsObjectId } from '../utils/validation/id.validator';
 
 export type ConversationDocument = HydratedDocument<Conversation>;
 
 @Schema({ timestamps: true })
 export class Message {
+  @IsObjectId({ message: 'Id should be in Mongo ObjectId format' })
   @Prop({ required: true, type: Types.ObjectId, ref: User.name })
   ownerId: Types.ObjectId;
 
@@ -39,7 +41,7 @@ export class Message {
 
 @Schema({ timestamps: true })
 export class Conversation {
-  @Prop({ type: [Message] })
+  @Prop({ type: [Message], default: [] })
   messages: Message[];
 
   @IsOptional()
@@ -57,7 +59,7 @@ export class Conversation {
   addMessage: (ownerId: Types.ObjectId, content: string) => Promise<void>;
 }
 
-export const ConversationSchema = SchemaFactory.createForClass(Message);
+export const ConversationSchema = SchemaFactory.createForClass(Conversation);
 
 ConversationSchema.methods.addMessage = async function (
   ownerId: Types.ObjectId,

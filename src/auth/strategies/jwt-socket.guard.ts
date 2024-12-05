@@ -82,6 +82,8 @@ export class JwtSocketAuthGuard extends AuthGuard('jwt-socket') {
       throw new WsException('Access denied');
     }
 
+    (wsRequest as any).requestDocument = request; // Attach request to handshake
+
     return true;
   }
 }

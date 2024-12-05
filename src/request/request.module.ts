@@ -21,6 +21,10 @@ import {
 } from '../schemas/requestable/reactive.schema';
 import { MaterialDbService } from '../material/material-db.service';
 import { ReactiveDbService } from '../reactive/reactive-db.service';
+import {
+  Conversation,
+  ConversationSchema,
+} from '../schemas/conversation.schema';
 
 @Module({
   imports: [
@@ -34,6 +38,9 @@ import { ReactiveDbService } from '../reactive/reactive-db.service';
     ]),
     MongooseModule.forFeature([
       { name: Reactive.name, schema: ReactiveSchema },
+    ]),
+    MongooseModule.forFeature([
+      { name: Conversation.name, schema: ConversationSchema },
     ]),
   ],
   providers: [

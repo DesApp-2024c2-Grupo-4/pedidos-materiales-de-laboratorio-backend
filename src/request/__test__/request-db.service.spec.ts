@@ -30,7 +30,7 @@ describe('RequestDbService', () => {
     description: 'Chemistry lab request for TP10.',
     lab: 'MA101',
     observations: 'Handle with care',
-    messages: new Types.ObjectId(),
+    conversation: new Types.ObjectId(),
     equipments: [
       {
         id: new Types.ObjectId(),

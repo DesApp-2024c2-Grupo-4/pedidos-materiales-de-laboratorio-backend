@@ -11,6 +11,9 @@ import { UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { JwtSocketAuthGuard } from '../auth/strategies/jwt-socket.guard';
 import { AccessTokenPayload } from 'src/types/jwt-payload';
 import { Types } from 'mongoose';
+import { ConversationService } from './conversation.service';
+import { RequestDocument } from 'src/schemas/request.schema';
+import { Server } from 'socket.io';
 
 export interface JoinRoomPayload {
   requestId: Types.ObjectId;
@@ -27,7 +30,8 @@ export interface ConversationMessagePayload {
 export class ConversationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  @WebSocketServer() server;
+  constructor(private conversationService: ConversationService) {}
+  @WebSocketServer() server: Server;
 
   private roomParticipants: Map<string, Set<string>> = new Map();
 
@@ -38,7 +42,6 @@ export class ConversationGateway
   handleDisconnect(client: any) {
     console.log('Client disconnected:', client.id);
 
-    // Remove the client from all rooms they were part of
     this.roomParticipants.forEach((clients, roomId) => {
       if (clients.has(client.id)) {
         clients.delete(client.id);
@@ -50,13 +53,13 @@ export class ConversationGateway
   }
 
   @SubscribeMessage('joinRoom')
-  joinRoom(
+  async joinRoom(
     @MessageBody() data: JoinRoomPayload,
     @ConnectedSocket() client: any,
   ) {
     const { requestId } = data;
 
-    const user = client.handshake.user as AccessTokenPayload;
+    const request = client.handshake.requestDocument as RequestDocument;
 
     if (!this.roomParticipants.has(requestId.toString())) {
       this.roomParticipants.set(requestId.toString(), new Set());
@@ -65,8 +68,13 @@ export class ConversationGateway
     this.roomParticipants.get(requestId.toString()).add(client.id);
     client.join(requestId);
 
-    console.log(`User ${user.id} joined room: ${requestId}`);
-    this.server.to(requestId).emit('userJoined', { user, requestId });
+    const conversation = await this.conversationService.get(
+      request.conversation,
+    );
+
+    this.server
+      .to(client.id)
+      .emit('roomHistory', { messages: conversation.messages });
   }
 
   @SubscribeMessage('message')
@@ -82,8 +90,7 @@ export class ConversationGateway
       return;
     }
 
-    console.log(`Message in room ${requestId} from ${user.id}: ${message}`);
-    this.server.to(requestId).emit('message', { user, message });
+    this.server.to(requestId.toString()).emit('message', { user, message });
   }
 
   @SubscribeMessage('leaveRoom')
@@ -98,7 +105,9 @@ export class ConversationGateway
       client.leave(requestId.toString());
 
       console.log(`Client ${client.id} left room: ${requestId.toString()}`);
-      this.server.to(requestId).emit('userLeft', { userId: client.id });
+      this.server
+        .to(requestId.toString())
+        .emit('userLeft', { userId: client.id });
     }
   }
 }
