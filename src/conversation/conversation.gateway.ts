@@ -57,15 +57,16 @@ export class ConversationGateway
     @MessageBody() data: JoinRoomPayload,
     @ConnectedSocket() client: any,
   ) {
-    const { requestId } = data;
+    const requestId = data.requestId.toString();
 
     const request = client.handshake.requestDocument as RequestDocument;
 
-    if (!this.roomParticipants.has(requestId.toString())) {
-      this.roomParticipants.set(requestId.toString(), new Set());
+    if (!this.roomParticipants.has(requestId)) {
+      this.roomParticipants.set(requestId, new Set());
     }
 
-    this.roomParticipants.get(requestId.toString()).add(client.id);
+    this.roomParticipants.get(requestId).add(client.id);
+
     client.join(requestId);
 
     const conversation = await this.conversationService.get(
@@ -96,16 +97,16 @@ export class ConversationGateway
       return;
     }
 
-    await this.conversationService.addMessage(
+    const newMessage = await this.conversationService.addMessage(
       request.conversation,
       user.id,
       message,
     );
 
-    for (let _client in this.roomParticipants[requestId]) {
-      if (_client === client.id) return;
-      this.server.to(_client).emit('message', { message });
-    }
+    this.roomParticipants.get(requestId).forEach((c) => {
+      if (c === client.id) return;
+      this.server.to(c).emit('message', { requestId, message: newMessage });
+    });
   }
 
   @SubscribeMessage('leaveRoom')

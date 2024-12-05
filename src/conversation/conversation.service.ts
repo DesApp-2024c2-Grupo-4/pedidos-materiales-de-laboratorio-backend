@@ -63,5 +63,7 @@ export class ConversationService {
     if (saveErr) {
       throw new WsException(cantAddMessage(id, ownerId, saveErr));
     }
+
+    return conversation.messages[conversation.messages.length - 1];
   }
 }
