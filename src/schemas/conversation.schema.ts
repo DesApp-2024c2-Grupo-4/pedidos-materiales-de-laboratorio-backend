@@ -17,8 +17,11 @@ export class Message {
   @Prop({ required: true })
   message: string;
 
-  @Prop({ required: true, type: [Types.ObjectId] })
+  @Prop({ required: true, type: [Types.ObjectId], ref: User.name })
   read: Types.ObjectId[];
+
+  @Prop({ required: true, type: [Types.ObjectId], ref: User.name })
+  delivered: Types.ObjectId[];
 
   @IsOptional()
   @IsDate()
@@ -59,6 +62,7 @@ export class Conversation {
 
   addMessage: (ownerId: Types.ObjectId, content: string) => void;
   readMessages: (userId: Types.ObjectId, messages: Types.ObjectId[]) => void;
+  deliverMessages: (userId: Types.ObjectId, messages: Types.ObjectId[]) => void;
 }
 
 export const ConversationSchema = SchemaFactory.createForClass(Conversation);
@@ -84,5 +88,22 @@ ConversationSchema.methods.readMessages = function (
     const readList = m.read.map((id) => id.toString());
     if (readList.includes(userId.toString())) return;
     m.read.push(userId);
+  });
+};
+
+ConversationSchema.methods.deliverMessages = function (
+  userId: Types.ObjectId,
+  messages: Types.ObjectId[],
+): void {
+  const messagesDict = messages.reduce((d, v) => {
+    d[v.toString()] = v;
+    return d;
+  }, {});
+
+  this.messages.forEach((m: MessageDocument) => {
+    if (!messagesDict[m._id.toString()]) return;
+    const deliveredList = m.delivered.map((id) => id.toString());
+    if (deliveredList.includes(userId.toString())) return;
+    m.delivered.push(userId);
   });
 };
