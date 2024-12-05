@@ -8,6 +8,14 @@ export function cantAddMessage(
   return `Cannot add message for conversation ${conversationId}, user ${ownerId}. Reason: ${reason}`;
 }
 
+export function cantReadMessages(
+  conversationId: Types.ObjectId,
+  userId: Types.ObjectId,
+  reason: unknown,
+): string {
+  return `Cannot read messages for conversation ${conversationId.toString()}, user ${userId.toString()}. Reason: ${reason}`;
+}
+
 export function cantGetConversation(
   conversationId: Types.ObjectId,
   reason: unknown,

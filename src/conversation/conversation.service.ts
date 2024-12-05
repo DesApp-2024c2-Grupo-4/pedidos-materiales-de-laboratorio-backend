@@ -3,7 +3,7 @@ import handlePromise from '../utils/promise';
 import { ConversationDbService } from './conversation-db.service';
 import { Types } from 'mongoose';
 import { UserDbService } from '../user/user-db.service';
-import { cantAddMessage } from './conversation.errors';
+import { cantAddMessage, cantReadMessages } from './conversation.errors';
 import { WsException } from '@nestjs/websockets';
 
 @Injectable()
@@ -62,6 +62,36 @@ export class ConversationService {
 
     if (saveErr) {
       throw new WsException(cantAddMessage(id, ownerId, saveErr));
+    }
+
+    return conversation.messages[conversation.messages.length - 1];
+  }
+
+  async readMessages(
+    conversationId: Types.ObjectId,
+    userId: Types.ObjectId,
+    messages: Types.ObjectId[],
+  ) {
+    const [conversation, getConversationErr] = await handlePromise(
+      this.dbService.get(conversationId),
+    );
+
+    if (getConversationErr) {
+      throw new WsException(
+        cantReadMessages(conversationId, userId, getConversationErr),
+      );
+    }
+
+    if (!conversation) {
+      throw new WsException(`Conversation with id ${conversationId} not found`);
+    }
+
+    conversation.readMessages(userId, messages);
+
+    const [, saveErr] = await handlePromise(conversation.save());
+
+    if (saveErr) {
+      throw new WsException(cantReadMessages(conversationId, userId, saveErr));
     }
 
     return conversation.messages[conversation.messages.length - 1];

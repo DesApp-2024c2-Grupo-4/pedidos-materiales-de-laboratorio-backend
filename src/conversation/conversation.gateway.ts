@@ -24,6 +24,11 @@ export interface ConversationMessagePayload {
   message: string;
 }
 
+export interface ConversationReadPayload {
+  requestId: Types.ObjectId;
+  messages: Types.ObjectId[];
+}
+
 @WebSocketGateway({ cors: true })
 @UseGuards(JwtSocketAuthGuard)
 @UsePipes(new ValidationPipe())
@@ -106,6 +111,39 @@ export class ConversationGateway
     this.roomParticipants.get(requestId).forEach((c) => {
       if (c === client.id) return;
       this.server.to(c).emit('message', { requestId, message: newMessage });
+    });
+  }
+
+  @SubscribeMessage('readMessages')
+  async handleRead(
+    @MessageBody() data: ConversationReadPayload,
+    @ConnectedSocket() client: any,
+  ) {
+    const user = client.handshake.user as AccessTokenPayload;
+    const { messages } = data;
+
+    const request = client.handshake.requestDocument as RequestDocument;
+
+    const requestId = request._id.toString();
+
+    if (!this.roomParticipants.has(requestId)) {
+      client.emit('error', {
+        message: `Room ${requestId} not found`,
+      });
+      return;
+    }
+
+    await this.conversationService.readMessages(
+      request.conversation,
+      user.id,
+      messages,
+    );
+
+    this.roomParticipants.get(requestId).forEach((c) => {
+      if (c === client.id) return;
+      this.server
+        .to(c)
+        .emit('messageReads', { requestId, userId: user.id, messages });
     });
   }
 
