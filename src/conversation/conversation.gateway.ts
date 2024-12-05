@@ -78,19 +78,34 @@ export class ConversationGateway
   }
 
   @SubscribeMessage('message')
-  handleMessage(
+  async handleMessage(
     @MessageBody() data: ConversationMessagePayload,
     @ConnectedSocket() client: any,
   ) {
     const user = client.handshake.user as AccessTokenPayload;
-    const { requestId, message } = data;
+    const { message } = data;
 
-    if (!this.roomParticipants.has(requestId.toString())) {
-      client.emit('error', { message: 'Room not found' });
+    const request = client.handshake.requestDocument as RequestDocument;
+
+    const requestId = request._id.toString();
+
+    if (!this.roomParticipants.has(requestId)) {
+      client.emit('error', {
+        message: `Room ${requestId} not found`,
+      });
       return;
     }
 
-    this.server.to(requestId.toString()).emit('message', { user, message });
+    await this.conversationService.addMessage(
+      request.conversation,
+      user.id,
+      message,
+    );
+
+    for (let _client in this.roomParticipants[requestId]) {
+      if (_client === client.id) return;
+      this.server.to(_client).emit('message', { message });
+    }
   }
 
   @SubscribeMessage('leaveRoom')
