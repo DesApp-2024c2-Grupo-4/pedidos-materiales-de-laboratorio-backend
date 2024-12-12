@@ -109,7 +109,6 @@ export class ConversationGateway
     );
 
     this.roomParticipants.get(requestId).forEach((c) => {
-      if (c === client.id) return;
       this.server.to(c).emit('message', { requestId, message: newMessage });
     });
   }
