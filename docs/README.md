@@ -1,7 +1,9 @@
-# Índice
-    1. Estructura de directorios
+# Documentación del proyecto
 
-
+## Contenido
+- Estructura de directorios
+    - Documentación
+    - Código
 
 ## Estructura de directorios
 

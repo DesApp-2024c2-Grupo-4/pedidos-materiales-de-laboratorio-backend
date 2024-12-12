@@ -1,3 +1,16 @@
+# Pedidos de materiales de laboratorio - Backend
+
+## Contenido
+- Documentación del proyecto
+- Pre-requisitos
+- Creación de Usuario Administrador Predeterminado
+- Configuración de Variables de Entorno
+- Iniciando el Proyecto
+- Licencias
+
+## Documentación del proyecto
+Para visualizar al documentación referir a la carpeta [docs](./docs/README.md)
+
 ## Pre-requisitos
 
 ### Requisitos de Base de Datos
