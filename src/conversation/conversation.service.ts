@@ -68,7 +68,22 @@ export class ConversationService {
       throw new WsException(cantAddMessage(id, ownerId, saveErr));
     }
 
-    return conversation.messages[conversation.messages.length - 1];
+    // Populate the ownerId field of the newly added message
+    const [populatedConversation, populateErr] = await handlePromise(
+      conversation.populate({
+        path: 'messages.ownerId',
+        model: 'User',
+        select: 'name lastName email',
+      }),
+    );
+
+    if (populateErr) {
+      throw new WsException(cantAddMessage(id, ownerId, populateErr));
+    }
+
+    return populatedConversation.messages[
+      populatedConversation.messages.length - 1
+    ];
   }
 
   async readMessages(

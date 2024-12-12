@@ -107,3 +107,21 @@ ConversationSchema.methods.deliverMessages = function (
     m.delivered.push(userId);
   });
 };
+
+ConversationSchema.pre('findOne', function () {
+  this.populate({
+    path: 'messages.ownerId',
+    model: User.name,
+    select: 'name lastName email',
+  })
+    .populate({
+      path: 'messages.read',
+      model: User.name,
+      select: 'name lastName email',
+    })
+    .populate({
+      path: 'messages.delivered',
+      model: User.name,
+      select: 'name lastName email',
+    });
+});

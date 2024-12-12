@@ -76,7 +76,8 @@ export class JwtSocketAuthGuard extends AuthGuard('jwt-socket') {
     }
 
     const isLabRole = user.roles && user.roles.includes(Roles.LAB);
-    const isOwner = user.id === request.requestantUser;
+    const isOwner =
+      user.id.toString() === request.requestantUser._id.toString();
 
     if (!isLabRole && !isOwner) {
       throw new WsException('Access denied');
