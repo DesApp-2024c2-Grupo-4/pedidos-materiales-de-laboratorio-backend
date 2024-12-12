@@ -4,8 +4,13 @@
 - Estructura de directorios
     - Documentación
     - Código
+- [Estructura de un módulo](./module/README.md)
+- [Comunicación por websockets](./websockets/README.md)
 
-## Estructura de directorios
+## Estructura de archivos
+
+### Tipos de archivo
+
 
 ### Documentación
 ```
@@ -14,6 +19,16 @@
     +-- insomnia
     |   +-- example-env.json
     |   +-- Insomnia.json
+    +-- DOC_A
+    |   +-- img
+    |   |   +-- img_A.ts
+    |   |   +-- img_B.ts
+    |   +-- README.md 
+    +-- DOC_B
+    |   +-- img
+    |   |   +-- img_A.ts
+    |   |   +-- img_B.ts
+    |   +-- README.md 
     +-- img
     |   +-- img_A.ts
     |   +-- img_B.ts
@@ -86,4 +101,5 @@
     |   +-- util_B.ts
     
 ```
+
 
